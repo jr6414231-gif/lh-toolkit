@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>L❤️H TOOLKIT — Admin Panel</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800&family=Rajdhani:wght@300;400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #12121a;
+    --card: #1a1a26;
+    --border: #2a2a3e;
+    --accent: #ff3366;
+    --accent2: #ff6b35;
+    --gold: #ffd700;
+    --text: #e0e0f0;
+    --muted: #888899;
+    --green: #00ff88;
+    --blue: #4fc3f7;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--bg); color:var(--text); font-family:'Rajdhani',sans-serif; min-height:100vh; }
+
+  /* AUTH */
+  #authScreen {
+    position:fixed; inset:0; background:var(--bg);
+    display:flex; align-items:center; justify-content:center;
+    z-index:1000;
+  }
+  .auth-box {
+    background:var(--card); border:1px solid var(--border);
+    border-radius:16px; padding:40px; width:380px; text-align:center;
+    box-shadow:0 0 60px rgba(255,51,102,0.15);
+  }
+  .auth-box h2 { font-family:'Orbitron',sans-serif; color:var(--accent); font-size:1.4rem; margin-bottom:8px; }
+  .auth-box p { color:var(--muted); font-size:.9rem; margin-bottom:28px; }
+  .inp { width:100%; background:#0d0d15; border:1px solid var(--border); border-radius:8px;
+    padding:12px 16px; color:var(--text); font-size:1rem; font-family:'Rajdhani',sans-serif;
+    outline:none; margin-bottom:14px; transition:border .3s; }
+  .inp:focus { border-color:var(--accent); }
+  .btn-main { width:100%; background:linear-gradient(135deg,var(--accent),var(--accent2));
+    border:none; border-radius:8px; padding:13px; color:#fff; font-family:'Orbitron',sans-serif;
+    font-size:.85rem; font-weight:600; cursor:pointer; transition:transform .2s,box-shadow .2s; }
+  .btn-main:hover { transform:translateY(-2px); box-shadow:0 8px 30px rgba(255,51,102,.4); }
+  .err { color:var(--accent); font-size:.85rem; margin-top:10px; display:none; }
+
+  /* LAYOUT */
+  #adminApp { display:none; }
+  .topbar {
+    background:var(--surface); border-bottom:1px solid var(--border);
+    padding:0 24px; height:60px; display:flex; align-items:center; justify-content:space-between;
+    position:sticky; top:0; z-index:100;
+  }
+  .topbar-brand { font-family:'Orbitron',sans-serif; font-size:1rem; color:var(--accent); }
+  .topbar-brand span { color:var(--gold); }
+  .topbar-right { display:flex; align-items:center; gap:14px; }
+  .badge-admin { background:rgba(255,51,102,.15); color:var(--accent); border:1px solid var(--accent);
+    padding:4px 12px; border-radius:20px; font-size:.75rem; font-family:'Orbitron',sans-serif; }
+  .btn-sm { background:var(--card); border:1px solid var(--border); color:var(--text);
+    padding:7px 16px; border-radius:8px; cursor:pointer; font-family:'Rajdhani',sans-serif;
+    font-size:.9rem; transition:all .2s; }
+  .btn-sm:hover { border-color:var(--accent); color:var(--accent); }
+
+  .layout { display:flex; min-height:calc(100vh - 60px); }
+  .sidebar {
+    width:220px; background:var(--surface); border-right:1px solid var(--border);
+    padding:20px 0; flex-shrink:0;
+  }
+  .nav-item { display:flex; align-items:center; gap:12px; padding:12px 22px;
+    color:var(--muted); cursor:pointer; transition:all .2s; font-size:1rem; border-left:3px solid transparent; }
+  .nav-item:hover, .nav-item.active { color:var(--text); background:rgba(255,51,102,.08); border-left-color:var(--accent); }
+  .nav-item i { width:18px; text-align:center; }
+  .nav-section { color:var(--muted); font-size:.7rem; padding:16px 22px 6px; letter-spacing:2px; text-transform:uppercase; }
+
+  .content { flex:1; padding:28px; overflow-y:auto; }
+  .page { display:none; }
+  .page.active { display:block; }
+
+  .page-header { margin-bottom:24px; }
+  .page-header h1 { font-family:'Orbitron',sans-serif; font-size:1.4rem; color:var(--text); }
+  .page-header p { color:var(--muted); font-size:.9rem; margin-top:4px; }
+
+  /* STATS */
+  .stats-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:16px; margin-bottom:28px; }
+  .stat-card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:20px; }
+  .stat-card .val { font-family:'Orbitron',sans-serif; font-size:2rem; font-weight:800; }
+  .stat-card .lbl { color:var(--muted); font-size:.85rem; margin-top:4px; }
+  .stat-card.red .val { color:var(--accent); }
+  .stat-card.gold .val { color:var(--gold); }
+  .stat-card.green .val { color:var(--green); }
+  .stat-card.blue .val { color:var(--blue); }
+
+  /* CARDS */
+  .card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:22px; margin-bottom:20px; }
+  .card-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:18px; }
+  .card-header h3 { font-family:'Orbitron',sans-serif; font-size:.95rem; color:var(--text); }
+
+  /* FORM */
+  .form-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  .form-grid.one { grid-template-columns:1fr; }
+  .form-group { display:flex; flex-direction:column; gap:6px; }
+  .form-group label { font-size:.85rem; color:var(--muted); text-transform:uppercase; letter-spacing:1px; }
+  .form-group input, .form-group select, .form-group textarea {
+    background:#0d0d15; border:1px solid var(--border); border-radius:8px;
+    padding:10px 14px; color:var(--text); font-size:.95rem; font-family:'Rajdhani',sans-serif;
+    outline:none; transition:border .3s; resize:vertical;
+  }
+  .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color:var(--accent); }
+  .form-group select option { background:var(--card); }
+  .btn-add { background:linear-gradient(135deg,var(--accent),var(--accent2)); border:none;
+    border-radius:8px; padding:11px 24px; color:#fff; font-family:'Orbitron',sans-serif;
+    font-size:.8rem; cursor:pointer; transition:all .2s; }
+  .btn-add:hover { transform:translateY(-2px); box-shadow:0 6px 20px rgba(255,51,102,.35); }
+
+  /* TABLE */
+  .table-wrap { overflow-x:auto; }
+  table { width:100%; border-collapse:collapse; }
+  th { text-align:left; padding:10px 14px; color:var(--muted); font-size:.75rem; text-transform:uppercase; letter-spacing:1px; border-bottom:1px solid var(--border); }
+  td { padding:12px 14px; border-bottom:1px solid rgba(255,255,255,.04); font-size:.95rem; vertical-align:middle; }
+  tr:hover td { background:rgba(255,255,255,.02); }
+  .tool-icon-preview { width:36px; height:36px; border-radius:8px; object-fit:cover; display:inline-block; vertical-align:middle; }
+  .tool-icon-fa { width:36px; height:36px; border-radius:8px; background:rgba(255,51,102,.15);
+    display:inline-flex; align-items:center; justify-content:center; color:var(--accent); font-size:1.1rem; }
+  .badge { padding:3px 10px; border-radius:20px; font-size:.75rem; font-family:'Orbitron',sans-serif; }
+  .badge-active { background:rgba(0,255,136,.12); color:var(--green); border:1px solid rgba(0,255,136,.3); }
+  .badge-off { background:rgba(255,51,102,.12); color:var(--accent); border:1px solid rgba(255,51,102,.3); }
+  .action-btn { background:none; border:1px solid var(--border); color:var(--muted);
+    padding:5px 12px; border-radius:6px; cursor:pointer; font-size:.8rem; transition:all .2s; margin-right:6px; }
+  .action-btn:hover { border-color:var(--accent); color:var(--accent); }
+  .action-btn.del:hover { border-color:#ff4444; color:#ff4444; }
+
+  /* KEYS */
+  .key-display { background:#0d0d15; border:1px solid var(--border); border-radius:8px;
+    padding:12px 16px; font-family:'Orbitron',sans-serif; font-size:.85rem; color:var(--gold);
+    word-break:break-all; margin-top:8px; }
+  .copy-btn { background:rgba(255,215,0,.1); border:1px solid rgba(255,215,0,.3); color:var(--gold);
+    padding:6px 14px; border-radius:6px; cursor:pointer; font-size:.8rem; transition:all .2s; margin-top:8px; }
+  .copy-btn:hover { background:rgba(255,215,0,.2); }
+  .key-row { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:16px; margin-bottom:12px; }
+  .key-row .key-info { display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:8px; }
+  .key-row .key-val { font-family:'Orbitron',sans-serif; font-size:.8rem; color:var(--gold); flex:1; word-break:break-all; }
+  .key-row .key-meta { font-size:.8rem; color:var(--muted); }
+
+  /* SETTINGS */
+  .color-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:14px; }
+  .color-item { display:flex; flex-direction:column; gap:6px; }
+  .color-item label { font-size:.8rem; color:var(--muted); text-transform:uppercase; letter-spacing:1px; }
+  .color-item input[type=color] { width:100%; height:42px; border:1px solid var(--border); border-radius:8px;
+    background:var(--card); cursor:pointer; padding:4px; }
+  .color-item input[type=text] { background:#0d0d15; border:1px solid var(--border); border-radius:8px;
+    padding:8px 12px; color:var(--text); font-size:.85rem; outline:none; }
+
+  /* IMAGE UPLOAD */
+  .upload-area { border:2px dashed var(--border); border-radius:10px; padding:24px;
+    text-align:center; cursor:pointer; transition:border .3s; }
+  .upload-area:hover { border-color:var(--accent); }
+  .upload-area i { font-size:2rem; color:var(--muted); margin-bottom:10px; display:block; }
+  .upload-area p { color:var(--muted); font-size:.9rem; }
+  #iconPreview { max-width:80px; max-height:80px; border-radius:10px; margin-top:10px; display:none; }
+
+  /* TOAST */
+  .toast { position:fixed; bottom:24px; right:24px; background:var(--card); border:1px solid var(--green);
+    color:var(--green); padding:12px 20px; border-radius:10px; font-size:.9rem;
+    transform:translateY(100px); opacity:0; transition:all .4s; z-index:9999; }
+  .toast.show { transform:translateY(0); opacity:1; }
+  .toast.err { border-color:var(--accent); color:var(--accent); }
+
+  /* PHONE */
+  .phone-display { display:flex; align-items:center; gap:12px; background:#0d0d15;
+    border:1px solid var(--border); border-radius:10px; padding:14px 18px; }
+  .phone-display i { color:var(--green); font-size:1.2rem; }
+  .phone-display .num { font-family:'Orbitron',sans-serif; font-size:1.1rem; color:var(--green); }
+
+  @media(max-width:768px) {
+    .sidebar { width:60px; }
+    .nav-item span, .nav-section { display:none; }
+    .form-grid { grid-template-columns:1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- AUTH SCREEN -->
+<div id="authScreen">
+  <div class="auth-box">
+    <div style="font-size:2.5rem;margin-bottom:12px;">🛡️</div>
+    <h2>ADMIN LOGIN</h2>
+    <p>L❤️H TOOLKIT Admin Panel</p>
+    <input class="inp" type="text" id="adminUser" placeholder="Admin Username">
+    <input class="inp" type="password" id="adminPass" placeholder="Admin Password">
+    <button class="btn-main" onclick="adminLogin()">ACCESS PANEL</button>
+    <div class="err" id="authErr">❌ Invalid credentials</div>
+  </div>
+</div>
+
+<!-- ADMIN APP -->
+<div id="adminApp">
+  <div class="topbar">
+    <div class="topbar-brand">L<span>❤️</span>H TOOLKIT — <span>ADMIN</span></div>
+    <div class="topbar-right">
+      <div class="badge-admin"><i class="fas fa-shield-alt"></i> ADMIN</div>
+      <button class="btn-sm" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+    </div>
+  </div>
+  <div class="layout">
+    <div class="sidebar">
+      <div class="nav-section">MAIN</div>
+      <div class="nav-item active" onclick="showPage('dashboard')"><i class="fas fa-chart-line"></i><span>Dashboard</span></div>
+      <div class="nav-item" onclick="showPage('tools')"><i class="fas fa-tools"></i><span>Manage Tools</span></div>
+      <div class="nav-item" onclick="showPage('keys')"><i class="fas fa-key"></i><span>License Keys</span></div>
+      <div class="nav-section">SETTINGS</div>
+      <div class="nav-item" onclick="showPage('appearance')"><i class="fas fa-paint-brush"></i><span>Appearance</span></div>
+      <div class="nav-item" onclick="showPage('toolkit-settings')"><i class="fas fa-sliders-h"></i><span>Toolkit Settings</span></div>
+      <div class="nav-item" onclick="showPage('admin-settings')"><i class="fas fa-user-cog"></i><span>Admin Settings</span></div>
+    </div>
+    <div class="content">
+
+      <!-- DASHBOARD -->
+      <div class="page active" id="page-dashboard">
+        <div class="page-header"><h1>Dashboard</h1><p>L❤️H Toolkit Overview</p></div>
+        <div class="stats-grid">
+          <div class="stat-card red"><div class="val" id="st-tools">0</div><div class="lbl">Total Tools</div></div>
+          <div class="stat-card gold"><div class="val" id="st-keys">0</div><div class="lbl">Active Keys</div></div>
+          <div class="stat-card green"><div class="val" id="st-active">0</div><div class="lbl">Active Users</div></div>
+          <div class="stat-card blue"><div class="val" id="st-expired">0</div><div class="lbl">Expired Keys</div></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><h3>📞 ADMIN CONTACT NUMBER</h3></div>
+          <div class="phone-display"><i class="fab fa-whatsapp"></i><span class="num" id="displayAdminPhone">+923277796795</span></div>
+          <p style="color:var(--muted);font-size:.85rem;margin-top:10px;">This number shows on Toolkit buy key page. Change it in Admin Settings.</p>
+        </div>
+        <div class="card">
+          <div class="card-header"><h3>⚡ QUICK ACTIONS</h3></div>
+          <div style="display:flex;gap:12px;flex-wrap:wrap;">
+            <button class="btn-add" onclick="showPage('tools')"><i class="fas fa-plus"></i> Add Tool</button>
+            <button class="btn-add" style="background:linear-gradient(135deg,#ffd700,#ff6b35)" onclick="showPage('keys')"><i class="fas fa-key"></i> Generate Key</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- TOOLS -->
+      <div class="page" id="page-tools">
+        <div class="page-header"><h1>Manage Tools</h1><p>Add, edit, remove tools from Toolkit</p></div>
+        <div class="card">
+          <div class="card-header"><h3>➕ ADD NEW TOOL</h3></div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Tool Name</label>
+              <input type="text" id="toolName" placeholder="e.g. WhatsApp Bomber">
+            </div>
+            <div class="form-group">
+              <label>Tool Link / URL</label>
+              <input type="text" id="toolLink" placeholder="https://...">
+            </div>
+            <div class="form-group">
+              <label>Tool Description</label>
+              <input type="text" id="toolDesc" placeholder="Short description...">
+            </div>
+            <div class="form-group">
+              <label>FA Icon Class (optional)</label>
+              <input type="text" id="toolIconClass" placeholder="fas fa-bomb">
+            </div>
+            <div class="form-group" style="grid-column:1/-1">
+              <label>Upload Icon Image (optional)</label>
+              <div class="upload-area" onclick="document.getElementById('iconFile').click()">
+                <i class="fas fa-cloud-upload-alt"></i>
+                <p>Click to upload icon (PNG/JPG/SVG)</p>
+                <img id="iconPreview">
+              </div>
+              <input type="file" id="iconFile" accept="image/*" style="display:none" onchange="previewIcon(event)">
+            </div>
+          </div>
+          <button class="btn-add" style="margin-top:16px" onclick="addTool()"><i class="fas fa-plus-circle"></i> ADD TOOL</button>
+        </div>
+        <div class="card">
+          <div class="card-header"><h3>🛠️ ALL TOOLS</h3></div>
+          <div class="table-wrap">
+            <table>
+              <tr><th>#</th><th>Icon</th><th>Name</th><th>Description</th><th>Link</th><th>Status</th><th>Actions</th></tr>
+              <tbody id="toolsTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- KEYS -->
+      <div class="page" id="page-keys">
+        <div class="page-header"><h1>License Keys</h1><p>Generate & manage access keys</p></div>
+        <div class="card">
+          <div class="card-header"><h3>🔑 GENERATE NEW KEY</h3></div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Key Duration</label>
+              <select id="keyDuration">
+                <option value="1">1 Day</option>
+                <option value="3">3 Days</option>
+                <option value="7">7 Days</option>
+                <option value="30">30 Days</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Custom Key Text (optional)</label>
+              <input type="text" id="customKeyText" placeholder="Leave blank for auto-generate">
+            </div>
+          </div>
+          <button class="btn-add" style="margin-top:16px" onclick="generateKey()"><i class="fas fa-key"></i> GENERATE KEY</button>
+          <div id="generatedKeyBox" style="display:none;margin-top:16px;">
+            <label style="color:var(--muted);font-size:.8rem;text-transform:uppercase;">Generated Key:</label>
+            <div class="key-display" id="generatedKeyVal"></div>
+            <button class="copy-btn" onclick="copyKey()"><i class="fas fa-copy"></i> Copy Key</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><h3>🗂️ ALL KEYS</h3></div>
+          <div id="keysListContainer"><p style="color:var(--muted)">Loading keys...</p></div>
+        </div>
+      </div>
+
+      <!-- APPEARANCE -->
+      <div class="page" id="page-appearance">
+        <div class="page-header"><h1>Appearance</h1><p>Change Toolkit colors & theme</p></div>
+        <div class="card">
+          <div class="card-header"><h3>🎨 TOOLKIT COLORS</h3></div>
+          <div class="color-grid">
+            <div class="color-item"><label>Background</label><input type="color" id="c-bg" value="#1a1a2e"><input type="text" id="ct-bg" value="#1a1a2e" oninput="syncColor('bg',this.value)"></div>
+            <div class="color-item"><label>Surface</label><input type="color" id="c-surface" value="#16213e"><input type="text" id="ct-surface" value="#16213e" oninput="syncColor('surface',this.value)"></div>
+            <div class="color-item"><label>Card Color</label><input type="color" id="c-card" value="#0f3460"><input type="text" id="ct-card" value="#0f3460" oninput="syncColor('card',this.value)"></div>
+            <div class="color-item"><label>Accent Color</label><input type="color" id="c-accent" value="#ff3366"><input type="text" id="ct-accent" value="#ff3366" oninput="syncColor('accent',this.value)"></div>
+            <div class="color-item"><label>Text Color</label><input type="color" id="c-text" value="#e0e0f0"><input type="text" id="ct-text" value="#e0e0f0" oninput="syncColor('text',this.value)"></div>
+            <div class="color-item"><label>Button Color</label><input type="color" id="c-btn" value="#ff3366"><input type="text" id="ct-btn" value="#ff3366" oninput="syncColor('btn',this.value)"></div>
+          </div>
+          <button class="btn-add" style="margin-top:20px" onclick="saveColors()"><i class="fas fa-save"></i> SAVE COLORS</button>
+        </div>
+        <div class="card">
+          <div class="card-header"><h3>🌙 DEFAULT THEME</h3></div>
+          <div style="display:flex;gap:16px;">
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;color:var(--text)">
+              <input type="radio" name="defaultTheme" value="dark" checked id="themeDark"> Dark Mode
+            </label>
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;color:var(--text)">
+              <input type="radio" name="defaultTheme" value="light" id="themeLight"> Light Mode
+            </label>
+          </div>
+          <button class="btn-add" style="margin-top:16px" onclick="saveTheme()"><i class="fas fa-save"></i> SAVE THEME</button>
+        </div>
+      </div>
+
+      <!-- TOOLKIT SETTINGS -->
+      <div class="page" id="page-toolkit-settings">
+        <div class="page-header"><h1>Toolkit Settings</h1><p>Customize name, logo & more</p></div>
+        <div class="card">
+          <div class="card-header"><h3>⚙️ GENERAL SETTINGS</h3></div>
+          <div class="form-grid one">
+            <div class="form-group"><label>Toolkit Name</label><input type="text" id="toolkitName" value="L❤️H TOOLKIT"></div>
+            <div class="form-group"><label>Toolkit Tagline</label><input type="text" id="toolkitTagline" value="The Ultimate Toolkit"></div>
+            <div class="form-group"><label>Welcome Message</label><input type="text" id="welcomeMsg" value="Welcome to L❤️H TOOLKIT! 🔥"></div>
+            <div class="form-group">
+              <label>Logo URL (or upload below)</label>
+              <input type="text" id="logoUrl" placeholder="https://... or leave blank">
+            </div>
+            <div class="form-group">
+              <label>Upload Logo</label>
+              <div class="upload-area" onclick="document.getElementById('logoFile').click()">
+                <i class="fas fa-image"></i>
+                <p>Click to upload logo</p>
+                <img id="logoPreview" style="max-height:60px;margin-top:8px;display:none;">
+              </div>
+              <input type="file" id="logoFile" accept="image/*" style="display:none" onchange="previewLogo(event)">
+            </div>
+          </div>
+          <button class="btn-add" style="margin-top:16px" onclick="saveToolkitSettings()"><i class="fas fa-save"></i> SAVE SETTINGS</button>
+        </div>
+      </div>
+
+      <!-- ADMIN SETTINGS -->
+      <div class="page" id="page-admin-settings">
+        <div class="page-header"><h1>Admin Settings</h1><p>Change admin credentials & contact</p></div>
+        <div class="card">
+          <div class="card-header"><h3>🔐 CHANGE CREDENTIALS</h3></div>
+          <div class="form-grid one">
+            <div class="form-group"><label>New Username</label><input type="text" id="newAdminUser" placeholder="New username"></div>
+            <div class="form-group"><label>New Password</label><input type="password" id="newAdminPass" placeholder="New password"></div>
+            <div class="form-group"><label>Confirm Password</label><input type="password" id="confirmAdminPass" placeholder="Confirm password"></div>
+          </div>
+          <button class="btn-add" style="margin-top:16px" onclick="changeAdminCreds()"><i class="fas fa-save"></i> SAVE CREDENTIALS</button>
+        </div>
+        <div class="card">
+          <div class="card-header"><h3>📱 ADMIN WHATSAPP NUMBER</h3></div>
+          <p style="color:var(--muted);font-size:.85rem;margin-bottom:12px;">This number shows on Toolkit for users to buy keys.</p>
+          <div class="form-group">
+            <label>WhatsApp Number</label>
+            <input type="text" id="adminPhoneInput" value="+923277796795">
+          </div>
+          <button class="btn-add" style="margin-top:14px" onclick="saveAdminPhone()"><i class="fas fa-save"></i> SAVE NUMBER</button>
+        </div>
+      </div>
+
+    </div><!-- content -->
+  </div><!-- layout -->
+</div><!-- adminApp -->
+
+<div class="toast" id="toast"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { getDatabase, ref, get, set, push, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDJ8nLUpk-LmCebvSuzOB0EJx5tJvVKsPw",
+  authDomain: "toolkit-73b2a.firebaseapp.com",
+  databaseURL: "https://toolkit-73b2a-default-rtdb.firebaseio.com",
+  projectId: "toolkit-73b2a",
+  storageBucket: "toolkit-73b2a.firebasestorage.app",
+  messagingSenderId: "350588325886",
+  appId: "1:350588325886:web:4aa842d33799775a4d7aaf",
+  measurementId: "G-24R8KP062H"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getDatabase(app);
+let iconBase64 = null;
+let logoBase64 = null;
+
+// ── FIREBASE HELPERS ──
+async function fbGet(path) {
+  try {
+    const snap = await get(ref(db, path));
+    return snap.exists() ? snap.val() : null;
+  } catch { return null; }
+}
+async function fbSet(path, data) {
+  try { await set(ref(db, path), data); } catch(e) { console.error(e); }
+}
+async function fbPush(path, data) {
+  try {
+    const r = await push(ref(db, path), data);
+    return { name: r.key };
+  } catch(e) { return null; }
+}
+async function fbDelete(path) {
+  try { await remove(ref(db, path)); } catch(e) {}
+}
+
+// ── AUTH ──
+async function adminLogin() {
+  const u = document.getElementById('adminUser').value.trim();
+  const p = document.getElementById('adminPass').value.trim();
+  if (!u || !p) { document.getElementById('authErr').style.display='block'; return; }
+  // Check credentials from Firebase
+  const creds = await fbGet('admin/credentials');
+  const adminU = (creds && creds.username) ? creds.username : 'admin';
+  const adminP = (creds && creds.password) ? creds.password : 'lhToolkit2024';
+  if (u === adminU && p === adminP) {
+    // Sign in anonymously for Firebase access
+    try {
+      const { signInAnonymously } = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js");
+      await signInAnonymously(auth);
+    } catch(e) {}
+    sessionStorage.setItem('lh_admin', btoa(u+':'+p));
+    document.getElementById('authScreen').style.display = 'none';
+    document.getElementById('adminApp').style.display = 'block';
+    loadDashboard(); loadToolsTable(); loadKeysTable();
+    loadAppearanceSettings(); loadToolkitSettings(); loadAdminSettings();
+  } else {
+    document.getElementById('authErr').style.display = 'block';
+  }
+}
+function logout() {
+  sessionStorage.removeItem('lh_admin');
+  document.getElementById('adminApp').style.display = 'none';
+  document.getElementById('authScreen').style.display = 'flex';
+}
+
+// ── NAV ──
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  event.currentTarget.classList.add('active');
+}
+
+// ── TOAST ──
+function showToast(msg, isErr=false) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show' + (isErr?' err':'');
+  setTimeout(()=>t.className='toast',2800);
+}
+
+// ── DASHBOARD ──
+async function loadDashboard() {
+  const tools = await fbGet('tools');
+  const keys = await fbGet('keys');
+  const phone = await fbGet('admin/phone');
+  document.getElementById('st-tools').textContent = tools ? Object.keys(tools).length : 0;
+  if (phone) {
+    document.getElementById('displayAdminPhone').textContent = phone;
+    document.getElementById('adminPhoneInput').value = phone;
+  }
+  let activeK=0, expiredK=0;
+  if (keys) {
+    const now = Date.now();
+    Object.values(keys).forEach(k => {
+      if (k.expiry > now) activeK++; else expiredK++;
+    });
+  }
+  document.getElementById('st-keys').textContent = keys ? Object.keys(keys).length : 0;
+  document.getElementById('st-active').textContent = activeK;
+  document.getElementById('st-expired').textContent = expiredK;
+}
+
+// ── TOOLS ──
+async function previewIcon(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    iconBase64 = ev.target.result;
+    const img = document.getElementById('iconPreview');
+    img.src = iconBase64; img.style.display='block';
+  };
+  reader.readAsDataURL(file);
+}
+
+async function addTool() {
+  const name = document.getElementById('toolName').value.trim();
+  const link = document.getElementById('toolLink').value.trim();
+  const desc = document.getElementById('toolDesc').value.trim();
+  const iconClass = document.getElementById('toolIconClass').value.trim();
+  if (!name || !link) { showToast('Name & Link required!', true); return; }
+  const tool = {
+    name, link, desc, iconClass,
+    iconBase64: iconBase64 || null,
+    active: true,
+    created: Date.now()
+  };
+  await fbPush('tools', tool);
+  showToast('✅ Tool added!');
+  document.getElementById('toolName').value='';
+  document.getElementById('toolLink').value='';
+  document.getElementById('toolDesc').value='';
+  document.getElementById('toolIconClass').value='';
+  iconBase64 = null;
+  document.getElementById('iconPreview').style.display='none';
+  loadToolsTable();
+  loadDashboard();
+}
+
+async function loadToolsTable() {
+  const tools = await fbGet('tools');
+  const tbody = document.getElementById('toolsTableBody');
+  tbody.innerHTML = '';
+  if (!tools) { tbody.innerHTML='<tr><td colspan="7" style="color:var(--muted);text-align:center;padding:20px;">No tools added yet</td></tr>'; return; }
+  let i=1;
+  for (const [id, t] of Object.entries(tools)) {
+    const iconHtml = t.iconBase64
+      ? `<img src="${t.iconBase64}" class="tool-icon-preview">`
+      : `<div class="tool-icon-fa"><i class="${t.iconClass||'fas fa-star'}"></i></div>`;
+    tbody.innerHTML += `
+      <tr>
+        <td>${i++}</td>
+        <td>${iconHtml}</td>
+        <td><strong>${t.name}</strong></td>
+        <td style="color:var(--muted);font-size:.85rem">${t.desc||'-'}</td>
+        <td><a href="${t.link}" target="_blank" style="color:var(--blue);font-size:.8rem">${t.link.substring(0,30)}...</a></td>
+        <td><span class="badge ${t.active?'badge-active':'badge-off'}">${t.active?'Active':'Off'}</span></td>
+        <td>
+          <button class="action-btn" onclick="toggleTool('${id}',${!t.active})">${t.active?'Disable':'Enable'}</button>
+          <button class="action-btn del" onclick="deleteTool('${id}')">Delete</button>
+        </td>
+      </tr>`;
+  }
+}
+
+async function toggleTool(id, val) {
+  await fbSet(`tools/${id}/active`, val);
+  showToast('Tool updated!'); loadToolsTable();
+}
+async function deleteTool(id) {
+  if (!confirm('Delete this tool?')) return;
+  await fbDelete(`tools/${id}`);
+  showToast('Tool deleted!'); loadToolsTable(); loadDashboard();
+}
+
+// ── KEYS ──
+function genRandomKey(custom) {
+  if (custom) return custom.toUpperCase().replace(/\s+/g,'-');
+  const chars='ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  let key='LH-';
+  for(let i=0;i<4;i++){let seg='';for(let j=0;j<4;j++)seg+=chars[Math.floor(Math.random()*chars.length)];key+=seg+(i<3?'-':'');}
+  return key;
+}
+
+async function generateKey() {
+  const days = parseInt(document.getElementById('keyDuration').value);
+  const customText = document.getElementById('customKeyText').value.trim();
+  const keyVal = genRandomKey(customText);
+  const expiry = Date.now() + days * 24 * 60 * 60 * 1000;
+  const keyData = { key: keyVal, days, expiry, created: Date.now(), used: false, usedBy: null };
+  await fbPush('keys', keyData);
+  document.getElementById('generatedKeyVal').textContent = keyVal;
+  document.getElementById('generatedKeyBox').style.display = 'block';
+  showToast('🔑 Key generated!');
+  loadKeysTable(); loadDashboard();
+}
+
+function copyKey() {
+  const val = document.getElementById('generatedKeyVal').textContent;
+  navigator.clipboard.writeText(val).then(()=>showToast('Key copied!'));
+}
+
+async function loadKeysTable() {
+  const keys = await fbGet('keys');
+  const container = document.getElementById('keysListContainer');
+  if (!keys) { container.innerHTML='<p style="color:var(--muted)">No keys generated yet</p>'; return; }
+  container.innerHTML='';
+  const now = Date.now();
+  for (const [id, k] of Object.entries(keys)) {
+    const expired = k.expiry < now;
+    const remaining = expired ? 'EXPIRED' : Math.ceil((k.expiry-now)/86400000)+'d left';
+    container.innerHTML += `
+      <div class="key-row">
+        <div class="key-info">
+          <div class="key-val">${k.key}</div>
+          <span class="badge ${expired?'badge-off':'badge-active'}">${remaining}</span>
+          <span class="badge" style="background:rgba(79,195,247,.12);color:var(--blue);border:1px solid rgba(79,195,247,.3)">${k.days} Day${k.days>1?'s':''}</span>
+          ${k.used?`<span class="badge badge-off">USED</span>`:`<span class="badge badge-active">AVAILABLE</span>`}
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+          <span class="key-meta">Created: ${new Date(k.created).toLocaleDateString()}</span>
+          ${k.usedBy?`<span class="key-meta">| Used by: ${k.usedBy}</span>`:''}
+          <button class="action-btn" onclick="copyKeyFromList('${k.key}')"><i class="fas fa-copy"></i></button>
+          <button class="action-btn del" onclick="deleteKey('${id}')">Delete</button>
+        </div>
+      </div>`;
+  }
+}
+
+function copyKeyFromList(k) {
+  navigator.clipboard.writeText(k).then(()=>showToast('Key copied!'));
+}
+async function deleteKey(id) {
+  if (!confirm('Delete key?')) return;
+  await fbDelete(`keys/${id}`);
+  showToast('Key deleted!'); loadKeysTable(); loadDashboard();
+}
+
+// ── APPEARANCE ──
+function syncColor(name, val) {
+  document.getElementById('c-'+name).value = val;
+  document.getElementById('ct-'+name).value = val;
+}
+async function loadAppearanceSettings() {
+  const colors = await fbGet('settings/colors');
+  if (!colors) return;
+  const keys = ['bg','surface','card','accent','text','btn'];
+  keys.forEach(k => {
+    if (colors[k]) {
+      document.getElementById('c-'+k).value = colors[k];
+      document.getElementById('ct-'+k).value = colors[k];
+    }
+  });
+}
+async function saveColors() {
+  const colors = {};
+  ['bg','surface','card','accent','text','btn'].forEach(k => {
+    colors[k] = document.getElementById('ct-'+k).value;
+  });
+  await fbSet('settings/colors', colors);
+  showToast('Colors saved!');
+}
+async function saveTheme() {
+  const theme = document.querySelector('input[name="defaultTheme"]:checked').value;
+  await fbSet('settings/theme', theme);
+  showToast('Theme saved!');
+}
+
+// ── TOOLKIT SETTINGS ──
+async function loadToolkitSettings() {
+  const s = await fbGet('settings/toolkit');
+  if (!s) return;
+  if (s.name) document.getElementById('toolkitName').value = s.name;
+  if (s.tagline) document.getElementById('toolkitTagline').value = s.tagline;
+  if (s.welcome) document.getElementById('welcomeMsg').value = s.welcome;
+  if (s.logoUrl) document.getElementById('logoUrl').value = s.logoUrl;
+}
+async function saveToolkitSettings() {
+  const data = {
+    name: document.getElementById('toolkitName').value,
+    tagline: document.getElementById('toolkitTagline').value,
+    welcome: document.getElementById('welcomeMsg').value,
+    logoUrl: logoBase64 || document.getElementById('logoUrl').value
+  };
+  await fbSet('settings/toolkit', data);
+  showToast('Toolkit settings saved!');
+}
+function previewLogo(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    logoBase64 = ev.target.result;
+    const img = document.getElementById('logoPreview');
+    img.src = logoBase64; img.style.display='block';
+    document.getElementById('logoUrl').value = logoBase64;
+  };
+  reader.readAsDataURL(file);
+}
+
+// ── ADMIN SETTINGS ──
+async function loadAdminSettings() {
+  const phone = await fbGet('admin/phone');
+  if (phone) document.getElementById('adminPhoneInput').value = phone;
+}
+async function changeAdminCreds() {
+  const u = document.getElementById('newAdminUser').value.trim();
+  const p = document.getElementById('newAdminPass').value;
+  const cp = document.getElementById('confirmAdminPass').value;
+  if (!u || !p) { showToast('All fields required!', true); return; }
+  if (p !== cp) { showToast('Passwords do not match!', true); return; }
+  await fbSet('admin/credentials', { username:u, password:p });
+  showToast('Credentials updated! Please re-login.');
+  setTimeout(()=>logout(),2000);
+}
+async function saveAdminPhone() {
+  const phone = document.getElementById('adminPhoneInput').value.trim();
+  await fbSet('admin/phone', phone);
+  document.getElementById('displayAdminPhone').textContent = phone;
+  showToast('Phone number saved!');
+}
+
+// Init default admin creds if not exist
+async function initAdminIfNeeded() {
+  const creds = await fbGet('admin/credentials');
+  if (!creds) await fbSet('admin/credentials', { username:'admin', password:'lhToolkit2024' });
+  const phone = await fbGet('admin/phone');
+  if (!phone) await fbSet('admin/phone', '+923277796795');
+}
+initAdminIfNeeded();
+
+// Expose functions globally
+window.adminLogin = adminLogin;
+window.logout = logout;
+window.showPage = showPage;
+window.addTool = addTool;
+window.toggleTool = toggleTool;
+window.deleteTool = deleteTool;
+window.generateKey = generateKey;
+window.copyKey = copyKey;
+window.copyKeyFromList = copyKeyFromList;
+window.deleteKey = deleteKey;
+window.saveColors = saveColors;
+window.saveTheme = saveTheme;
+window.saveToolkitSettings = saveToolkitSettings;
+window.changeAdminCreds = changeAdminCreds;
+window.saveAdminPhone = saveAdminPhone;
+window.previewIcon = previewIcon;
+window.previewLogo = previewLogo;
+window.syncColor = syncColor;
+
+// Color sync listeners
+document.querySelectorAll('input[type=color]').forEach(inp => {
+  const key = inp.id.replace('c-','');
+  inp.addEventListener('input', ()=>{
+    const t = document.getElementById('ct-'+key);
+    if (t) t.value = inp.value;
+  });
+});
+</script>
+</body>
+</html>

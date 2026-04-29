@@ -1,0 +1,8 @@
+{
+  "version": 2,
+  "name": "lh-toolkit",
+  "routes": [
+    { "src": "/admin", "dest": "/admin.html" },
+    { "src": "/", "dest": "/index.html" }
+  ]
+}
