@@ -1,23 +1,21 @@
 {
   "version": 2,
   "functions": {
-    "api/data.js": {
-      "memory": 128,
-      "maxDuration": 10
-    }
+    "api/data.js": { "memory": 128, "maxDuration": 10 },
+    "api/page.js": { "memory": 128, "maxDuration": 5 }
   },
   "routes": [
     { "src": "/api/data", "dest": "/api/data.js" },
+    { "src": "/api/page", "dest": "/api/page.js" },
     { "src": "/admin", "dest": "/public/admin.html" },
-    { "src": "/", "dest": "/public/index.html" }
+    { "src": "/", "dest": "/api/page.js" }
   ],
   "headers": [
     {
       "source": "/(.*)",
       "headers": [
         { "key": "X-Frame-Options", "value": "DENY" },
-        { "key": "X-Content-Type-Options", "value": "nosniff" },
-        { "key": "X-XSS-Protection", "value": "1; mode=block" }
+        { "key": "X-Content-Type-Options", "value": "nosniff" }
       ]
     }
   ]
