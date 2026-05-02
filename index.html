@@ -51,6 +51,15 @@ body{background:var(--bg);color:var(--tx);font-family:"Rajdhani",sans-serif;min-
 #ws.on{position:fixed;inset:0;z-index:500;flex-direction:column;align-items:center;justify-content:center;background:var(--bg);}
 #ts.on{flex-direction:column;min-height:100vh;}
 
+
+/* FALLING FLOWERS */
+.flowers{position:fixed;inset:0;pointer-events:none;z-index:1;overflow:hidden;}
+.flower{position:absolute;top:-60px;font-size:1.8rem;animation:fall linear infinite;opacity:0;}
+@keyframes fall{
+  0%{transform:translateY(-60px) rotate(0deg);opacity:1;}
+  80%{opacity:1;}
+  100%{transform:translateY(110vh) rotate(720deg);opacity:0;}
+}
 /* THEME BTN - fixed top right */
 .thb{position:fixed;top:14px;right:14px;z-index:300;width:44px;height:44px;border-radius:12px;border:none;cursor:pointer;background:var(--nm);box-shadow:var(--shadow-sm);color:var(--tx2);font-size:1rem;display:flex;align-items:center;justify-content:center;transition:all .2s;}
 .thb:hover{color:var(--ac);}
@@ -220,6 +229,7 @@ body{background:var(--bg);color:var(--tx);font-family:"Rajdhani",sans-serif;min-
 
 <!-- WELCOME -->
 <div class="scr" id="ws">
+  <div class="flowers" id="flowersContainer"></div>
   <div class="wi">
     <span class="wico">&#128293;</span>
     <div class="wtit" id="wT">L&#9829;H TOOLKIT</div>
@@ -251,7 +261,7 @@ body{background:var(--bg);color:var(--tx);font-family:"Rajdhani",sans-serif;min-
       </div>
     </div>
     <div class="stit"><i class="fas fa-tools"></i> ALL TOOLS</div>
-    <div class="tg" id="tG"><div class="ldg"><div class="sp"></div>Loading...</div></div>
+    <div class="tg" id="tG"></div>
   </div>
   <div class="foot">L&#9829;H TOOLKIT &copy; 2024 &mdash; All Rights Reserved</div>
 </div>
@@ -263,7 +273,7 @@ body{background:var(--bg);color:var(--tx);font-family:"Rajdhani",sans-serif;min-
   var h=window.location.hostname;
   var ok=h==="lh-toolkit.vercel.app"||h==="localhost"||h==="127.0.0.1";
 
-  var BLOCK="<"+"!DOCTYPE html><html><head><meta charset=UTF-8><meta name=viewport content='width=device-width,initial-scale=1'><style>html,body{margin:0;padding:0;width:100%;height:100%;overflow:hidden}body{position:fixed;inset:0;background:#0a0a0a;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:sans-serif;text-align:center;padding:24px}.f{font-size:6rem;display:block;margin-bottom:8px;animation:r 1s ease-in-out infinite}@keyframes r{0%,100%{transform:rotate(-12deg) scale(1)}50%{transform:rotate(12deg) scale(1.1)}}.t1{color:#ff3366;font-size:1.6rem;font-weight:900;letter-spacing:3px;margin:8px 0;text-shadow:0 0 20px rgba(255,51,102,.6)}.t2{color:#ff6b35;font-size:1rem;font-weight:700;margin:6px 0;letter-spacing:1px}.t3{color:#555;font-size:.85rem;margin:5px 0;line-height:1.5}.nm{color:#ffd700;font-size:1.2rem;font-weight:900;margin:12px 0 4px;letter-spacing:2px;text-shadow:0 0 15px rgba(255,215,0,.5)}.line{width:80px;height:2px;background:linear-gradient(90deg,#ff3366,#ffd700);margin:10px auto;border-radius:2px}</style></head><body><span class=f>&#128405;</span><h1 class=t1>CHORI PAKRI GAYI!</h1><div class=line></div><p class=t2>Beta buri baat — chori nahi karty! &#128580;</p><p class=t3>Yeh toolkit sirf ek jagah chalti hai<br>aur woh jagah teri nahi hai &#128526;</p><p class=t3>Jal raha hai na? Seedha ja aur key khareed! &#128514;&#128514;</p><div class=line></div><p class=nm>— MA LEGEND —</p><p class=t3 style=color:#333;font-size:.75rem>Owned. Blocked. Rejected. &#9889;</p><script>document.onkeydown=function(e){e.preventDefault();return false};document.oncontextmenu=function(e){e.preventDefault();return false};<\/script></body></html>";
+  var BLOCK="<"+"!DOCTYPE html><html><head><meta charset=UTF-8><meta name=viewport content='width=device-width,initial-scale=1'><style>*{margin:0;padding:0;box-sizing:border-box}html,body{width:100%;height:100%;overflow:hidden;background:#0a0a0a}body{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:sans-serif;text-align:center;padding:20px;gap:6px}.f{font-size:5.5rem;animation:r 1s ease-in-out infinite}@keyframes r{0%,100%{transform:rotate(-12deg) scale(1)}50%{transform:rotate(12deg) scale(1.15)}}.t1{color:#ff3366;font-size:1.5rem;font-weight:900;letter-spacing:3px;text-shadow:0 0 20px rgba(255,51,102,.7)}.line{width:70px;height:2px;background:linear-gradient(90deg,#ff3366,#ffd700);border-radius:2px;margin:4px auto}.t2{color:#ff6b35;font-size:.95rem;font-weight:700;letter-spacing:1px}.t3{color:#555;font-size:.85rem;line-height:1.6}.t3 span{color:#ff3366}.nm{color:#ffd700;font-size:1.15rem;font-weight:900;letter-spacing:2px;text-shadow:0 0 15px rgba(255,215,0,.6)}.t4{color:#2a2a2a;font-size:.75rem}</style></head><body><div class=f>&#128405;</div><div class=t1>CHORI PAKRI GAYI!</div><div class=line></div><div class=t2>Beta buri baat &#8212; chori nahi karty! &#128580;</div><div class=t3>Yeh toolkit sirf <span>lh-toolkit.vercel.app</span> pe chalti hai<br>aur woh jagah teri nahi hai &#128526;</div><div class=t3>Jal raha hai na? Seedha ja aur key khareed! &#128514;&#128514;</div><div class=line></div><div class=nm>&#8212; MA LEGEND &#8212;</div><div class=t4>Owned. Blocked. Rejected. &#9889;</div><script>document.onkeydown=function(e){e.preventDefault();return false};document.oncontextmenu=function(e){e.preventDefault();return false};<\/script></body></html>";
 
   if(!ok){
     try{
@@ -348,7 +358,39 @@ async function doLogin(){
 
 function showWelcome(){
   showS("ws");
-  setTimeout(function(){showS("ts");loadUI();},2000);
+  startFlowers();
+  setTimeout(function(){
+    stopFlowers();
+    showS("ts");
+    loadUI();
+  },2200);
+}
+
+var flowerTimer=null;
+var flowerEmojis=["&#127802;","&#127801;","&#127800;","&#127804;","&#127803;","&#10052;","&#127799;","&#127807;"];
+function startFlowers(){
+  var c=document.getElementById("flowersContainer");
+  c.innerHTML="";
+  // Create 30 flowers at staggered times
+  for(var i=0;i<30;i++){
+    (function(idx){
+      setTimeout(function(){
+        var f=document.createElement("div");
+        f.className="flower";
+        f.innerHTML=flowerEmojis[Math.floor(Math.random()*flowerEmojis.length)];
+        f.style.left=Math.random()*100+"%";
+        f.style.fontSize=(1.2+Math.random()*1.4)+"rem";
+        var dur=(1.2+Math.random()*1.5)+"s";
+        f.style.animation="fall "+dur+" linear forwards";
+        f.style.animationDelay=(Math.random()*1.5)+"s";
+        c.appendChild(f);
+      },idx*60);
+    })(i);
+  }
+}
+function stopFlowers(){
+  var c=document.getElementById("flowersContainer");
+  if(c)c.innerHTML="";
 }
 
 async function loadUI(){
@@ -376,8 +418,20 @@ async function loadUI(){
 }
 
 async function loadTools(){
-  var res=await api("getTools",{});
   var g=document.getElementById("tG");
+  // Show skeleton cards instantly - no loading text
+  g.innerHTML="<style>.sk-card{background:var(--nm);box-shadow:var(--shadow-sm);border-radius:18px;padding:18px 12px;display:flex;flex-direction:column;align-items:center;gap:9px;}.sk-ic{width:50px;height:50px;border-radius:14px;background:linear-gradient(90deg,var(--nd) 25%,var(--nl) 50%,var(--nd) 75%);background-size:200% 100%;animation:sk 1.2s ease-in-out infinite;}.sk-tx{height:12px;width:70%;border-radius:6px;background:linear-gradient(90deg,var(--nd) 25%,var(--nl) 50%,var(--nd) 75%);background-size:200% 100%;animation:sk 1.2s ease-in-out infinite;}.sk-tx2{height:10px;width:50%;border-radius:6px;background:linear-gradient(90deg,var(--nd) 25%,var(--nl) 50%,var(--nd) 75%);background-size:200% 100%;animation:sk 1.2s ease-in-out infinite 0.2s;}@keyframes sk{0%{background-position:200% 0;}100%{background-position:-200% 0;}}</style>";
+  // Add 6 skeleton cards
+  for(var s=0;s<6;s++){
+    var sk=document.createElement("div");
+    sk.className="tc sk-card";
+    sk.style.cursor="default";
+    sk.innerHTML="<div class=sk-ic></div><div class=sk-tx></div><div class=sk-tx2></div>";
+    g.appendChild(sk);
+  }
+  
+  // Fetch real data
+  var res=await api("getTools",{});
   g.innerHTML="";
   if(!res.ok||!res.tools||!res.tools.length){
     g.innerHTML="<div class='emp'><i class='fas fa-tools'></i><p>No tools yet. Check back soon!</p></div>";
