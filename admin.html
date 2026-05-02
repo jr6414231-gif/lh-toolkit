@@ -3,436 +3,363 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>L♥H TOOLKIT — Admin</title>
+<title>L&#9829;H TOOLKIT &mdash; Admin</title>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
-*{margin:0;padding:0;box-sizing:border-box;}
 :root{
-  --bg:#f0f2f7;--sidebar:#fff;--card:#fff;--border:#e2e8f0;
-  --accent:#ff3366;--accent2:#ff6b35;--gold:#f59e0b;
-  --text:#1a1a2e;--text2:#64748b;--muted:#94a3b8;
-  --green:#10b981;--blue:#3b82f6;--red:#ef4444;
-  --shadow:0 1px 3px rgba(0,0,0,.08),0 4px 16px rgba(0,0,0,.06);
+  --bg:#e8ecf0;--nm:#e0e6ed;--nl:#ffffff;--nd:#c8d0dc;
+  --ac:#ff3366;--ac2:#ff6b35;--gd:#f59e0b;
+  --tx:#1a1a2e;--tx2:#4a5568;--mt:#94a3b8;
+  --gr:#10b981;--bl:#3b82f6;--red:#ef4444;
+  --shadow:8px 8px 20px #c8d0dc,-8px -8px 20px #ffffff;
+  --shadow-sm:5px 5px 12px #c8d0dc,-5px -5px 12px #ffffff;
+  --shadow-in:inset 4px 4px 10px #c8d0dc,inset -4px -4px 10px #ffffff;
+  --border:#dde3ea;
 }
-body{background:var(--bg);color:var(--text);font-family:"Inter",sans-serif;min-height:100vh;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--tx);font-family:"Inter",sans-serif;min-height:100vh;}
 
 /* AUTH */
-#authScreen{position:fixed;inset:0;background:linear-gradient(135deg,#1a1a2e,#16213e,#0f3460);
-  display:flex;align-items:center;justify-content:center;z-index:1000;}
-.auth-wrap{width:360px;text-align:center;}
-.auth-logo{width:80px;height:80px;border-radius:20px;object-fit:cover;margin-bottom:18px;
-  box-shadow:0 0 0 3px rgba(255,51,102,.4),0 0 40px rgba(255,51,102,.3);
-  animation:ap 2.5s ease-in-out infinite;}
-@keyframes ap{0%,100%{box-shadow:0 0 0 3px rgba(255,51,102,.3),0 0 30px rgba(255,51,102,.2);}
-  50%{box-shadow:0 0 0 6px rgba(255,51,102,.5),0 0 50px rgba(255,51,102,.4);}}
-.auth-title{font-family:"Orbitron",sans-serif;font-size:1.2rem;color:#fff;margin-bottom:4px;}
-.auth-sub{color:rgba(255,255,255,.45);font-size:.82rem;margin-bottom:24px;}
-.auth-card{background:rgba(255,255,255,.06);backdrop-filter:blur(20px);
-  border:1px solid rgba(255,255,255,.1);border-radius:18px;padding:28px 24px;}
-.ai{width:100%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);
-  border-radius:10px;padding:12px 16px;color:#fff;font-size:.92rem;
-  font-family:"Inter",sans-serif;outline:none;margin-bottom:12px;transition:border .2s;}
+#authScreen{position:fixed;inset:0;background:linear-gradient(135deg,#1a1a2e,#16213e,#0f3460);display:flex;align-items:center;justify-content:center;z-index:1000;}
+.aw{width:360px;text-align:center;}
+.al{width:82px;height:82px;border-radius:20px;object-fit:cover;margin-bottom:16px;display:block;margin:0 auto 16px;box-shadow:0 0 0 3px rgba(255,51,102,.4),0 0 40px rgba(255,51,102,.3);animation:alp 2.5s ease-in-out infinite;}
+@keyframes alp{0%,100%{box-shadow:0 0 0 3px rgba(255,51,102,.3),0 0 30px rgba(255,51,102,.2);}50%{box-shadow:0 0 0 6px rgba(255,51,102,.5),0 0 50px rgba(255,51,102,.4);}}
+.at{font-family:"Orbitron",sans-serif;font-size:1.2rem;color:#fff;margin-bottom:4px;}
+.as{color:rgba(255,255,255,.45);font-size:.8rem;margin-bottom:22px;}
+.ac2{background:rgba(255,255,255,.06);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.1);border-radius:18px;padding:26px 22px;}
+.ai{width:100%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:11px 14px;color:#fff;font-size:.9rem;font-family:"Inter",sans-serif;outline:none;margin-bottom:11px;transition:border .2s;}
 .ai::placeholder{color:rgba(255,255,255,.3);}
-.ai:focus{border-color:var(--accent);}
-.abtn{width:100%;background:linear-gradient(135deg,var(--accent),var(--accent2));
-  border:none;border-radius:10px;padding:13px;color:#fff;
-  font-family:"Orbitron",sans-serif;font-size:.78rem;font-weight:700;
-  cursor:pointer;letter-spacing:1px;transition:all .2s;}
-.abtn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(255,51,102,.4);}
-.aerr{color:#ff6b6b;font-size:.8rem;margin-top:10px;display:none;
-  background:rgba(255,51,102,.1);padding:8px;border-radius:8px;}
+.ai:focus{border-color:var(--ac);}
+.abn{width:100%;background:linear-gradient(135deg,var(--ac),var(--ac2));border:none;border-radius:10px;padding:12px;color:#fff;font-family:"Orbitron",sans-serif;font-size:.78rem;font-weight:700;cursor:pointer;letter-spacing:1px;transition:all .2s;}
+.abn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(255,51,102,.4);}
+.aerr{color:#ff6b6b;font-size:.8rem;margin-top:10px;display:none;background:rgba(255,51,102,.1);padding:7px;border-radius:7px;}
 
-/* LAYOUT */
-#adminApp{display:none;}
-.layout{display:flex;min-height:100vh;}
-
-/* SIDEBAR */
-/* HAMBURGER BUTTON */
-.ham-btn{
-  position:fixed;top:14px;left:14px;z-index:300;
-  width:42px;height:42px;border-radius:10px;border:none;
-  background:var(--accent);color:#fff;cursor:pointer;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;
-  box-shadow:0 4px 14px rgba(255,51,102,.35);transition:all .2s;
-}
-.ham-btn span{display:block;width:18px;height:2px;background:#fff;border-radius:2px;transition:all .3s;}
-.ham-btn.open span:nth-child(1){transform:rotate(45deg) translate(5px,5px);}
-.ham-btn.open span:nth-child(2){opacity:0;}
-.ham-btn.open span:nth-child(3){transform:rotate(-45deg) translate(5px,-5px);}
+/* HAMBURGER */
+.hbtn{position:fixed;top:14px;left:14px;z-index:300;width:44px;height:44px;border-radius:12px;border:none;background:var(--ac);color:#fff;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;box-shadow:var(--shadow-sm),0 4px 14px rgba(255,51,102,.3);transition:all .2s;}
+.hbtn span{display:block;width:18px;height:2px;background:#fff;border-radius:2px;transition:all .3s;}
+.hbtn.open span:nth-child(1){transform:rotate(45deg) translate(5px,5px);}
+.hbtn.open span:nth-child(2){opacity:0;}
+.hbtn.open span:nth-child(3){transform:rotate(-45deg) translate(5px,-5px);}
 
 /* OVERLAY */
-.sb-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:150;
-  display:none;opacity:0;transition:opacity .3s;}
-.sb-overlay.on{display:block;opacity:1;}
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:150;display:none;opacity:0;transition:opacity .3s;}
+.ov.on{display:block;opacity:1;}
 
-/* SIDEBAR - slides from left */
-.sb{
-  width:260px;background:var(--sidebar);
-  display:flex;flex-direction:column;position:fixed;top:0;left:-270px;height:100vh;
-  z-index:200;transition:left .3s cubic-bezier(.23,1,.32,1);overflow:hidden;
-  box-shadow:4px 0 24px rgba(0,0,0,.15);
-}
+/* SIDEBAR */
+.sb{width:256px;background:var(--nm);display:flex;flex-direction:column;position:fixed;top:0;left:-270px;height:100vh;z-index:200;transition:left .3s cubic-bezier(.23,1,.32,1);overflow:hidden;box-shadow:var(--shadow);}
 .sb.open{left:0;}
-.sb-hd{padding:20px 16px 16px;border-bottom:1px solid var(--border);
-  display:flex;align-items:center;gap:12px;min-height:68px;}
-.sb-logo{width:38px;height:38px;border-radius:12px;object-fit:cover;flex-shrink:0;}
-.sb-name{font-family:"Orbitron",sans-serif;font-size:.82rem;font-weight:700;
-  background:linear-gradient(135deg,var(--accent),var(--gold));
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;white-space:nowrap;}
-.sb-nav{flex:1;padding:12px 10px;overflow-y:auto;}
-.sb-sec{font-size:.62rem;font-weight:700;color:var(--muted);letter-spacing:2px;
-  text-transform:uppercase;padding:12px 10px 5px;}
-.ni{display:flex;align-items:center;gap:12px;padding:11px 12px;color:var(--text2);
-  cursor:pointer;border-radius:10px;margin-bottom:3px;transition:all .2s;}
-.ni:hover{background:#f8fafc;color:var(--text);}
-.ni.on{background:linear-gradient(135deg,rgba(255,51,102,.1),rgba(255,107,53,.06));color:var(--accent);}
+.sbhd{padding:20px 16px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;min-height:68px;}
+.sblo{width:38px;height:38px;border-radius:11px;object-fit:cover;box-shadow:var(--shadow-sm);}
+.sbnm{font-family:"Orbitron",sans-serif;font-size:.8rem;font-weight:700;background:linear-gradient(135deg,var(--ac),var(--gd));-webkit-background-clip:text;-webkit-text-fill-color:transparent;white-space:nowrap;}
+.sbnav{flex:1;padding:12px 10px;overflow-y:auto;}
+.sbsec{font-size:.62rem;font-weight:700;color:var(--mt);letter-spacing:2px;text-transform:uppercase;padding:12px 10px 5px;}
+.ni{display:flex;align-items:center;gap:12px;padding:11px 12px;color:var(--tx2);cursor:pointer;border-radius:11px;margin-bottom:3px;transition:all .2s;}
+.ni:hover{background:rgba(255,51,102,.06);color:var(--tx);}
+.ni.on{background:linear-gradient(135deg,rgba(255,51,102,.1),rgba(255,107,53,.06));color:var(--ac);}
 .ni-ic{width:20px;display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0;}
-.ni-tx{font-size:.88rem;font-weight:500;}
+.ni-tx{font-size:.87rem;font-weight:500;}
 
 /* MAIN */
 .mn{margin-left:0;min-height:100vh;display:flex;flex-direction:column;}
-.tb{background:var(--card);border-bottom:1px solid var(--border);padding:0 22px 0 70px;
-  height:62px;display:flex;align-items:center;justify-content:space-between;
-  position:sticky;top:0;z-index:50;}
-.tb h1{font-size:1rem;font-weight:600;}
-.tb p{font-size:.75rem;color:var(--muted);}
-.tb-r{display:flex;align-items:center;gap:8px;}
-.badm{background:rgba(255,51,102,.08);color:var(--accent);border:1px solid rgba(255,51,102,.2);
-  padding:4px 12px;border-radius:20px;font-size:.7rem;font-family:"Orbitron",sans-serif;}
-.tbtn{background:var(--bg);border:1px solid var(--border);color:var(--text2);
-  padding:6px 14px;border-radius:8px;cursor:pointer;font-size:.8rem;transition:all .2s;}
-.tbtn:hover{border-color:var(--accent);color:var(--accent);}
+.tb{background:var(--nm);border-bottom:1px solid var(--border);padding:0 22px 0 70px;height:62px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;box-shadow:0 2px 10px rgba(0,0,0,.06);}
+.tb h1{font-size:1rem;font-weight:600;color:var(--tx);}
+.tb p{font-size:.74rem;color:var(--mt);}
+.tbr2{display:flex;align-items:center;gap:8px;}
+.badm{background:rgba(255,51,102,.08);color:var(--ac);border:1px solid rgba(255,51,102,.2);padding:4px 12px;border-radius:20px;font-size:.7rem;font-family:"Orbitron",sans-serif;font-weight:600;}
+.tbn{background:var(--bg);border:1px solid var(--border);color:var(--tx2);padding:7px 14px;border-radius:8px;cursor:pointer;font-size:.8rem;font-family:"Inter",sans-serif;transition:all .2s;}
+.tbn:hover{border-color:var(--ac);color:var(--ac);}
+
+/* CONTENT */
 .con{flex:1;padding:22px;}
 .pg{display:none;}.pg.on{display:block;}
 
 /* STATS */
 .sr{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:20px;}
-.sc{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px 18px;box-shadow:var(--shadow);animation:fadeIn .2s ease;}
-@keyframes fadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
-.si{width:38px;height:38px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:.9rem;margin-bottom:10px;}
-.si.r{background:rgba(255,51,102,.1);color:var(--accent);}
-.si.g{background:rgba(245,158,11,.1);color:var(--gold);}
-.si.gr{background:rgba(16,185,129,.1);color:var(--green);}
-.si.b{background:rgba(59,130,246,.1);color:var(--blue);}
-.sv{font-family:"Orbitron",sans-serif;font-size:1.7rem;font-weight:800;}
-.sl{font-size:.75rem;color:var(--muted);margin-top:2px;}
+.sc{background:var(--nm);box-shadow:var(--shadow-sm);border-radius:14px;padding:18px;}
+.si{width:40px;height:40px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:.95rem;margin-bottom:10px;box-shadow:var(--shadow-in);}
+.si.r{color:var(--ac);}
+.si.g{color:var(--gd);}
+.si.gr{color:var(--gr);}
+.si.b{color:var(--bl);}
+.sv{font-family:"Orbitron",sans-serif;font-size:1.8rem;font-weight:800;color:var(--tx);}
+.sl{font-size:.75rem;color:var(--mt);margin-top:2px;}
 
 /* CARD */
-.cd{background:var(--card);border:1px solid var(--border);border-radius:12px;
-  padding:18px;box-shadow:var(--shadow);margin-bottom:16px;}
+.cd{background:var(--nm);box-shadow:var(--shadow-sm);border-radius:14px;padding:18px;margin-bottom:16px;}
 .ch{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
-.ch h3{font-size:.88rem;font-weight:600;display:flex;align-items:center;gap:7px;}
-.ch h3 i{color:var(--accent);}
+.ch h3{font-size:.88rem;font-weight:600;color:var(--tx);display:flex;align-items:center;gap:7px;}
+.ch h3 i{color:var(--ac);}
 
 /* FORM */
 .fg{display:flex;flex-direction:column;gap:4px;margin-bottom:12px;}
-.fg label{font-size:.7rem;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;}
-.fg input,.fg select,.fg textarea{background:var(--bg);border:1px solid var(--border);
-  border-radius:8px;padding:9px 12px;color:var(--text);font-size:.88rem;
-  font-family:"Inter",sans-serif;outline:none;transition:border .2s;resize:vertical;}
-.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--accent);}
+.fg label{font-size:.7rem;font-weight:600;color:var(--tx2);text-transform:uppercase;letter-spacing:.5px;}
+.fg input,.fg select,.fg textarea{background:var(--bg);box-shadow:var(--shadow-in);border:1px solid transparent;border-radius:9px;padding:10px 13px;color:var(--tx);font-size:.88rem;font-family:"Inter",sans-serif;outline:none;transition:border .2s;resize:vertical;}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--ac);}
+.fg select option{background:var(--nm);}
 .fr{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
 .fr1{grid-template-columns:1fr;}
 
-/* BTN */
-.bn{border:none;border-radius:8px;padding:9px 18px;cursor:pointer;
-  font-size:.8rem;font-family:"Inter",sans-serif;font-weight:600;
-  transition:all .2s;display:inline-flex;align-items:center;gap:6px;}
-.bp{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;
-  box-shadow:0 4px 12px rgba(255,51,102,.25);}
-.bp:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(255,51,102,.35);}
-.bg2{background:linear-gradient(135deg,#10b981,#059669);color:#fff;}
-.bo{background:transparent;border:1px solid var(--border);color:var(--text2);}
-.bo:hover{border-color:var(--accent);color:var(--accent);}
-.bd{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);color:var(--red);}
+/* BUTTONS */
+.bn{border:none;border-radius:9px;padding:10px 18px;cursor:pointer;font-size:.8rem;font-family:"Inter",sans-serif;font-weight:600;transition:all .2s;display:inline-flex;align-items:center;gap:6px;}
+.bp{background:linear-gradient(135deg,var(--ac),var(--ac2));color:#fff;box-shadow:var(--shadow-sm),0 4px 14px rgba(255,51,102,.2);}
+.bp:hover{transform:translateY(-1px);box-shadow:var(--shadow-sm),0 6px 20px rgba(255,51,102,.3);}
+.bg2{background:linear-gradient(135deg,#10b981,#059669);color:#fff;box-shadow:var(--shadow-sm);}
+.bg2:hover{transform:translateY(-1px);}
+.bo{background:var(--nm);box-shadow:var(--shadow-sm);border:none;color:var(--tx2);}
+.bo:hover{color:var(--ac);}
+.bd{background:rgba(239,68,68,.08);box-shadow:var(--shadow-sm);border:1px solid rgba(239,68,68,.15);color:var(--red);}
 .bd:hover{background:rgba(239,68,68,.15);}
-.bs{padding:5px 10px;font-size:.75rem;}
+.bs{padding:6px 11px;font-size:.76rem;}
 
 /* TABLE */
 .tw{overflow-x:auto;}
 table{width:100%;border-collapse:collapse;}
-th{text-align:left;padding:9px 12px;font-size:.7rem;font-weight:600;color:var(--muted);
-  text-transform:uppercase;border-bottom:1px solid var(--border);}
-td{padding:11px 12px;border-bottom:1px solid #f1f5f9;font-size:.85rem;vertical-align:middle;}
-tr:hover td{background:#fafbfd;}
+th{text-align:left;padding:9px 12px;font-size:.7rem;font-weight:600;color:var(--mt);text-transform:uppercase;border-bottom:2px solid var(--border);}
+td{padding:11px 12px;border-bottom:1px solid var(--border);font-size:.84rem;vertical-align:middle;}
+tr:hover td{background:rgba(255,51,102,.02);}
 .bdg{padding:3px 9px;border-radius:20px;font-size:.68rem;font-weight:600;}
-.ba{background:rgba(16,185,129,.1);color:var(--green);}
+.ba{background:rgba(16,185,129,.1);color:var(--gr);}
 .bof{background:rgba(239,68,68,.1);color:var(--red);}
-.bus{background:rgba(245,158,11,.1);color:var(--gold);}
-.bbl{background:rgba(59,130,246,.1);color:var(--blue);}
-
-/* ICON */
-.tic{width:34px;height:34px;border-radius:8px;object-fit:cover;display:inline-block;}
-.tif{width:34px;height:34px;border-radius:8px;background:rgba(255,51,102,.08);
-  display:inline-flex;align-items:center;justify-content:center;color:var(--accent);}
+.bus{background:rgba(245,158,11,.1);color:var(--gd);}
+.bbl{background:rgba(59,130,246,.1);color:var(--bl);}
+.tic{width:34px;height:34px;border-radius:9px;object-fit:cover;}
+.tif{width:34px;height:34px;border-radius:9px;background:rgba(255,51,102,.08);display:inline-flex;align-items:center;justify-content:center;color:var(--ac);}
 
 /* KEY */
-.kb{background:var(--bg);border:1px solid var(--border);border-radius:8px;
-  padding:11px 14px;font-family:"Orbitron",sans-serif;font-size:.78rem;
-  color:var(--accent);word-break:break-all;margin-top:10px;}
-.kr{background:var(--bg);border:1px solid var(--border);border-radius:9px;
-  padding:12px 14px;margin-bottom:9px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
-.kv{font-family:"Orbitron",sans-serif;font-size:.75rem;color:var(--accent);flex:1;word-break:break-all;}
+.kb{background:var(--bg);box-shadow:var(--shadow-in);border-radius:9px;padding:11px 14px;font-family:"Orbitron",sans-serif;font-size:.78rem;color:var(--ac);word-break:break-all;margin-top:10px;}
+.kr{background:var(--bg);box-shadow:var(--shadow-in);border-radius:10px;padding:12px 14px;margin-bottom:9px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.kv{font-family:"Orbitron",sans-serif;font-size:.75rem;color:var(--ac);flex:1;word-break:break-all;}
 
-/* COLOR */
-.cg{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px;}
+/* COLORS */
+.cg{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;}
 .ci{display:flex;flex-direction:column;gap:4px;}
-.ci label{font-size:.7rem;font-weight:600;color:var(--text2);text-transform:uppercase;}
-.ci input[type=color]{width:100%;height:38px;border:1px solid var(--border);border-radius:7px;background:#fff;cursor:pointer;padding:3px;}
-.ci input[type=text]{background:var(--bg);border:1px solid var(--border);border-radius:7px;padding:7px 11px;color:var(--text);font-size:.8rem;outline:none;}
+.ci label{font-size:.7rem;font-weight:600;color:var(--tx2);text-transform:uppercase;}
+.ci input[type=color]{width:100%;height:38px;border:none;border-radius:8px;box-shadow:var(--shadow-in);background:var(--bg);cursor:pointer;padding:3px;}
+.ci input[type=text]{background:var(--bg);box-shadow:var(--shadow-in);border:1px solid transparent;border-radius:8px;padding:7px 10px;color:var(--tx);font-size:.8rem;outline:none;}
 
 /* UPLOAD */
-.ua{border:2px dashed var(--border);border-radius:9px;padding:18px;
-  text-align:center;cursor:pointer;transition:border .2s;}
-.ua:hover{border-color:var(--accent);}
-.ua i{font-size:1.6rem;color:var(--muted);margin-bottom:7px;display:block;}
-.ua p{font-size:.8rem;color:var(--muted);}
+.ua{border:2px dashed var(--border);border-radius:10px;padding:18px;text-align:center;cursor:pointer;transition:border .2s;background:var(--bg);box-shadow:var(--shadow-in);}
+.ua:hover{border-color:var(--ac);}
+.ua i{font-size:1.6rem;color:var(--mt);margin-bottom:7px;display:block;}
+.ua p{font-size:.8rem;color:var(--mt);}
 
 /* PHONE */
-.pc{background:linear-gradient(135deg,rgba(16,185,129,.08),rgba(16,185,129,.03));
-  border:1px solid rgba(16,185,129,.2);border-radius:11px;padding:14px 18px;
-  display:flex;align-items:center;gap:12px;}
-.pc i{color:var(--green);font-size:1.3rem;}
-.pn{font-family:"Orbitron",sans-serif;font-size:.95rem;color:var(--green);font-weight:700;}
+.pc{background:rgba(16,185,129,.06);border:1px solid rgba(16,185,129,.2);border-radius:11px;padding:14px 18px;display:flex;align-items:center;gap:12px;box-shadow:var(--shadow-sm);}
+.pc i{color:var(--gr);font-size:1.3rem;}
+.pn{font-family:"Orbitron",sans-serif;font-size:.95rem;color:var(--gr);font-weight:700;}
 
 /* MODAL */
-.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:500;
-  display:none;align-items:center;justify-content:center;}
-.modal-bg.open{display:flex;}
-.modal{background:#fff;border-radius:16px;padding:24px;width:90%;max-width:480px;
-  box-shadow:0 20px 60px rgba(0,0,0,.2);}
-.modal h3{font-size:1rem;font-weight:600;margin-bottom:16px;display:flex;align-items:center;gap:8px;}
-.modal h3 i{color:var(--accent);}
-.modal-footer{display:flex;gap:10px;justify-content:flex-end;margin-top:16px;}
+.modalbg{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:500;display:none;align-items:center;justify-content:center;}
+.modalbg.open{display:flex;}
+.modal{background:var(--nm);box-shadow:var(--shadow);border-radius:16px;padding:22px;width:90%;max-width:460px;}
+.modal h3{font-size:.95rem;font-weight:600;margin-bottom:14px;display:flex;align-items:center;gap:7px;color:var(--tx);}
+.modal h3 i{color:var(--ac);}
+.mf{display:flex;gap:10px;justify-content:flex-end;margin-top:14px;}
 
 /* TOAST */
-.toast{position:fixed;bottom:18px;right:18px;background:#1a1a2e;color:#fff;
-  padding:11px 18px;border-radius:9px;font-size:.85rem;
-  transform:translateY(80px);opacity:0;transition:all .3s;z-index:9999;
-  display:flex;align-items:center;gap:7px;box-shadow:0 8px 24px rgba(0,0,0,.2);}
-.toast.show{transform:translateY(0);opacity:1;}
-.toast.ok{border-left:3px solid var(--green);}
-.toast.err{border-left:3px solid var(--red);}
+.toast{position:fixed;bottom:18px;right:18px;background:var(--nm);box-shadow:var(--shadow-sm);color:var(--gr);padding:11px 18px;border-radius:10px;font-size:.84rem;transform:translateY(80px);opacity:0;transition:all .3s;z-index:9999;border-left:3px solid var(--gr);}
+.toast.on{transform:translateY(0);opacity:1;}
+.toast.er{color:var(--red);border-left-color:var(--red);}
 
-@media(max-width:700px){
-  .sb{width:64px;}.sb .sb-name,.sb .ni-tx,.sb .sb-sec{display:none;}
-  .mn{margin-left:64px;}.fr{grid-template-columns:1fr;}
-}
+@media(max-width:600px){.fr{grid-template-columns:1fr;}}
 </style>
 </head>
 <body>
 
 <!-- AUTH -->
 <div id="authScreen">
-  <div class="auth-wrap">
-    <img class="auth-logo" src="data:image/jpeg;base64,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" alt="L♥H">
-    <div class="auth-title">L♥H TOOLKIT</div>
-    <div class="auth-sub">Admin Panel — Private Access</div>
-    <div class="auth-card">
+  <div class="aw">
+    <img class="al" src="data:image/jpeg;base64,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" alt="">
+    <div class="at">L&#9829;H TOOLKIT</div>
+    <div class="as">Admin Panel &mdash; Private Access</div>
+    <div class="ac2">
       <input class="ai" type="text" id="au" placeholder="Username" autocomplete="off">
       <input class="ai" type="password" id="ap" placeholder="Password">
-      <button class="abtn" onclick="adminLogin()"><i class="fas fa-shield-alt"></i> ENTER PANEL</button>
-      <div class="aerr" id="aerr">❌ Invalid credentials</div>
+      <button class="abn" onclick="adminLogin()"><i class="fas fa-shield-alt"></i> ENTER PANEL</button>
+      <div class="aerr" id="aerr">&#10060; Invalid credentials</div>
     </div>
   </div>
 </div>
 
 <!-- EDIT TOOL MODAL -->
-<div class="modal-bg" id="editModal">
+<div class="modalbg" id="editMod">
   <div class="modal">
     <h3><i class="fas fa-edit"></i> Edit Tool</h3>
-    <input type="hidden" id="editId">
-    <div class="fg"><label>Tool Name</label><input type="text" id="eName"></div>
-    <div class="fg"><label>Tool Link</label><input type="text" id="eLink"></div>
-    <div class="fg"><label>Description</label><input type="text" id="eDesc"></div>
-    <div class="fg"><label>Icon Class</label><input type="text" id="eIcon"></div>
+    <input type="hidden" id="eId">
+    <div class="fg"><label>Tool Name</label><input type="text" id="eNm"></div>
+    <div class="fg"><label>Tool Link</label><input type="text" id="eLk"></div>
+    <div class="fg"><label>Description</label><input type="text" id="eDsc"></div>
+    <div class="fg"><label>Icon Class</label><input type="text" id="eIc"></div>
     <div class="fg">
-      <label>Change Icon Image</label>
-      <div class="ua" onclick="document.getElementById('eIconFile').click()">
+      <label>Change Icon</label>
+      <div class="ua" onclick="document.getElementById('eIF').click()">
         <i class="fas fa-image"></i><p>Click to change icon</p>
-        <img id="eIconPrev" style="max-width:50px;max-height:50px;border-radius:7px;margin-top:7px;display:none;">
+        <img id="eIPv" style="max-width:50px;border-radius:7px;margin-top:7px;display:none;">
       </div>
-      <input type="file" id="eIconFile" accept="image/*" style="display:none" onchange="prevEditIcon(event)">
+      <input type="file" id="eIF" accept="image/*" style="display:none" onchange="prevEI(event)">
     </div>
-    <div class="modal-footer">
+    <div class="mf">
       <button class="bn bo" onclick="closeEdit()">Cancel</button>
-      <button class="bn bp" onclick="saveEdit()"><i class="fas fa-save"></i> Save Changes</button>
+      <button class="bn bp" onclick="saveEdit()"><i class="fas fa-save"></i> Save</button>
     </div>
   </div>
 </div>
 
-<!-- ADMIN APP -->
-<div id="adminApp">
-  <div class="layout">
-    <div class="sb" id="sb">
-      <button class="sb-tog" onclick="togSb()"><i class="fas fa-chevron-left"></i></button>
-      <div class="sb-hd">
-        <img class="sb-logo" src="data:image/jpeg;base64,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" alt="">
-        <span class="sb-name">L♥H ADMIN</span>
-      </div>
-      <nav class="sb-nav">
-        <div class="sb-sec">MAIN</div>
-        <div class="ni on" onclick="showPg('dash',this)" data-tip="Dashboard"><div class="ni-ic"><i class="fas fa-chart-pie"></i></div><span class="ni-tx">Dashboard</span></div>
-        <div class="ni" onclick="showPg('tools',this)" data-tip="Tools"><div class="ni-ic"><i class="fas fa-tools"></i></div><span class="ni-tx">Manage Tools</span></div>
-        <div class="ni" onclick="showPg('keys',this)" data-tip="Keys"><div class="ni-ic"><i class="fas fa-key"></i></div><span class="ni-tx">License Keys</span></div>
-        <div class="sb-sec">SETTINGS</div>
-        <div class="ni" onclick="showPg('appear',this)" data-tip="Colors"><div class="ni-ic"><i class="fas fa-palette"></i></div><span class="ni-tx">Appearance</span></div>
-        <div class="ni" onclick="showPg('tksett',this)" data-tip="Toolkit"><div class="ni-ic"><i class="fas fa-sliders-h"></i></div><span class="ni-tx">Toolkit Settings</span></div>
-        <div class="ni" onclick="showPg('admsett',this)" data-tip="Admin"><div class="ni-ic"><i class="fas fa-user-shield"></i></div><span class="ni-tx">Admin Settings</span></div>
-        <div class="sb-sec">ACCOUNT</div>
-        <div class="ni" onclick="doLogout()" data-tip="Logout"><div class="ni-ic"><i class="fas fa-sign-out-alt"></i></div><span class="ni-tx">Logout</span></div>
-      </nav>
+<!-- APP -->
+<div id="adminApp" style="display:none">
+  <button class="hbtn" id="hBtn" onclick="togSb()"><span></span><span></span><span></span></button>
+  <div class="ov" id="ov" onclick="closeSb()"></div>
+  <div class="sb" id="sb">
+    <div class="sbhd">
+      <img class="sblo" src="data:image/jpeg;base64,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" alt="">
+      <span class="sbnm">L&#9829;H ADMIN</span>
     </div>
+    <nav class="sbnav">
+      <div class="sbsec">MAIN</div>
+      <div class="ni on" onclick="showPg('dash',this)" data-tip="Dashboard"><div class="ni-ic"><i class="fas fa-chart-pie"></i></div><span class="ni-tx">Dashboard</span></div>
+      <div class="ni" onclick="showPg('tools',this)" data-tip="Tools"><div class="ni-ic"><i class="fas fa-tools"></i></div><span class="ni-tx">Manage Tools</span></div>
+      <div class="ni" onclick="showPg('keys',this)" data-tip="Keys"><div class="ni-ic"><i class="fas fa-key"></i></div><span class="ni-tx">License Keys</span></div>
+      <div class="sbsec">SETTINGS</div>
+      <div class="ni" onclick="showPg('appear',this)" data-tip="Colors"><div class="ni-ic"><i class="fas fa-palette"></i></div><span class="ni-tx">Appearance</span></div>
+      <div class="ni" onclick="showPg('tksett',this)" data-tip="Toolkit"><div class="ni-ic"><i class="fas fa-sliders-h"></i></div><span class="ni-tx">Toolkit Settings</span></div>
+      <div class="ni" onclick="showPg('admsett',this)" data-tip="Admin"><div class="ni-ic"><i class="fas fa-user-shield"></i></div><span class="ni-tx">Admin Settings</span></div>
+      <div class="sbsec">ACCOUNT</div>
+      <div class="ni" onclick="doLogout()" data-tip="Logout"><div class="ni-ic"><i class="fas fa-sign-out-alt"></i></div><span class="ni-tx">Logout</span></div>
+    </nav>
+  </div>
+  <div class="mn">
+    <div class="tb">
+      <div><h1 id="pgT">Dashboard</h1><p id="pgS">L&#9829;H Toolkit Overview</p></div>
+      <div class="tbr2">
+        <span class="badm"><i class="fas fa-shield-alt"></i> ADMIN</span>
+        <button class="tbn" onclick="doLogout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+      </div>
+    </div>
+    <div class="con">
 
-    <div class="mn" id="mn">
-      <div class="tb">
-        <div><h1 id="pgT">Dashboard</h1><p id="pgS">L♥H Toolkit Overview</p></div>
-        <div class="tb-r">
-          <span class="badm"><i class="fas fa-shield-alt"></i> ADMIN</span>
-          <button class="tbtn" onclick="doLogout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+      <!-- DASHBOARD -->
+      <div class="pg on" id="pg-dash">
+        <div class="sr">
+          <div class="sc"><div class="si r"><i class="fas fa-tools"></i></div><div class="sv" id="st0">0</div><div class="sl">Total Tools</div></div>
+          <div class="sc"><div class="si g"><i class="fas fa-key"></i></div><div class="sv" id="st1">0</div><div class="sl">Total Keys</div></div>
+          <div class="sc"><div class="si gr"><i class="fas fa-check-circle"></i></div><div class="sv" id="st2">0</div><div class="sl">Active Keys</div></div>
+          <div class="sc"><div class="si b"><i class="fas fa-times-circle"></i></div><div class="sv" id="st3">0</div><div class="sl">Expired Keys</div></div>
+        </div>
+        <div class="cd">
+          <div class="ch"><h3><i class="fab fa-whatsapp"></i> Admin WhatsApp</h3></div>
+          <div class="pc"><i class="fab fa-whatsapp"></i><span class="pn" id="dPh">+923277796795</span></div>
+        </div>
+        <div class="cd">
+          <div class="ch"><h3><i class="fas fa-bolt"></i> Quick Actions</h3></div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;">
+            <button class="bn bp" onclick="showPg('tools',null)"><i class="fas fa-plus"></i> Add Tool</button>
+            <button class="bn bg2" onclick="showPg('keys',null)"><i class="fas fa-key"></i> Generate Key</button>
+          </div>
         </div>
       </div>
 
-      <div class="con">
-
-        <!-- DASHBOARD -->
-        <div class="pg on" id="pg-dash">
-          <div class="sr">
-            <div class="sc"><div class="si r"><i class="fas fa-tools"></i></div><div class="sv" id="st0">0</div><div class="sl">Total Tools</div></div>
-            <div class="sc"><div class="si g"><i class="fas fa-key"></i></div><div class="sv" id="st1">0</div><div class="sl">Total Keys</div></div>
-            <div class="sc"><div class="si gr"><i class="fas fa-check-circle"></i></div><div class="sv" id="st2">0</div><div class="sl">Active Keys</div></div>
-            <div class="sc"><div class="si b"><i class="fas fa-times-circle"></i></div><div class="sv" id="st3">0</div><div class="sl">Expired Keys</div></div>
+      <!-- TOOLS -->
+      <div class="pg" id="pg-tools">
+        <div class="cd">
+          <div class="ch"><h3><i class="fas fa-plus-circle"></i> Add New Tool</h3></div>
+          <div class="fr">
+            <div class="fg"><label>Tool Name</label><input type="text" id="tNm" placeholder="e.g. WhatsApp Tool"></div>
+            <div class="fg"><label>Tool Link</label><input type="text" id="tLk" placeholder="https://..."></div>
+            <div class="fg"><label>Description</label><input type="text" id="tDsc" placeholder="Short description"></div>
+            <div class="fg"><label>Icon Class (optional)</label><input type="text" id="tIc" placeholder="fas fa-star"></div>
           </div>
-          <div class="cd">
-            <div class="ch"><h3><i class="fab fa-whatsapp"></i> Admin WhatsApp</h3></div>
-            <div class="pc"><i class="fab fa-whatsapp"></i><span class="pn" id="dPhone">+923277796795</span></div>
+          <div class="fg">
+            <label>Upload Icon Image</label>
+            <div class="ua" onclick="document.getElementById('icF').click()"><i class="fas fa-cloud-upload-alt"></i><p>Click to upload icon</p><img id="icPv" style="max-width:55px;border-radius:8px;margin-top:8px;display:none;"></div>
+            <input type="file" id="icF" accept="image/*" style="display:none" onchange="prevIc(event)">
           </div>
-          <div class="cd">
-            <div class="ch"><h3><i class="fas fa-bolt"></i> Quick Actions</h3></div>
-            <div style="display:flex;gap:10px;flex-wrap:wrap;">
-              <button class="bn bp" onclick="showPg('tools',document.querySelector('[data-tip=Tools]'))"><i class="fas fa-plus"></i> Add Tool</button>
-              <button class="bn bg2" onclick="showPg('keys',document.querySelector('[data-tip=Keys]'))"><i class="fas fa-key"></i> Generate Key</button>
-            </div>
-          </div>
+          <button class="bn bp" style="margin-top:8px" onclick="addTool()"><i class="fas fa-plus"></i> ADD TOOL</button>
         </div>
-
-        <!-- TOOLS -->
-        <div class="pg" id="pg-tools">
-          <div class="cd">
-            <div class="ch"><h3><i class="fas fa-plus-circle"></i> Add New Tool</h3></div>
-            <div class="fr">
-              <div class="fg"><label>Tool Name</label><input type="text" id="tName" placeholder="e.g. WhatsApp Tool"></div>
-              <div class="fg"><label>Tool Link</label><input type="text" id="tLink" placeholder="https://..."></div>
-              <div class="fg"><label>Description</label><input type="text" id="tDesc" placeholder="Short description"></div>
-              <div class="fg"><label>Icon Class (optional)</label><input type="text" id="tIcon" placeholder="fas fa-star"></div>
-            </div>
-            <div class="fg">
-              <label>Upload Icon Image</label>
-              <div class="ua" onclick="document.getElementById('icFile').click()">
-                <i class="fas fa-cloud-upload-alt"></i><p>Click to upload icon</p>
-                <img id="icPrev" style="max-width:55px;border-radius:8px;margin-top:8px;display:none;">
-              </div>
-              <input type="file" id="icFile" accept="image/*" style="display:none" onchange="prevIc(event)">
-            </div>
-            <button class="bn bp" style="margin-top:6px" onclick="addTool()"><i class="fas fa-plus"></i> ADD TOOL</button>
-          </div>
-          <div class="cd">
-            <div class="ch"><h3><i class="fas fa-list"></i> All Tools</h3></div>
-            <div class="tw">
-              <table>
-                <tr><th>#</th><th>Icon</th><th>Name</th><th>Desc</th><th>Status</th><th>Actions</th></tr>
-                <tbody id="tTbl"></tbody>
-              </table>
-            </div>
-          </div>
+        <div class="cd">
+          <div class="ch"><h3><i class="fas fa-list"></i> All Tools</h3></div>
+          <div class="tw"><table><tr><th>#</th><th>Icon</th><th>Name</th><th>Desc</th><th>Status</th><th>Actions</th></tr><tbody id="tTbl"></tbody></table></div>
         </div>
-
-        <!-- KEYS -->
-        <div class="pg" id="pg-keys">
-          <div class="cd">
-            <div class="ch"><h3><i class="fas fa-key"></i> Generate Key</h3></div>
-            <div class="fr">
-              <div class="fg"><label>Duration</label>
-                <select id="kDur"><option value="1">1 Day</option><option value="3">3 Days</option><option value="7">7 Days</option><option value="30">30 Days</option></select>
-              </div>
-              <div class="fg"><label>Custom Key Text</label><input type="text" id="kCustom" placeholder="Auto if blank"></div>
-            </div>
-            <button class="bn bp" onclick="genKey()"><i class="fas fa-key"></i> GENERATE KEY</button>
-            <div id="kBox" style="display:none;margin-top:12px;">
-              <label style="font-size:.7rem;font-weight:600;color:var(--muted);text-transform:uppercase;">Generated Key:</label>
-              <div class="kb" id="kVal"></div>
-              <button class="bn bo bs" style="margin-top:8px" onclick="cpKey()"><i class="fas fa-copy"></i> Copy Key</button>
-            </div>
-          </div>
-          <div class="cd">
-            <div class="ch"><h3><i class="fas fa-list-alt"></i> All Keys</h3></div>
-            <div id="kList"><p style="color:var(--muted);font-size:.85rem">Loading...</p></div>
-          </div>
-        </div>
-
-        <!-- APPEARANCE -->
-        <div class="pg" id="pg-appear">
-          <div class="cd">
-            <div class="ch"><h3><i class="fas fa-palette"></i> Toolkit Colors</h3></div>
-            <div class="cg">
-              <div class="ci"><label>Background</label><input type="color" id="c-bg" value="#1a1a2e" oninput="syncC('bg',this.value)"><input type="text" id="ct-bg" value="#1a1a2e"></div>
-              <div class="ci"><label>Card Color</label><input type="color" id="c-card" value="#1e2240" oninput="syncC('card',this.value)"><input type="text" id="ct-card" value="#1e2240"></div>
-              <div class="ci"><label>Accent Color</label><input type="color" id="c-accent" value="#ff3366" oninput="syncC('accent',this.value)"><input type="text" id="ct-accent" value="#ff3366"></div>
-              <div class="ci"><label>Text Color</label><input type="color" id="c-text" value="#e0e0f0" oninput="syncC('text',this.value)"><input type="text" id="ct-text" value="#e0e0f0"></div>
-            </div>
-            <button class="bn bp" style="margin-top:14px" onclick="saveColors()"><i class="fas fa-save"></i> Save Colors</button>
-          </div>
-          <div class="cd">
-            <div class="ch"><h3><i class="fas fa-moon"></i> Default Theme</h3></div>
-            <div style="display:flex;gap:18px;">
-              <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:.88rem;"><input type="radio" name="thm" value="dark" checked> Dark Mode</label>
-              <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:.88rem;"><input type="radio" name="thm" value="light"> Light Mode</label>
-            </div>
-            <button class="bn bp" style="margin-top:12px" onclick="saveTheme()"><i class="fas fa-save"></i> Save Theme</button>
-          </div>
-        </div>
-
-        <!-- TOOLKIT SETTINGS -->
-        <div class="pg" id="pg-tksett">
-          <div class="cd">
-            <div class="ch"><h3><i class="fas fa-cog"></i> Toolkit Settings</h3></div>
-            <div class="fr fr1">
-              <div class="fg"><label>Toolkit Name</label><input type="text" id="tkN" value="L♥H TOOLKIT"></div>
-              <div class="fg"><label>Tagline</label><input type="text" id="tkT" value="The Ultimate Toolkit"></div>
-              <div class="fg"><label>Welcome Message</label><input type="text" id="tkW" value="Welcome to L♥H TOOLKIT!"></div>
-              <div class="fg"><label>Upload New Logo</label>
-                <div class="ua" onclick="document.getElementById('lgFile').click()">
-                  <i class="fas fa-image"></i><p>Click to upload logo</p>
-                  <img id="lgPrev" style="max-height:55px;margin-top:8px;display:none;border-radius:9px;">
-                </div>
-                <input type="file" id="lgFile" accept="image/*" style="display:none" onchange="prevLg(event)">
-              </div>
-            </div>
-            <button class="bn bp" onclick="saveTk()"><i class="fas fa-save"></i> Save Settings</button>
-          </div>
-        </div>
-
-        <!-- ADMIN SETTINGS -->
-        <div class="pg" id="pg-admsett">
-          <div class="cd">
-            <div class="ch"><h3><i class="fas fa-lock"></i> Change Login Credentials</h3></div>
-            <div class="fr fr1">
-              <div class="fg"><label>New Username</label><input type="text" id="nU" placeholder="New username"></div>
-              <div class="fg"><label>New Password</label><input type="password" id="nP" placeholder="New password"></div>
-              <div class="fg"><label>Confirm Password</label><input type="password" id="nCP" placeholder="Confirm password"></div>
-            </div>
-            <button class="bn bp" onclick="changeCreds()"><i class="fas fa-save"></i> Save Credentials</button>
-          </div>
-          <div class="cd">
-            <div class="ch"><h3><i class="fab fa-whatsapp"></i> Admin WhatsApp Number</h3></div>
-            <p style="font-size:.8rem;color:var(--muted);margin-bottom:12px;">Users click "Buy Key" — this number opens on WhatsApp.</p>
-            <div class="fg"><label>WhatsApp Number</label><input type="text" id="aPhone" value="+923277796795"></div>
-            <button class="bn bg2" onclick="savePhone()"><i class="fas fa-save"></i> Save Number</button>
-          </div>
-        </div>
-
       </div>
+
+      <!-- KEYS -->
+      <div class="pg" id="pg-keys">
+        <div class="cd">
+          <div class="ch"><h3><i class="fas fa-key"></i> Generate Key</h3></div>
+          <div class="fr">
+            <div class="fg"><label>Duration</label><select id="kDr"><option value="1">1 Day</option><option value="3">3 Days</option><option value="7">7 Days</option><option value="30">30 Days</option></select></div>
+            <div class="fg"><label>Custom Key Text</label><input type="text" id="kCus" placeholder="Auto if blank"></div>
+          </div>
+          <button class="bn bp" onclick="genKey()"><i class="fas fa-key"></i> GENERATE KEY</button>
+          <div id="kBox" style="display:none;margin-top:12px;">
+            <label style="font-size:.7rem;font-weight:600;color:var(--mt);text-transform:uppercase;">Generated Key:</label>
+            <div class="kb" id="kVal"></div>
+            <button class="bn bo bs" style="margin-top:8px" onclick="cpKey()"><i class="fas fa-copy"></i> Copy Key</button>
+          </div>
+        </div>
+        <div class="cd">
+          <div class="ch"><h3><i class="fas fa-list-alt"></i> All Keys</h3></div>
+          <div id="kList"><p style="color:var(--mt);font-size:.85rem">Loading...</p></div>
+        </div>
+      </div>
+
+      <!-- APPEARANCE -->
+      <div class="pg" id="pg-appear">
+        <div class="cd">
+          <div class="ch"><h3><i class="fas fa-palette"></i> Toolkit Colors</h3></div>
+          <div class="cg">
+            <div class="ci"><label>Background</label><input type="color" id="c-bg" value="#e8ecf0" oninput="sC('bg',this.value)"><input type="text" id="ct-bg" value="#e8ecf0"></div>
+            <div class="ci"><label>Accent Color</label><input type="color" id="c-ac" value="#ff3366" oninput="sC('ac',this.value)"><input type="text" id="ct-ac" value="#ff3366"></div>
+            <div class="ci"><label>Text Color</label><input type="color" id="c-tx" value="#1a1a2e" oninput="sC('tx',this.value)"><input type="text" id="ct-tx" value="#1a1a2e"></div>
+          </div>
+          <button class="bn bp" style="margin-top:14px" onclick="saveColors()"><i class="fas fa-save"></i> Save Colors</button>
+        </div>
+        <div class="cd">
+          <div class="ch"><h3><i class="fas fa-moon"></i> Default Theme</h3></div>
+          <div style="display:flex;gap:18px;">
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:.88rem;"><input type="radio" name="thm" value="light" checked> Light Mode</label>
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:.88rem;"><input type="radio" name="thm" value="dark"> Dark Mode</label>
+          </div>
+          <button class="bn bp" style="margin-top:12px" onclick="saveTheme()"><i class="fas fa-save"></i> Save Theme</button>
+        </div>
+      </div>
+
+      <!-- TOOLKIT SETTINGS -->
+      <div class="pg" id="pg-tksett">
+        <div class="cd">
+          <div class="ch"><h3><i class="fas fa-cog"></i> Toolkit Settings</h3></div>
+          <div class="fr fr1">
+            <div class="fg"><label>Toolkit Name</label><input type="text" id="tkN" value="L&#9829;H TOOLKIT"></div>
+            <div class="fg"><label>Tagline</label><input type="text" id="tkT" value="The Ultimate Toolkit"></div>
+            <div class="fg"><label>Welcome Message</label><input type="text" id="tkW" value="Welcome to L&#9829;H TOOLKIT!"></div>
+            <div class="fg"><label>Upload Logo</label>
+              <div class="ua" onclick="document.getElementById('lgF').click()"><i class="fas fa-image"></i><p>Click to upload logo</p><img id="lgPv" style="max-height:55px;margin-top:8px;display:none;border-radius:9px;"></div>
+              <input type="file" id="lgF" accept="image/*" style="display:none" onchange="prevLg(event)">
+            </div>
+          </div>
+          <button class="bn bp" onclick="saveTk()"><i class="fas fa-save"></i> Save Settings</button>
+        </div>
+      </div>
+
+      <!-- ADMIN SETTINGS -->
+      <div class="pg" id="pg-admsett">
+        <div class="cd">
+          <div class="ch"><h3><i class="fas fa-lock"></i> Change Login Credentials</h3></div>
+          <div class="fr fr1">
+            <div class="fg"><label>New Username</label><input type="text" id="nU" placeholder="New username"></div>
+            <div class="fg"><label>New Password</label><input type="password" id="nP" placeholder="New password"></div>
+            <div class="fg"><label>Confirm Password</label><input type="password" id="nCP" placeholder="Confirm password"></div>
+          </div>
+          <button class="bn bp" onclick="changeCreds()"><i class="fas fa-save"></i> Save Credentials</button>
+        </div>
+        <div class="cd">
+          <div class="ch"><h3><i class="fab fa-whatsapp"></i> Admin WhatsApp Number</h3></div>
+          <p style="font-size:.8rem;color:var(--mt);margin-bottom:12px;">Users click Buy Key button — this WhatsApp opens.</p>
+          <div class="fg"><label>WhatsApp Number</label><input type="text" id="aPh" value="+923277796795"></div>
+          <button class="bn bg2" onclick="savePhone()"><i class="fas fa-save"></i> Save Number</button>
+        </div>
+      </div>
+
     </div>
   </div>
 </div>
@@ -440,189 +367,239 @@ tr:hover td{background:#fafbfd;}
 <div class="toast" id="tst"></div>
 
 <script>
-// ═══════════════════════════════
-// ADMIN — calls Vercel server API
-// Firebase completely hidden
-// ═══════════════════════════════
-const ADMIN_SECRET = "LH_ADMIN_2024_SECRET";
-let _adminToken = null;
-let icB64=null,lgB64=null,editIcB64=null;
+const AS="LH_ADMIN_2024_SECRET";
+let _tok=null,icB=null,lgB=null,eIB=null;
 
-async function api(action, extra={}) {
-  try {
-    const r = await fetch("/api/data", {
-      method: "POST",
-      headers: {"Content-Type":"application/json"},
-      body: JSON.stringify({action, payload:{adminToken: _adminToken, ...extra}})
+// Firebase with Anonymous Auth for local admin panel
+var DB="https://toolkit-73b2a-default-rtdb.firebaseio.com";
+var FB_KEY="AIzaSyDJ8nLUpk-LmCebvSuzOB0EJx5tJvVKsPw";
+var _idToken=null;
+
+async function getFirebaseToken(){
+  if(_idToken)return _idToken;
+  try{
+    var r=await fetch("https://identitytoolkit.googleapis.com/v1/accounts:signUp?key="+FB_KEY,{
+      method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({returnSecureToken:true})
     });
-    return await r.json();
-  } catch { return {ok:false}; }
+    var d=await r.json();
+    _idToken=d.idToken||null;
+    return _idToken;
+  }catch(e){return null;}
 }
-// Shorthand helpers
-async function fg(p){const r=await api("getAdminData");return r.ok?getPath(r,p):null;}
-function getPath(r,p){let d={tools:r.tools,keys:r.keys,"admin/phone":r.phone,"settings/colors":r.settings?.colors,"settings/toolkit":r.settings?.toolkit,"settings/theme":r.settings?.theme,"admin/credentials":r.creds};return d[p]!==undefined?d[p]:null;}
-async function fs(p,d){
-  if(p.startsWith("tools/")&&p.endsWith("/active")){const id=p.split("/")[1];await api("toggleTool",{id,active:d});}
-  else if(p==="admin/phone"){await api("savePhone",{phone:d});}
-  else if(p==="admin/credentials"){await api("saveCreds",{username:d.username,password:d.password});}
-  else if(p.startsWith("settings/")){const r2=await api("getAdminData");const s=r2.settings||{};if(p==="settings/colors")s.colors=d;else if(p==="settings/theme")s.theme=d;else if(p==="settings/toolkit")s.toolkit=d;await api("saveSettings",{settings:s});}
+
+async function fbGet(p){
+  try{
+    var tok=await getFirebaseToken();
+    var url=DB+"/"+p+".json"+(tok?"?auth="+tok:"");
+    var r=await fetch(url);
+    var t=await r.text();
+    return t&&t!=="null"&&t!=="Permission denied"?JSON.parse(t):null;
+  }catch(e){return null;}
 }
-async function fp(p,d){if(p==="tools")await api("addTool",{tool:d});else if(p==="keys"){const r=await api("generateKey",{days:d.days,customKey:d.key!=="LH-"?d.key:""});return r.key;}return null;}
-async function fd(p){if(p.startsWith("tools/"))await api("deleteTool",{id:p.split("/")[1]});else if(p.startsWith("keys/"))await api("deleteKey",{id:p.split("/")[1]});}
+async function fbSet(p,d){
+  try{
+    var tok=await getFirebaseToken();
+    var url=DB+"/"+p+".json"+(tok?"?auth="+tok:"");
+    await fetch(url,{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify(d)});
+  }catch(e){}
+}
+async function fbPush(p,d){
+  try{
+    var tok=await getFirebaseToken();
+    var url=DB+"/"+p+".json"+(tok?"?auth="+tok:"");
+    var r=await fetch(url,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(d)});
+    var j=await r.json();return j.name||null;
+  }catch(e){return null;}
+}
+async function fbDel(p){
+  try{
+    var tok=await getFirebaseToken();
+    var url=DB+"/"+p+".json"+(tok?"?auth="+tok:"");
+    await fetch(url,{method:"DELETE"});
+  }catch(e){}
+}
 
-function tst(m,ok=true){const t=document.getElementById("tst");t.innerHTML=(ok?"✅ ":"❌ ")+m;t.className="toast show "+(ok?"ok":"err");setTimeout(()=>t.className="toast",2800);}
+async function api(action,extra){
+  // Admin panel uses Firebase directly (local file)
+  try{
+    var pl=extra||{};
+    if(action==="adminLogin"){
+      var creds=await fbGet("admin/credentials");
+      var au=(creds&&creds.username)?creds.username:"admin";
+      var ap=(creds&&creds.password)?creds.password:"lhToolkit2024";
+      if(pl.username===au&&pl.password===ap)return{ok:true,token:"LH_ADMIN_2024_SECRET"};
+      return{ok:false,msg:"Invalid credentials"};
+    }
+    if(action==="getAdminData"){
+      var tools=await fbGet("tools");
+      var keys=await fbGet("keys");
+      var phone=await fbGet("admin/phone");
+      var settings=await fbGet("settings");
+      return{ok:true,tools:tools,keys:keys,phone:phone,settings:settings};
+    }
+    if(action==="addTool")return{ok:!!(await fbPush("tools",Object.assign({},pl.tool,{active:true,created:Date.now()})))};
+    if(action==="editTool"){var ex=await fbGet("tools/"+pl.id);await fbSet("tools/"+pl.id,Object.assign({},ex,pl.tool));return{ok:true};}
+    if(action==="deleteTool"){await fbDel("tools/"+pl.id);return{ok:true};}
+    if(action==="toggleTool"){await fbSet("tools/"+pl.id+"/active",pl.active);return{ok:true};}
+    if(action==="generateKey"){
+      var chars="ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+      var kv=pl.customKey?pl.customKey.toUpperCase().replace(/\s+/g,"-"):"LH-";
+      if(!pl.customKey){for(var i=0;i<4;i++){var s="";for(var j=0;j<4;j++)s+=chars[Math.floor(Math.random()*chars.length)];kv+=s+(i<3?"-":"");}}
+      await fbPush("keys",{key:kv,days:pl.days,expiry:Date.now()+pl.days*86400000,created:Date.now(),used:false,usedBy:null,deviceId:null});
+      return{ok:true,key:kv};
+    }
+    if(action==="deleteKey"){await fbDel("keys/"+pl.id);return{ok:true};}
+    if(action==="saveSettings"){await fbSet("settings",pl.settings);return{ok:true};}
+    if(action==="savePhone"){await fbSet("admin/phone",pl.phone);return{ok:true};}
+    if(action==="saveCreds"){await fbSet("admin/credentials",{username:pl.username,password:pl.password});return{ok:true};}
+    return{ok:false};
+  }catch(e){console.error(e);return{ok:false};}
+}
 
-window.togSb=function(){
-  const sb=document.getElementById("sb");
-  const btn=document.getElementById("hamBtn");
-  const ov=document.getElementById("sbOverlay");
-  sb.classList.toggle("open");
-  btn.classList.toggle("open");
-  ov.classList.toggle("on");
-};
-window.closeSb=function(){
-  document.getElementById("sb").classList.remove("open");
-  document.getElementById("hamBtn").classList.remove("open");
-  document.getElementById("sbOverlay").classList.remove("on");
-};
+function tst(m,ok){var t=document.getElementById("tst");t.textContent=m;t.className="toast on"+(ok===false?" er":"");setTimeout(function(){t.className="toast";},2800);}
 
-window.showPg=function(id,el){
+// SIDEBAR
+function togSb(){document.getElementById("sb").classList.toggle("open");document.getElementById("hBtn").classList.toggle("open");document.getElementById("ov").classList.toggle("on");}
+function closeSb(){document.getElementById("sb").classList.remove("open");document.getElementById("hBtn").classList.remove("open");document.getElementById("ov").classList.remove("on");}
+
+function showPg(id,el){
   closeSb();
-  document.querySelectorAll(".pg").forEach(p=>p.classList.remove("on"));
-  document.querySelectorAll(".ni").forEach(n=>n.classList.remove("on"));
+  document.querySelectorAll(".pg").forEach(function(p){p.classList.remove("on");});
+  document.querySelectorAll(".ni").forEach(function(n){n.classList.remove("on");});
   document.getElementById("pg-"+id).classList.add("on");
   if(el)el.classList.add("on");
-  const mp={dash:["Dashboard","L♥H Toolkit Overview"],tools:["Manage Tools","Add edit remove tools"],keys:["License Keys","Generate manage access keys"],appear:["Appearance","Colors and theme"],tksett:["Toolkit Settings","Name logo welcome"],admsett:["Admin Settings","Credentials and contact"]};
+  var mp={dash:["Dashboard","L♥H Toolkit Overview"],tools:["Manage Tools","Add edit remove tools"],keys:["License Keys","Generate manage keys"],appear:["Appearance","Colors and theme"],tksett:["Toolkit Settings","Name logo welcome"],admsett:["Admin Settings","Credentials and contact"]};
   if(mp[id]){document.getElementById("pgT").textContent=mp[id][0];document.getElementById("pgS").textContent=mp[id][1];}
-};
+}
 
-window.adminLogin=async function(){
-  const u=document.getElementById("au").value.trim();
-  const p=document.getElementById("ap").value;
-  document.getElementById("aerr").textContent="🔄 Checking...";
-  document.getElementById("aerr").style.display="block";
-  _adminToken = ADMIN_SECRET;
-  const r=await api("adminLogin",{username:u,password:p});
+// AUTH
+async function adminLogin(){
+  var u=document.getElementById("au").value.trim();
+  var p=document.getElementById("ap").value;
+  var e=document.getElementById("aerr");
+  e.textContent="Checking...";e.style.display="block";e.style.color="rgba(255,255,255,.5)";
+  _tok=AS;
+  var r=await api("adminLogin",{username:u,password:p});
   if(r.ok){
-    _adminToken=r.token||ADMIN_SECRET;
+    _tok=r.token||AS;
     sessionStorage.setItem("lha",btoa(u+":"+p));
     document.getElementById("authScreen").style.display="none";
     document.getElementById("adminApp").style.display="block";
     loadAll();
-  }else{
-    _adminToken=null;
-    document.getElementById("aerr").textContent="❌ Invalid credentials";
-    document.getElementById("aerr").style.display="block";
-  }
-};
-window.doLogout=function(){sessionStorage.removeItem("lha");document.getElementById("adminApp").style.display="none";document.getElementById("authScreen").style.display="flex";};
+  }else{e.textContent="❌ "+( r.msg||"Invalid credentials");e.style.color="#ff6b6b";e.style.display="block";_tok=null;}
+}
+function doLogout(){sessionStorage.removeItem("lha");document.getElementById("adminApp").style.display="none";document.getElementById("authScreen").style.display="flex";}
 
-async function loadAll(){loadDash();loadTools();loadKeys();loadColors();loadTkS();}
+async function loadAll(){loadDash();loadTools();loadKeys();loadTkS();}
 
+// DASHBOARD
 async function loadDash(){
-  const r=await api("getAdminData");
-  const t=r.tools,k=r.keys,ph=r.phone;
+  var r=await api("getAdminData");
+  var t=r.tools,k=r.keys,ph=r.phone;
   document.getElementById("st0").textContent=t?Object.keys(t).length:0;
-  if(ph){document.getElementById("dPhone").textContent=ph;document.getElementById("aPhone").value=ph;}
-  let a=0,e=0;const now=Date.now();
-  if(k)Object.values(k).forEach(x=>x.expiry>now?a++:e++);
+  if(ph){document.getElementById("dPh").textContent=ph;document.getElementById("aPh").value=ph;}
+  var a=0,e2=0,now=Date.now();
+  if(k)Object.values(k).forEach(function(x){x.expiry>now?a++:e2++;});
   document.getElementById("st1").textContent=k?Object.keys(k).length:0;
-  document.getElementById("st2").textContent=a;document.getElementById("st3").textContent=e;
+  document.getElementById("st2").textContent=a;document.getElementById("st3").textContent=e2;
 }
 
 // TOOLS
-window.prevIc=function(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{icB64=ev.target.result;const i=document.getElementById("icPrev");i.src=icB64;i.style.display="block";};r.readAsDataURL(f);};
-window.addTool=async function(){
-  const n=document.getElementById("tName").value.trim();
-  const l=document.getElementById("tLink").value.trim();
-  const d=document.getElementById("tDesc").value.trim();
-  const ic=document.getElementById("tIcon").value.trim();
+function prevIc(ev){var f=ev.target.files[0];if(!f)return;var r=new FileReader();r.onload=function(e2){icB=e2.target.result;var i=document.getElementById("icPv");i.src=icB;i.style.display="block";};r.readAsDataURL(f);}
+async function addTool(){
+  var n=document.getElementById("tNm").value.trim();
+  var l=document.getElementById("tLk").value.trim();
   if(!n||!l){tst("Name & Link required!",false);return;}
-  await fp("tools",{name:n,link:l,desc:d,iconClass:ic,iconBase64:icB64||null,active:true,created:Date.now()});
+  await api("addTool",{tool:{name:n,link:l,desc:document.getElementById("tDsc").value.trim(),iconClass:document.getElementById("tIc").value.trim(),iconBase64:icB||null}});
   tst("Tool added!");
-  ["tName","tLink","tDesc","tIcon"].forEach(id=>document.getElementById(id).value="");
-  icB64=null;document.getElementById("icPrev").style.display="none";
+  ["tNm","tLk","tDsc","tIc"].forEach(function(id){document.getElementById(id).value="";});
+  icB=null;document.getElementById("icPv").style.display="none";
   loadTools();loadDash();
-};
-
+}
 async function loadTools(){
-  const r=await api("getAdminData");const tools=r.tools;const tb=document.getElementById("tTbl");tb.innerHTML="";
-  if(!tools){tb.innerHTML='<tr><td colspan="6" style="text-align:center;color:#94a3b8;padding:20px">No tools yet</td></tr>';return;}
-  let i=1;
-  for(const[id,t]of Object.entries(tools)){
-    const ic=t.iconBase64?`<img src="${t.iconBase64}" class="tic">`:`<div class="tif"><i class="${t.iconClass||"fas fa-star"}"></i></div>`;
-    tb.innerHTML+=`<tr><td>${i++}</td><td>${ic}</td><td><strong>${t.name}</strong></td><td style="color:#64748b;font-size:.8rem">${t.desc||"-"}</td><td><span class="bdg ${t.active?"ba":"bof"}">${t.active?"Active":"Off"}</span></td><td style="display:flex;gap:5px;flex-wrap:wrap;padding:8px 12px"><button class="bn bp bs" onclick="openEdit('${id}')"><i class="fas fa-edit"></i></button><button class="bn bo bs" onclick="togTool('${id}',${!t.active})">${t.active?"Off":"On"}</button><button class="bn bd bs" onclick="delTool('${id}')"><i class="fas fa-trash"></i></button></td></tr>`;
+  var r=await api("getAdminData");var tools=r.tools;var tb=document.getElementById("tTbl");tb.innerHTML="";
+  if(!tools){tb.innerHTML="<tr><td colspan=6 style=text-align:center;color:var(--mt);padding:20px>No tools yet</td></tr>";return;}
+  var i=1;
+  for(var id in tools){
+    var t=tools[id];
+    var ic=t.iconBase64?"<img src='"+t.iconBase64+"' class=tic>":"<div class=tif><i class='"+(t.iconClass||"fas fa-star")+"'></i></div>";
+    tb.innerHTML+="<tr><td>"+i+"</td><td>"+ic+"</td><td><strong>"+t.name+"</strong></td><td style=color:var(--mt);font-size:.8rem>"+(t.desc||"-")+"</td><td><span class='bdg "+(t.active?"ba":"bof")+"'>"+(t.active?"Active":"Off")+"</span></td><td style=display:flex;gap:5px;flex-wrap:wrap;padding:8px 12px><button class='bn bp bs' onclick='openEdit(""+id+"")' ><i class='fas fa-edit'></i></button><button class='bn bo bs' onclick='togTool(""+id+"","+(!t.active)+")'>"+(t.active?"Off":"On")+"</button><button class='bn bd bs' onclick='delTool(""+id+"")' ><i class='fas fa-trash'></i></button></td></tr>";
+    i++;
   }
 }
-window.togTool=async function(id,v){await fs(`tools/${id}/active`,v);tst("Updated!");loadTools();};
-window.delTool=async function(id){if(!confirm("Delete this tool?"))return;await fd(`tools/${id}`);tst("Deleted!");loadTools();loadDash();};
+async function togTool(id,v){await api("toggleTool",{id:id,active:v});tst("Updated!");loadTools();}
+async function delTool(id){if(!confirm("Delete?"))return;await api("deleteTool",{id:id});tst("Deleted!");loadTools();loadDash();}
 
-// EDIT TOOL
-window.openEdit=async function(id){
-  const t=await fg(`tools/${id}`);if(!t)return;
-  document.getElementById("editId").value=id;
-  document.getElementById("eName").value=t.name||"";
-  document.getElementById("eLink").value=t.link||"";
-  document.getElementById("eDesc").value=t.desc||"";
-  document.getElementById("eIcon").value=t.iconClass||"";
-  editIcB64=t.iconBase64||null;
-  const p=document.getElementById("eIconPrev");
-  if(t.iconBase64){p.src=t.iconBase64;p.style.display="block";}else{p.style.display="none";}
-  document.getElementById("editModal").classList.add("open");
-};
-window.closeEdit=()=>document.getElementById("editModal").classList.remove("open");
-window.prevEditIcon=function(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{editIcB64=ev.target.result;const i=document.getElementById("eIconPrev");i.src=editIcB64;i.style.display="block";};r.readAsDataURL(f);};
-window.saveEdit=async function(){
-  const id=document.getElementById("editId").value;
-  const data={name:document.getElementById("eName").value.trim(),link:document.getElementById("eLink").value.trim(),desc:document.getElementById("eDesc").value.trim(),iconClass:document.getElementById("eIcon").value.trim(),iconBase64:editIcB64||null};
-  await fs(`tools/${id}`,{...data,active:true,created:Date.now()});
-  tst("Tool updated!");closeEdit();loadTools();
-};
+// EDIT
+async function openEdit(id){
+  var r=await api("getAdminData");var t=r.tools&&r.tools[id];if(!t)return;
+  document.getElementById("eId").value=id;document.getElementById("eNm").value=t.name||"";document.getElementById("eLk").value=t.link||"";document.getElementById("eDsc").value=t.desc||"";document.getElementById("eIc").value=t.iconClass||"";
+  eIB=t.iconBase64||null;var p=document.getElementById("eIPv");if(t.iconBase64){p.src=t.iconBase64;p.style.display="block";}else p.style.display="none";
+  document.getElementById("editMod").classList.add("open");
+}
+function closeEdit(){document.getElementById("editMod").classList.remove("open");}
+function prevEI(ev){var f=ev.target.files[0];if(!f)return;var r=new FileReader();r.onload=function(e2){eIB=e2.target.result;var i=document.getElementById("eIPv");i.src=eIB;i.style.display="block";};r.readAsDataURL(f);}
+async function saveEdit(){
+  var id=document.getElementById("eId").value;
+  await api("editTool",{id:id,tool:{name:document.getElementById("eNm").value.trim(),link:document.getElementById("eLk").value.trim(),desc:document.getElementById("eDsc").value.trim(),iconClass:document.getElementById("eIc").value.trim(),iconBase64:eIB||null,active:true}});
+  tst("Updated!");closeEdit();loadTools();
+}
 
 // KEYS
-window.genKey=async function(){
-  const days=parseInt(document.getElementById("kDur").value);
-  const custom=document.getElementById("kCustom").value.trim();
-  const r=await api("generateKey",{days,customKey:custom});
+async function genKey(){
+  var days=parseInt(document.getElementById("kDr").value);
+  var custom=document.getElementById("kCus").value.trim();
+  var r=await api("generateKey",{days:days,customKey:custom});
   if(!r.ok){tst("Error!",false);return;}
   document.getElementById("kVal").textContent=r.key;document.getElementById("kBox").style.display="block";
   tst("Key generated!");loadKeys();loadDash();
-};
-window.cpKey=()=>{navigator.clipboard.writeText(document.getElementById("kVal").textContent).then(()=>tst("Copied!"));};
+}
+function cpKey(){navigator.clipboard.writeText(document.getElementById("kVal").textContent).then(function(){tst("Copied!");});}
 async function loadKeys(){
-  const r=await api("getAdminData");const keys=r.keys;const c=document.getElementById("kList");
-  if(!keys){c.innerHTML='<p style="color:#94a3b8;font-size:.85rem">No keys yet</p>';return;}
-  c.innerHTML="";const now=Date.now();
-  for(const[id,k]of Object.entries(keys)){
-    const exp=k.expiry<now;const rem=exp?"EXPIRED":Math.ceil((k.expiry-now)/86400000)+"d left";
-    c.innerHTML+=`<div class="kr"><div class="kv">${k.key}</div><span class="bdg ${exp?"bof":"ba"}">${rem}</span><span class="bdg bbl">${k.days}d</span>${k.used?'<span class="bdg bus">USED</span>':'<span class="bdg ba">FREE</span>'}<button class="bn bo bs" onclick="cpKV('${k.key}')"><i class="fas fa-copy"></i></button><button class="bn bd bs" onclick="delKey('${id}')"><i class="fas fa-trash"></i></button></div>`;
+  var r=await api("getAdminData");var keys=r.keys;var c=document.getElementById("kList");
+  if(!keys){c.innerHTML="<p style=color:var(--mt);font-size:.85rem>No keys yet</p>";return;}
+  c.innerHTML="";var now=Date.now();
+  for(var id in keys){
+    var k=keys[id];var exp=k.expiry<now;var rem=exp?"EXPIRED":Math.ceil((k.expiry-now)/86400000)+"d left";
+    c.innerHTML+="<div class=kr><div class=kv>"+k.key+"</div><span class='bdg "+(exp?"bof":"ba")+"'>"+(rem)+"</span><span class='bdg bbl'>"+k.days+"d</span>"+(k.used?"<span class='bdg bus'>USED</span>":"<span class='bdg ba'>FREE</span>")+"<button class='bn bo bs' onclick='cpKV(""+k.key+"")' ><i class='fas fa-copy'></i></button><button class='bn bd bs' onclick='delKey(""+id+"")' ><i class='fas fa-trash'></i></button></div>";
   }
 }
-window.cpKV=v=>navigator.clipboard.writeText(v).then(()=>tst("Copied!"));
-window.delKey=async function(id){if(!confirm("Delete?"))return;await fd(`keys/${id}`);tst("Deleted!");loadKeys();loadDash();};
+function cpKV(v){navigator.clipboard.writeText(v).then(function(){tst("Copied!");});}
+async function delKey(id){if(!confirm("Delete?"))return;await api("deleteKey",{id:id});tst("Deleted!");loadKeys();loadDash();}
 
 // APPEARANCE
-async function loadColors(){const c=await fg("settings/colors");if(!c)return;["bg","card","accent","text"].forEach(k=>{if(c[k]){document.getElementById("c-"+k).value=c[k];document.getElementById("ct-"+k).value=c[k];}});}
-window.syncC=(k,v)=>document.getElementById("ct-"+k).value=v;
-window.saveColors=async function(){const c={};["bg","card","accent","text"].forEach(k=>c[k]=document.getElementById("ct-"+k).value);const r=await api("getAdminData");const s=r.settings||{};s.colors=c;await api("saveSettings",{settings:s});tst("Colors saved!");};
-window.saveTheme=async function(){const th=document.querySelector('input[name="thm"]:checked').value;const r=await api("getAdminData");const s=r.settings||{};s.theme=th;await api("saveSettings",{settings:s});tst("Theme saved!");};
+function sC(k,v){document.getElementById("ct-"+k).value=v;}
+async function saveColors(){
+  var c={bg:document.getElementById("ct-bg").value,accent:document.getElementById("ct-ac").value,text:document.getElementById("ct-tx").value};
+  var r2=await api("getAdminData");var s=r2.settings||{};s.colors=c;
+  await api("saveSettings",{settings:s});tst("Colors saved!");
+}
+async function saveTheme(){
+  var th=document.querySelector("input[name=thm]:checked").value;
+  var r2=await api("getAdminData");var s=r2.settings||{};s.theme=th;
+  await api("saveSettings",{settings:s});tst("Theme saved!");
+}
 
 // TOOLKIT SETTINGS
-async function loadTkS(){const r=await api("getAdminData");const s=r.settings?.toolkit;if(!s)return;if(s.name)document.getElementById("tkN").value=s.name;if(s.tagline)document.getElementById("tkT").value=s.tagline;if(s.welcome)document.getElementById("tkW").value=s.welcome;}
-window.prevLg=function(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{lgB64=ev.target.result;const i=document.getElementById("lgPrev");i.src=lgB64;i.style.display="block";};r.readAsDataURL(f);};
-window.saveTk=async function(){const d={name:document.getElementById("tkN").value,tagline:document.getElementById("tkT").value,welcome:document.getElementById("tkW").value};if(lgB64)d.logoUrl=lgB64;const r=await api("getAdminData");const s=r.settings||{};s.toolkit=d;await api("saveSettings",{settings:s});tst("Saved!");};
+async function loadTkS(){var r=await api("getAdminData");var s=r.settings&&r.settings.toolkit;if(!s)return;if(s.name)document.getElementById("tkN").value=s.name;if(s.tagline)document.getElementById("tkT").value=s.tagline;if(s.welcome)document.getElementById("tkW").value=s.welcome;}
+function prevLg(ev){var f=ev.target.files[0];if(!f)return;var r=new FileReader();r.onload=function(e2){lgB=e2.target.result;var i=document.getElementById("lgPv");i.src=lgB;i.style.display="block";};r.readAsDataURL(f);}
+async function saveTk(){
+  var d={name:document.getElementById("tkN").value,tagline:document.getElementById("tkT").value,welcome:document.getElementById("tkW").value};
+  if(lgB)d.logoUrl=lgB;
+  var r2=await api("getAdminData");var s=r2.settings||{};s.toolkit=d;
+  await api("saveSettings",{settings:s});tst("Saved!");
+}
 
 // ADMIN SETTINGS
-window.savePhone=async function(){const p=document.getElementById("aPhone").value.trim();await api("savePhone",{phone:p});document.getElementById("dPhone").textContent=p;tst("Number saved!");};
-window.changeCreds=async function(){
-  const u=document.getElementById("nU").value.trim();const p=document.getElementById("nP").value;const cp=document.getElementById("nCP").value;
+async function savePhone(){var p=document.getElementById("aPh").value.trim();await api("savePhone",{phone:p});document.getElementById("dPh").textContent=p;tst("Saved!");}
+async function changeCreds(){
+  var u=document.getElementById("nU").value.trim();var p=document.getElementById("nP").value;var cp=document.getElementById("nCP").value;
   if(!u||!p){tst("All fields required!",false);return;}
-  if(p!==cp){tst("Passwords dont match!",false);return;}
-  await api("saveCreds",{username:u,password:p});tst("Updated! Re-login in 2s...");
-  setTimeout(()=>window.doLogout(),2000);
-};
-
-// Ready
+  if(p!==cp){tst("Passwords don't match!",false);return;}
+  await api("saveCreds",{username:u,password:p});tst("Updated! Re-login...");
+  setTimeout(function(){doLogout();},2000);
+}
 </script>
 </body>
 </html>
