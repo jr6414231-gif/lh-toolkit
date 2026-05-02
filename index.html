@@ -185,7 +185,7 @@ body{background:var(--bg);color:var(--tx);font-family:"Rajdhani",sans-serif;min-
 
 /* TOOL CARD */
 .tc{background:var(--nm);box-shadow:var(--shadow-sm);
-  border-radius:18px;padding:18px 12px;cursor:pointer;
+  border-radius:18px;padding:20px 10px;cursor:pointer;
   text-decoration:none;color:var(--tx);
   display:flex;flex-direction:column;align-items:center;text-align:center;gap:9px;
   transition:all .25s;animation:ce .3s ease both;
@@ -194,11 +194,11 @@ body{background:var(--bg);color:var(--tx);font-family:"Rajdhani",sans-serif;min-
   box-shadow:10px 10px 24px var(--nd),-10px -10px 24px var(--nl),0 0 20px var(--gw);
   border-bottom-color:var(--ac);}
 @keyframes ce{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
-.tiw{width:50px;height:50px;border-radius:14px;background:var(--nm);
+.tiw{width:72px;height:72px;border-radius:18px;background:var(--nm);
   box-shadow:var(--shadow-in);
-  display:flex;align-items:center;justify-content:center;font-size:1.3rem;color:var(--ac);}
-.tiw img{width:30px;height:30px;border-radius:8px;object-fit:cover;}
-.tnm{font-weight:700;font-size:.88rem;color:var(--tx);}
+  display:flex;align-items:center;justify-content:center;font-size:1.8rem;color:var(--ac);}
+.tiw img{width:52px;height:52px;border-radius:14px;object-fit:cover;}
+.tnm{font-weight:700;font-size:.92rem;color:var(--tx);}
 .tds{font-size:.73rem;color:var(--tx2);line-height:1.3;}
 .emp{grid-column:1/-1;text-align:center;padding:50px 20px;color:var(--mt);}
 .emp i{font-size:2.5rem;margin-bottom:12px;display:block;opacity:.4;}
@@ -310,13 +310,31 @@ body{background:var(--bg);color:var(--tx);font-family:"Rajdhani",sans-serif;min-
   });
 })();
 
-// ═══ API ═══
+// ═══ API — with timeout ═══
 async function api(action,payload){
   try{
-    var r=await fetch("/api/data",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({action:action,payload:payload||{}})});
+    var ctrl=new AbortController();
+    var tid=setTimeout(function(){ctrl.abort();},12000); // 12s timeout
+    var r=await fetch("/api/data",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({action:action,payload:payload||{}}),
+      signal:ctrl.signal
+    });
+    clearTimeout(tid);
     return await r.json();
-  }catch(e){return{ok:false,msg:"Connection error"};}
+  }catch(e){
+    if(e.name==="AbortError")return{ok:false,msg:"Server timeout. Please retry."};
+    return{ok:false,msg:"Connection error"};
+  }
 }
+
+// ── Keep Vercel warm — ping every 4 min so next user gets fast response ──
+function _keepWarm(){
+  fetch("/api/data",{method:"POST",headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({action:"ping",payload:{}})}).catch(function(){});
+}
+setInterval(_keepWarm, 4*60*1000);
 
 var curKey=null,curExp=null,curTh="light";
 
@@ -519,8 +537,12 @@ async function loadTools(){
   if(res.ok&&res.tools){
     _toolsCache=res.tools;
     _toolsCacheTime=Date.now();
+    _renderTools(res.tools);
+  } else {
+    // Show retry button on error
+    var g2=document.getElementById("tG");
+    g2.innerHTML="<div class='emp' style='grid-column:1/-1'><i class='fas fa-wifi' style='color:var(--ac)'></i><p style='margin:8px 0'>Could not load tools</p><button onclick='_toolsCache=null;loadTools();' style='margin-top:10px;padding:10px 22px;background:var(--ac);color:#fff;border:none;border-radius:10px;font-size:.88rem;cursor:pointer;font-weight:700'>↺ Retry</button></div>";
   }
-  _renderTools(res.ok&&res.tools?res.tools:[]);
 }
 
 async function buyK(e){
