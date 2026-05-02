@@ -368,17 +368,35 @@ async function doLogin(){
   }
   localStorage.setItem("lh_k",k);
   localStorage.setItem("lh_e",String(curExp));
+  // Start tool prefetch immediately
+  _prefetchTools();
   showWelcome();
 }
 
 function showWelcome(){
   showS("ws");
   startFlowers();
+  // ── Prefetch tools immediately in background (parallel with animation) ──
+  _prefetchTools();
+  // Reduce animation to 1 second — don't keep user waiting
   setTimeout(function(){
     stopFlowers();
     showS("ts");
     loadUI();
-  },2200);
+  },1000);
+}
+
+// Prefetch tools in background — stores in cache so loadTools() shows instantly
+var _prefetchPromise=null;
+function _prefetchTools(){
+  if(!curKey)return;
+  _prefetchPromise=api("getTools",{}).then(function(res){
+    if(res&&res.ok&&res.tools){
+      _toolsCache=res.tools;
+      _toolsCacheTime=Date.now();
+    }
+    _prefetchPromise=null;
+  }).catch(function(){_prefetchPromise=null;});
 }
 
 var flowerTimer=null;
@@ -489,10 +507,18 @@ async function loadTools(){
     g.appendChild(sk);
   }
 
+  // If prefetch already in progress, wait for it — no duplicate call
+  if(_prefetchPromise){
+    try{await _prefetchPromise;}catch(e2){}
+    if(_toolsCache&&_toolsCacheTime>0){
+      _renderTools(_toolsCache);
+      return;
+    }
+  }
   var res=await api("getTools",{});
   if(res.ok&&res.tools){
     _toolsCache=res.tools;
-    _toolsCacheTime=now;
+    _toolsCacheTime=Date.now();
   }
   _renderTools(res.ok&&res.tools?res.tools:[]);
 }
@@ -541,7 +567,7 @@ function startCountdown(){
 
 function doLogout(){
   clearInterval(_cdTimer);
-  _toolsCache=null;_toolsCacheTime=0;
+  _toolsCache=null;_toolsCacheTime=0;_prefetchPromise=null;
   curKey=null;curExp=null;
   localStorage.removeItem("lh_k");
   localStorage.removeItem("lh_e");
@@ -577,6 +603,8 @@ async function autoLogin(){
     if(decoded.match(/^[A-Z0-9\-]+$/))key=decoded;
   }catch(e2){}
   curKey=key;curExp=exp;
+  // Start tool prefetch immediately — don't wait for animation
+  _prefetchTools();
   showWelcome();
 }
 
