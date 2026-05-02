@@ -359,9 +359,15 @@ async function doLogin(){
   var res=await api("verifyKey",{key:k,deviceId:getDevId()});
   if(!res.ok){e.textContent=res.msg||"Invalid key!";e.style.color="var(--ac)";e.style.display="block";return;}
   e.style.display="none";
-  curKey=k;curExp=res.expiry;
+  curKey=k;
+  // Ensure expiry is a valid timestamp number
+  curExp=res.expiry?parseInt(res.expiry):null;
+  if(!curExp||isNaN(curExp)){
+    // Fallback: if server didn't return expiry, use 1 day from now
+    curExp=Date.now()+86400000;
+  }
   localStorage.setItem("lh_k",k);
-  localStorage.setItem("lh_e",res.expiry);
+  localStorage.setItem("lh_e",String(curExp));
   showWelcome();
 }
 
@@ -403,11 +409,22 @@ function stopFlowers(){
 }
 
 async function loadUI(){
-  document.getElementById("kSh").textContent=curKey;
-  document.getElementById("wU").textContent=curKey.substring(0,8)+"...";
-  if(curExp){
-    // Start live countdown
+  // Sanitize key display — decode if btoa encoded
+  var dispKey=curKey||"";
+  try{
+    var dec=atob(dispKey);
+    if(dec&&dec.match(/^[A-Z0-9\-]+$/))dispKey=dec;
+  }catch(e2){}
+  curKey=dispKey; // make sure curKey is clean
+  document.getElementById("kSh").textContent=dispKey;
+  // Show masked key e.g. LH-X***-***X
+  var masked=dispKey.length>6?dispKey.substring(0,4)+"****"+dispKey.slice(-4):dispKey;
+  document.getElementById("wU").textContent=masked;
+  if(curExp&&!isNaN(curExp)&&curExp>Date.now()){
     startCountdown();
+  } else if(curExp&&curExp<=Date.now()){
+    document.getElementById("kEx").textContent="EXPIRED";
+    document.getElementById("kbdg").innerHTML="<i class='fas fa-clock'></i> EXP";
   }
   // Load tools immediately
   loadTools();
@@ -524,8 +541,10 @@ function startCountdown(){
 
 function doLogout(){
   clearInterval(_cdTimer);
+  _toolsCache=null;_toolsCacheTime=0;
   curKey=null;curExp=null;
-  localStorage.removeItem("lh_k");localStorage.removeItem("lh_e");
+  localStorage.removeItem("lh_k");
+  localStorage.removeItem("lh_e");
   document.getElementById("lk").value="";
   document.getElementById("err").style.display="none";
   showS("ls");tst("Logged out!");
@@ -533,9 +552,31 @@ function doLogout(){
 
 async function autoLogin(){
   var k=localStorage.getItem("lh_k");
-  var exp=localStorage.getItem("lh_e");
-  if(!k||!exp||parseInt(exp)<Date.now()){localStorage.removeItem("lh_k");return;}
-  curKey=k;curExp=parseInt(exp);
+  var expRaw=localStorage.getItem("lh_e");
+  if(!k||!expRaw){return;}
+  // Handle both plain and btoa-encoded values safely
+  var exp;
+  try{
+    // Try plain number first
+    exp=parseInt(expRaw);
+    if(isNaN(exp)){
+      // Try btoa decode
+      exp=parseInt(atob(expRaw));
+    }
+  }catch(e2){exp=0;}
+  if(!exp||isNaN(exp)||exp<Date.now()){
+    localStorage.removeItem("lh_k");
+    localStorage.removeItem("lh_e");
+    return;
+  }
+  // Also handle btoa-encoded key
+  var key=k;
+  try{
+    var decoded=atob(k);
+    // btoa decoded strings look like keys (LH-XXXX format)
+    if(decoded.match(/^[A-Z0-9\-]+$/))key=decoded;
+  }catch(e2){}
+  curKey=key;curExp=exp;
   showWelcome();
 }
 
