@@ -345,26 +345,29 @@ async function _fbSet(path,data){
 async function api(action,payload){
   try{
     if(action==="verifyKey"){
-      var keys=await _fbGet("keys");
-      if(!keys)return{ok:false,msg:"Server error. Try again."};
       var k=(payload.key||"").trim().toUpperCase();
       var now=Date.now();
-      for(var id in keys){
-        var kd=keys[id];
-        if(kd.key&&kd.key.toUpperCase()===k){
-          if(kd.expiry<now)return{ok:false,msg:"Key expired!"};
-          // Device lock check
-          if(kd.deviceId&&kd.deviceId!==(payload.deviceId||""))
-            return{ok:false,msg:"Key locked to another device!"};
-          // First use — save deviceId
-          if(!kd.deviceId&&payload.deviceId){
-            await _fbSet("keys/"+id+"/deviceId",payload.deviceId);
-            await _fbSet("keys/"+id+"/used",true);
-          }
-          return{ok:true,expiry:kd.expiry,keyId:id};
+      // Query Firebase by key value directly — no need to read all keys
+      try{
+        var url=_FB_DB+"/keys.json?orderBy=%22key%22&equalTo=%22"+encodeURIComponent(k)+"%22";
+        var r2=await fetch(url);
+        var txt=await r2.text();
+        var result=(txt&&txt!=="null")?JSON.parse(txt):null;
+        if(!result||!Object.keys(result).length)
+          return{ok:false,msg:"Invalid key! Buy from admin."};
+        var id=Object.keys(result)[0];
+        var kd=result[id];
+        if(kd.expiry<now)return{ok:false,msg:"Key expired!"};
+        if(kd.deviceId&&kd.deviceId!==(payload.deviceId||""))
+          return{ok:false,msg:"Key locked to another device!"};
+        if(!kd.deviceId&&payload.deviceId){
+          await _fbSet("keys/"+id+"/deviceId",payload.deviceId);
+          await _fbSet("keys/"+id+"/used",true);
         }
+        return{ok:true,expiry:kd.expiry,keyId:id};
+      }catch(e2){
+        return{ok:false,msg:"Connection error. Try again."};
       }
-      return{ok:false,msg:"Invalid key! Buy from admin."};
     }
 
     if(action==="getTools"){
