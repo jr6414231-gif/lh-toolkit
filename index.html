@@ -228,9 +228,26 @@ body{background:var(--bg);color:var(--tx);font-family:"Rajdhani",sans-serif;min-
 </style>
 <div class="darood-wrap">
   <span class="darood-txt">
-    &#x2728;&nbsp;&nbsp;اللَّهُمَّ صَلِّ عَلَى مُحَمَّدٍ وَعَلَى آلِ مُحَمَّدٍ كَمَا صَلَّيْتَ عَلَى إِبْرَاهِيمَ وَعَلَى آلِ إِبْرَاهِيمَ إِنَّكَ حَمِيدٌ مَجِيدٌ &nbsp;&nbsp;&#x2605;&nbsp;&nbsp;اللَّهُمَّ بَارِكْ عَلَى مُحَمَّدٍ وَعَلَى آلِ مُحَمَّدٍ كَمَا بَارَكْتَ عَلَى إِبْرَاهِيمَ وَعَلَى آلِ إِبْرَاهِيمَ إِنَّكَ حَمِيدٌ مَجِيدٌ &nbsp;&nbsp;&#x2728;
+    ✨&nbsp;&nbsp;اللَّهُمَّ صَلِّ عَلَى مُحَمَّدٍ وَعَلَى آلِ مُحَمَّدٍ كَمَا صَلَّيْتَ عَلَى إِبْرَاهِيمَ وَعَلَى آلِ إِبْرَاهِيمَ إِنَّكَ حَمِيدٌ مَجِيدٌ &nbsp;&nbsp;★&nbsp;&nbsp;اللَّهُمَّ بَارِكْ عَلَى مُحَمَّدٍ وَعَلَى آلِ مُحَمَّدٍ كَمَا بَارَكْتَ عَلَى إِبْرَاهِيمَ وَعَلَى آلِ إِبْرَاهِيمَ إِنَّكَ حَمِيدٌ مَجِيدٌ &nbsp;&nbsp;✨
   </span>
 </div>
+<!-- DAROOD SHAREEF MARQUEE -->
+<div style="background:linear-gradient(135deg,#1a1a2e,#16213e);padding:9px 0;overflow:hidden;position:relative;z-index:9999;border-bottom:2px solid rgba(255,51,102,.3);box-shadow:0 2px 12px rgba(255,51,102,.2);">
+  <div style="display:flex;align-items:center;gap:0;">
+    <div style="white-space:nowrap;animation:dScroll 28s linear infinite;font-family:'Noto Nastaliq Urdu','Traditional Arabic',Arial,sans-serif;font-size:1rem;color:#ffd700;letter-spacing:1px;text-shadow:0 0 10px rgba(255,215,0,.5);direction:rtl;padding-right:60px;">
+      &#x2728;&nbsp;&nbsp;اللَّهُمَّ صَلِّ عَلَى مُحَمَّدٍ وَعَلَى آلِ مُحَمَّدٍ كَمَا صَلَّيْتَ عَلَى إِبْرَاهِيمَ وَعَلَى آلِ إِبْرَاهِيمَ إِنَّكَ حَمِيدٌ مَجِيدٌ &nbsp;&nbsp;&#x2605;&nbsp;&nbsp; اللَّهُمَّ بَارِكْ عَلَى مُحَمَّدٍ وَعَلَى آلِ مُحَمَّدٍ كَمَا بَارَكْتَ عَلَى إِبْرَاهِيمَ وَعَلَى آلِ إِبْرَاهِيمَ إِنَّكَ حَمِيدٌ مَجِيدٌ &nbsp;&nbsp;&#x2728;
+    </div>
+    <div style="white-space:nowrap;animation:dScroll 28s linear infinite;font-family:'Noto Nastaliq Urdu','Traditional Arabic',Arial,sans-serif;font-size:1rem;color:#ffd700;letter-spacing:1px;text-shadow:0 0 10px rgba(255,215,0,.5);direction:rtl;padding-right:60px;" aria-hidden="true">
+      &#x2728;&nbsp;&nbsp;اللَّهُمَّ صَلِّ عَلَى مُحَمَّدٍ وَعَلَى آلِ مُحَمَّدٍ كَمَا صَلَّيْتَ عَلَى إِبْرَاهِيمَ وَعَلَى آلِ إِبْرَاهِيمَ إِنَّكَ حَمِيدٌ مَجِيدٌ &nbsp;&nbsp;&#x2605;&nbsp;&nbsp; اللَّهُمَّ بَارِكْ عَلَى مُحَمَّدٍ وَعَلَى آلِ مُحَمَّدٍ كَمَا بَارَكْتَ عَلَى إِبْرَاهِيمَ وَعَلَى آلِ إِبْرَاهِيمَ إِنَّكَ حَمِيدٌ مَجِيدٌ &nbsp;&nbsp;&#x2728;
+    </div>
+  </div>
+</div>
+<style>
+@keyframes dScroll{
+  0%{transform:translateX(0);}
+  100%{transform:translateX(-100%);}
+}
+</style>
 
 
 
@@ -325,31 +342,94 @@ body{background:var(--bg);color:var(--tx);font-family:"Rajdhani",sans-serif;min-
   });
 })();
 
-// ═══ API — with timeout ═══
+// ═══ FIREBASE DIRECT (No Vercel — instant load) ═══
+var _FB_DB = "https://toolkit-73b2a-default-rtdb.firebaseio.com";
+var _FB_KEY = "AIzaSyDJ8nLUpk-LmCebvSuzOB0EJx5tJvVKsPw";
+var _fbToken = null;
+
+async function _fbAuth(){
+  if(_fbToken)return _fbToken;
+  try{
+    var r=await fetch("https://identitytoolkit.googleapis.com/v1/accounts:signUp?key="+_FB_KEY,{
+      method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({returnSecureToken:true})
+    });
+    var d=await r.json();
+    _fbToken=d.idToken||null;
+    return _fbToken;
+  }catch(e){return null;}
+}
+
+async function _fbGet(path){
+  try{
+    var tok=await _fbAuth();
+    var r=await fetch(_FB_DB+"/"+path+".json"+(tok?"?auth="+tok:""));
+    var t=await r.text();
+    return(t&&t!=="null")?JSON.parse(t):null;
+  }catch(e){return null;}
+}
+
+async function _fbSet(path,data){
+  try{
+    var tok=await _fbAuth();
+    await fetch(_FB_DB+"/"+path+".json"+(tok?"?auth="+tok:""),{
+      method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify(data)
+    });
+  }catch(e){}
+}
+
+// ── api() shim — maps old Vercel actions to Firebase directly ──
 async function api(action,payload){
   try{
-    var ctrl=new AbortController();
-    var tid=setTimeout(function(){ctrl.abort();},12000); // 12s timeout
-    var r=await fetch("/api/data",{
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({action:action,payload:payload||{}}),
-      signal:ctrl.signal
-    });
-    clearTimeout(tid);
-    return await r.json();
+    if(action==="verifyKey"){
+      var keys=await _fbGet("keys");
+      if(!keys)return{ok:false,msg:"Server error. Try again."};
+      var k=(payload.key||"").trim().toUpperCase();
+      var now=Date.now();
+      for(var id in keys){
+        var kd=keys[id];
+        if(kd.key&&kd.key.toUpperCase()===k){
+          if(kd.expiry<now)return{ok:false,msg:"Key expired!"};
+          // Device lock check
+          if(kd.deviceId&&kd.deviceId!==(payload.deviceId||""))
+            return{ok:false,msg:"Key locked to another device!"};
+          // First use — save deviceId
+          if(!kd.deviceId&&payload.deviceId){
+            await _fbSet("keys/"+id+"/deviceId",payload.deviceId);
+            await _fbSet("keys/"+id+"/used",true);
+          }
+          return{ok:true,expiry:kd.expiry,keyId:id};
+        }
+      }
+      return{ok:false,msg:"Invalid key! Buy from admin."};
+    }
+
+    if(action==="getTools"){
+      var tools=await _fbGet("tools");
+      if(!tools)return{ok:true,tools:[]};
+      var arr=[];
+      for(var tid in tools){
+        var t=tools[tid];
+        if(t.active!==false)arr.push(t);
+      }
+      return{ok:true,tools:arr};
+    }
+
+    if(action==="getSettings"){
+      var s=await _fbGet("settings");
+      return{ok:true,settings:s||{}};
+    }
+
+    if(action==="getPhone"){
+      var ph=await _fbGet("admin/phone");
+      return{ok:true,phone:ph||"923277796795"};
+    }
+
+    return{ok:false,msg:"Unknown action"};
   }catch(e){
-    if(e.name==="AbortError")return{ok:false,msg:"Server timeout. Please retry."};
     return{ok:false,msg:"Connection error"};
   }
 }
-
-// ── Keep Vercel warm — ping every 4 min so next user gets fast response ──
-function _keepWarm(){
-  fetch("/api/data",{method:"POST",headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({action:"ping",payload:{}})}).catch(function(){});
-}
-setInterval(_keepWarm, 4*60*1000);
 
 var curKey=null,curExp=null,curTh="light";
 
