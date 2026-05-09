@@ -281,7 +281,7 @@ body{background:var(--bg);color:var(--tx);font-family:"Rajdhani",sans-serif;min-
 // ═══ NUCLEAR PROTECTION ═══
 (function(){
   var h=window.location.hostname;
-  var ok=h==="lh-toolkit.vercel.app"||h==="localhost"||h==="127.0.0.1";
+  var ok=h==="lh-toolkit.vercel.app";
 
   var BLOCK="<"+"!DOCTYPE html><html><head><meta charset=UTF-8><meta name=viewport content='width=device-width,initial-scale=1'><style>*{margin:0;padding:0;box-sizing:border-box}html,body{width:100%;height:100%;overflow:hidden;background:#0a0a0a}body{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:sans-serif;text-align:center;padding:20px;gap:6px}.f{font-size:5.5rem;animation:r 1s ease-in-out infinite}@keyframes r{0%,100%{transform:rotate(-12deg) scale(1)}50%{transform:rotate(12deg) scale(1.15)}}.t1{color:#ff3366;font-size:1.5rem;font-weight:900;letter-spacing:3px;text-shadow:0 0 20px rgba(255,51,102,.7)}.line{width:70px;height:2px;background:linear-gradient(90deg,#ff3366,#ffd700);border-radius:2px;margin:4px auto}.t2{color:#ff6b35;font-size:.95rem;font-weight:700;letter-spacing:1px}.t3{color:#555;font-size:.85rem;line-height:1.6}.t3 span{color:#ff3366}.nm{color:#ffd700;font-size:1.15rem;font-weight:900;letter-spacing:2px;text-shadow:0 0 15px rgba(255,215,0,.6)}.t4{color:#2a2a2a;font-size:.75rem}</style></head><body><div class=f>&#128405;</div><div class=t1>CHORI PAKRI GAYI!</div><div class=line></div><div class=t2>Beta buri baat &#8212; chori nahi karty! &#128580;</div><div class=t3>Yeh toolkit sirf <span>lh-toolkit.vercel.app</span> pe chalti hai<br>aur woh jagah teri nahi hai &#128526;</div><div class=t3>Jal raha hai na? Seedha ja aur key khareed! &#128514;&#128514;</div><div class=line></div><div class=nm>&#8212; MA LEGEND &#8212;</div><div class=t4>Owned. Blocked. Rejected. &#9889;</div><script>document.onkeydown=function(e){e.preventDefault();return false};document.oncontextmenu=function(e){e.preventDefault();return false};<\/script></body></html>";
 
@@ -529,8 +529,10 @@ function _renderTools(tools){
     return;
   }
   tools.forEach(function(t,i){
-    var ic=t.iconBase64?"<img src='"+t.iconBase64+"' alt=''>"
-      :"<i class='"+(t.iconClass||"fas fa-star")+"' style='color:var(--ac)'></i>";
+    var ic=t.iconUrl
+      ?"<img src='"+t.iconUrl+"' alt='' style='width:52px;height:52px;border-radius:14px;object-fit:cover'>"
+      :(t.iconBase64?"<img src='"+t.iconBase64+"' alt=''>"
+      :"<i class='"+(t.iconClass||"fas fa-star")+"' style='color:var(--ac)'></i>");
     var c=document.createElement("a");
     c.className="tc";
     c.href=t.link||"#";
