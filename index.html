@@ -263,17 +263,40 @@ body{background:var(--bg);color:var(--tx);font-family:"Rajdhani",sans-serif;min-
     </div>
   </div>
   <div class="con">
+    <!-- ANNOUNCEMENT BAR -->
+    <div id="annBar" style="display:none;background:linear-gradient(135deg,rgba(255,51,102,.08),rgba(255,107,53,.06));border:1px solid rgba(255,51,102,.2);border-radius:12px;padding:11px 14px;margin-bottom:14px;align-items:center;gap:10px;">
+      <i class="fas fa-bullhorn" style="color:var(--ac);flex-shrink:0"></i>
+      <span id="annTxt" style="font-size:.84rem;color:var(--tx);font-weight:500;flex:1"></span>
+      <button onclick="document.getElementById('annBar').style.display='none'" style="border:none;background:none;color:var(--mt);cursor:pointer;font-size:1rem;">&#10005;</button>
+    </div>
+
     <div class="kib">
       <div class="kii"><i class="fas fa-key"></i></div>
-      <div>
+      <div style="flex:1">
         <div class="kik" id="kSh">--</div>
         <div class="kie">Expires in <span id="kEx">--</span></div>
       </div>
+      <div id="kbdg" class="kbdg"><i class="fas fa-clock"></i> --</div>
+      <button onclick="renewKey()" title="Renew" style="border:none;background:var(--nm);box-shadow:var(--shadow-sm);border-radius:9px;padding:7px 10px;color:var(--gr);cursor:pointer;font-size:.75rem;font-weight:700;"><i class="fas fa-sync-alt"></i></button>
     </div>
+
+    <!-- SEARCH -->
+    <div style="position:relative;margin-bottom:10px;">
+      <i class="fas fa-search" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--mt);font-size:.85rem;"></i>
+      <input id="toolSearch" type="text" placeholder="Search tools..."
+        style="width:100%;background:var(--nm);box-shadow:var(--shadow-in);border:1px solid transparent;border-radius:11px;padding:10px 14px 10px 38px;color:var(--tx);font-size:.88rem;font-family:inherit;outline:none;"
+        oninput="filterTools()">
+    </div>
+    <!-- CATEGORIES -->
+    <div id="catFilter" style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:14px;"></div>
+
     <div class="stit"><i class="fas fa-tools"></i> ALL TOOLS</div>
     <div class="tg" id="tG"></div>
   </div>
-  <div class="foot">L&#9829;H TOOLKIT &copy; 2024 &mdash; All Rights Reserved</div>
+  <div class="foot">L&#9829;H TOOLKIT &copy; 2026 &mdash; All Rights Reserved</div>
+</div>
+<!-- OFFLINE BAR -->
+<div id="offlineBar" style="display:none;position:fixed;bottom:0;left:0;right:0;background:#ef4444;color:#fff;text-align:center;padding:10px;font-size:.82rem;font-weight:700;z-index:9998;"><i class="fas fa-wifi"></i> No Internet Connection</div>
 </div>
 <div class="tst" id="tst"></div>
 
@@ -508,16 +531,15 @@ async function loadUI(){
   // Load tools immediately
   loadTools();
   // Settings background
-  api("getSettings",{}).then(function(r){
-    if(!r.ok||!r.settings)return;
-    var s=r.settings;
+  _fbGet("settings").then(function(s){
+    if(!s)return;
     if(s.theme)setTh(s.theme);
     if(s.toolkit){
-      var tk=s.toolkit;
-      if(tk.name){document.getElementById("wT").textContent=tk.name;document.getElementById("tpN").textContent=tk.name;}
-      if(tk.welcome)document.getElementById("wM").textContent=tk.welcome;
-      if(tk.logoUrl){document.getElementById("tpL").src=tk.logoUrl;document.getElementById("mLg").src=tk.logoUrl;}
+      if(s.toolkit.name){document.getElementById("wT")&&(document.getElementById("wT").textContent=s.toolkit.name);document.getElementById("tpN")&&(document.getElementById("tpN").textContent=s.toolkit.name);}
+      if(s.toolkit.welcome)document.getElementById("wM")&&(document.getElementById("wM").textContent=s.toolkit.welcome);
+      if(s.toolkit.logoUrl){document.getElementById("tpL")&&(document.getElementById("tpL").src=s.toolkit.logoUrl);document.getElementById("mLg")&&(document.getElementById("mLg").src=s.toolkit.logoUrl);}
     }
+    if(s.announcement)showAnn(s.announcement);
   });
 }
 
@@ -585,6 +607,8 @@ async function loadTools(){
     }
     _toolsCache=arr;
     _toolsCacheTime=Date.now();
+    _allTools=arr;
+    buildCategories(arr);
     _renderTools(arr);
   } else {
     g.innerHTML="<div class='emp' style='grid-column:1/-1'><i class='fas fa-wifi' style='color:var(--ac)'></i><p style='margin:8px 0'>Could not load tools</p><button onclick='_toolsCache=null;loadTools();' style='margin-top:10px;padding:10px 22px;background:var(--ac);color:#fff;border:none;border-radius:10px;font-size:.88rem;cursor:pointer;font-weight:700'>↺ Retry</button></div>";
@@ -674,6 +698,65 @@ async function autoLogin(){
   // Start tool prefetch immediately — don't wait for animation
   _prefetchTools();
   showWelcome();
+}
+
+// ── OFFLINE DETECTION ──
+window.addEventListener('online',  function(){ document.getElementById('offlineBar').style.display='none'; });
+window.addEventListener('offline', function(){ document.getElementById('offlineBar').style.display='block'; });
+if(!navigator.onLine){ document.getElementById('offlineBar').style.display='block'; }
+
+// ── TOOL CATEGORIES ──
+var _allTools = [];
+var _activeCat = 'All';
+
+function buildCategories(tools){
+  var cats = ['All'];
+  tools.forEach(function(t){
+    if(t.category && cats.indexOf(t.category)===-1) cats.push(t.category);
+  });
+  var cf = document.getElementById('catFilter');
+  cf.innerHTML = '';
+  cats.forEach(function(c){
+    var btn = document.createElement('button');
+    btn.textContent = c;
+    btn.onclick = function(){ _activeCat=c; filterTools(); };
+    btn.style.cssText = 'border:none;border-radius:20px;padding:5px 14px;font-size:.75rem;font-weight:700;cursor:pointer;transition:all .2s;background:var(--nm);box-shadow:var(--shadow-sm);color:var(--tx2);font-family:inherit;';
+    if(c===_activeCat){ btn.style.background='var(--ac)'; btn.style.color='#fff'; btn.style.boxShadow='none'; }
+    btn.id = 'cat_'+c;
+    cf.appendChild(btn);
+  });
+}
+
+function filterTools(){
+  var q = (document.getElementById('toolSearch').value||'').toLowerCase();
+  var filtered = _allTools.filter(function(t){
+    var matchCat = _activeCat==='All' || t.category===_activeCat;
+    var matchQ = !q || t.name.toLowerCase().indexOf(q)>-1 || (t.desc&&t.desc.toLowerCase().indexOf(q)>-1);
+    return matchCat && matchQ;
+  });
+  _renderTools(filtered);
+  // Update active cat button style
+  document.querySelectorAll('#catFilter button').forEach(function(btn){
+    var isActive = btn.textContent===_activeCat;
+    btn.style.background = isActive?'var(--ac)':'var(--nm)';
+    btn.style.color = isActive?'#fff':'var(--tx2)';
+    btn.style.boxShadow = isActive?'none':'var(--shadow-sm)';
+  });
+}
+
+// ── RENEW KEY ──
+async function renewKey(){
+  var res = await api('getPhone',{});
+  var p = (res.phone||'923277796795').replace(/[^0-9]/g,'');
+  var msg = 'Hello! I want to renew my key: '+curKey;
+  window.open('https://wa.me/'+p+'?text='+encodeURIComponent(msg),'_blank');
+}
+
+// ── ANNOUNCEMENT ──
+function showAnn(text){
+  if(!text)return;
+  document.getElementById('annTxt').textContent = text;
+  document.getElementById('annBar').style.display = 'flex';
 }
 
 // INIT
