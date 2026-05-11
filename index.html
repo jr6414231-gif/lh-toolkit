@@ -257,7 +257,7 @@ body{background:var(--bg);color:var(--tx);font-family:"Rajdhani",sans-serif;min-
       <span id="tpN">L&#9829;H TOOLKIT</span>
     </div>
     <div class="tbri">
-      <div class="kbdg" id="kbdg"><i class="fas fa-clock"></i> --</div>
+      <div class="kbdg" id="kbdg2"><i class="fas fa-clock"></i> --</div>
       <button class="icb" id="thTkBtn" onclick="togTh()"><i class="fas fa-moon" id="thTk"></i></button>
       <button class="icb" onclick="doLogout()"><i class="fas fa-sign-out-alt"></i></button>
     </div>
@@ -526,7 +526,7 @@ async function loadUI(){
     startCountdown();
   } else if(curExp&&curExp<=Date.now()){
     document.getElementById("kEx").textContent="EXPIRED";
-    document.getElementById("kbdg").innerHTML="<i class='fas fa-clock'></i> EXP";
+    document.getElementById("kbdg").innerHTML="<i class='fas fa-clock'></i> EXP";if(document.getElementById("kbdg2"))document.getElementById("kbdg2").innerHTML="<i class='fas fa-clock'></i> EXP";
   }
   // Load tools immediately
   loadTools();
@@ -630,7 +630,7 @@ function startCountdown(){
     var rem=curExp-Date.now();
     if(rem<=0){
       document.getElementById("kEx").textContent="EXPIRED";
-      document.getElementById("kbdg").innerHTML="<i class='fas fa-clock'></i> EXP";
+      document.getElementById("kbdg").innerHTML="<i class='fas fa-clock'></i> EXP";if(document.getElementById("kbdg2"))document.getElementById("kbdg2").innerHTML="<i class='fas fa-clock'></i> EXP";
       clearInterval(_cdTimer);
       setTimeout(function(){doLogout();tst("Key expired!",false);},1500);
       return;
@@ -645,12 +645,15 @@ function startCountdown(){
     // Short badge
     var badgeTxt=h>0?(h+"h"):((m<10?"0"+m:m)+"m");
     document.getElementById("kEx").textContent=fullTxt;
-    document.getElementById("kbdg").innerHTML="<i class='fas fa-clock'></i> "+badgeTxt;
+    var bdgHTML="<i class='fas fa-clock'></i> "+badgeTxt;
+    document.getElementById("kbdg").innerHTML=bdgHTML;
+    if(document.getElementById("kbdg2"))document.getElementById("kbdg2").innerHTML=bdgHTML;
     // Warn red when < 1 hour
     if(rem<3600000){
-      document.getElementById("kbdg").style.background="rgba(239,68,68,.15)";
-      document.getElementById("kbdg").style.color="var(--ac)";
-      document.getElementById("kbdg").style.borderColor="rgba(239,68,68,.3)";
+      ["kbdg","kbdg2"].forEach(function(id){
+        var el=document.getElementById(id);
+        if(el){el.style.background="rgba(239,68,68,.15)";el.style.color="var(--ac)";el.style.borderColor="rgba(239,68,68,.3)";}
+      });
     }
   }
   tick();
