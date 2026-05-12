@@ -187,8 +187,8 @@ body{background:var(--bg);color:var(--tx);font-family:"Rajdhani",sans-serif;min-
 
 /* TOOL CARD */
 .tc{background:var(--nm);box-shadow:var(--shadow-sm);
-  border-radius:18px;padding:20px 10px;cursor:pointer;
-  transition:transform .15s ease,box-shadow .15s ease;}
+  border-radius:14px;padding:14px 8px;cursor:pointer;
+  transition:transform .15s ease,box-shadow .15s ease;position:relative;}
 .tc:active{transform:scale(.94);box-shadow:var(--shadow-in);}
 .tc{
   text-decoration:none;color:var(--tx);
@@ -199,11 +199,11 @@ body{background:var(--bg);color:var(--tx);font-family:"Rajdhani",sans-serif;min-
   box-shadow:10px 10px 24px var(--nd),-10px -10px 24px var(--nl),0 0 20px var(--gw);
   border-bottom-color:var(--ac);}
 @keyframes ce{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
-.tiw{width:72px;height:72px;border-radius:18px;background:var(--nm);
+.tiw{width:54px;height:54px;border-radius:14px;background:var(--nm);
   box-shadow:var(--shadow-in);
   display:flex;align-items:center;justify-content:center;font-size:1.8rem;color:var(--ac);}
-.tiw img{width:52px;height:52px;border-radius:14px;object-fit:cover;}
-.tnm{font-weight:700;font-size:.92rem;color:var(--tx);}
+.tiw img{width:44px;height:44px;border-radius:11px;object-fit:cover;}
+.tnm{font-weight:700;font-size:.78rem;color:var(--tx);}
 .tds{font-size:.73rem;color:var(--tx2);line-height:1.3;}
 .emp{grid-column:1/-1;text-align:center;padding:50px 20px;color:var(--mt);}
 .emp i{font-size:2.5rem;margin-bottom:12px;display:block;opacity:.4;}
@@ -285,6 +285,26 @@ body{background:var(--bg);color:var(--tx);font-family:"Rajdhani",sans-serif;min-
     </div>
   </div>
   <div class="con">
+    <!-- STATS BAR -->
+    <div style="display:flex;gap:10px;margin-bottom:14px;">
+      <div style="flex:1;background:var(--nm);box-shadow:var(--shadow-sm);border-radius:12px;padding:10px;text-align:center;">
+        <div style="display:flex;align-items:center;justify-content:center;gap:5px;">
+          <div style="width:8px;height:8px;border-radius:50%;background:#10b981;animation:onlinePulse 2s ease-in-out infinite;"></div>
+          <span id="onlineCount" style="font-family:'Orbitron',sans-serif;font-size:.85rem;font-weight:700;color:#10b981;">--</span>
+        </div>
+        <div style="font-size:.65rem;color:var(--mt);margin-top:2px;">Online</div>
+      </div>
+      <div style="flex:1;background:var(--nm);box-shadow:var(--shadow-sm);border-radius:12px;padding:10px;text-align:center;">
+        <div style="font-family:'Orbitron',sans-serif;font-size:.85rem;font-weight:700;color:var(--bl);" id="viewsCount">--</div>
+        <div style="font-size:.65rem;color:var(--mt);margin-top:2px;">Views</div>
+      </div>
+      <div style="flex:1;background:var(--nm);box-shadow:var(--shadow-sm);border-radius:12px;padding:10px;text-align:center;">
+        <div style="font-family:'Orbitron',sans-serif;font-size:.85rem;font-weight:700;color:var(--ac);" id="toolsCountStat">--</div>
+        <div style="font-size:.65rem;color:var(--mt);margin-top:2px;">Tools</div>
+      </div>
+    </div>
+    <style>@keyframes onlinePulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.5;transform:scale(1.3);}}</style>
+
     <!-- ANNOUNCEMENT BAR -->
     <div id="annBar" style="display:none;background:linear-gradient(135deg,rgba(255,51,102,.08),rgba(255,107,53,.06));border:1px solid rgba(255,51,102,.2);border-radius:12px;padding:11px 14px;margin-bottom:14px;align-items:center;gap:10px;">
       <i class="fas fa-bullhorn" style="color:var(--ac);flex-shrink:0"></i>
@@ -315,8 +335,15 @@ body{background:var(--bg);color:var(--tx);font-family:"Rajdhani",sans-serif;min-
         style="width:100%;background:var(--nm);box-shadow:var(--shadow-in);border:1px solid transparent;border-radius:11px;padding:10px 14px 10px 38px;color:var(--tx);font-size:.88rem;font-family:inherit;outline:none;"
         oninput="filterTools()">
     </div>
+    <!-- TABS -->
+    <div style="display:flex;gap:8px;margin-bottom:12px;overflow-x:auto;padding-bottom:4px;">
+      <button id="tab_all" onclick="setTab('all')" style="border:none;border-radius:20px;padding:7px 16px;font-size:.78rem;font-weight:700;cursor:pointer;white-space:nowrap;font-family:inherit;background:var(--ac);color:#fff;box-shadow:0 4px 12px rgba(255,51,102,.3);">All</button>
+      <button id="tab_trending" onclick="setTab('trending')" style="border:none;border-radius:20px;padding:7px 16px;font-size:.78rem;font-weight:700;cursor:pointer;white-space:nowrap;font-family:inherit;background:var(--nm);box-shadow:var(--shadow-sm);color:var(--tx2);">🔥 Trending</button>
+      <button id="tab_latest" onclick="setTab('latest')" style="border:none;border-radius:20px;padding:7px 16px;font-size:.78rem;font-weight:700;cursor:pointer;white-space:nowrap;font-family:inherit;background:var(--nm);box-shadow:var(--shadow-sm);color:var(--tx2);">✨ Latest</button>
+      <button id="tab_fav" onclick="setTab('fav')" style="border:none;border-radius:20px;padding:7px 16px;font-size:.78rem;font-weight:700;cursor:pointer;white-space:nowrap;font-family:inherit;background:var(--nm);box-shadow:var(--shadow-sm);color:var(--tx2);">⭐ Favourites</button>
+    </div>
     <!-- CATEGORIES -->
-    <div id="catFilter" style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:14px;"></div>
+    <div id="catFilter" style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:12px;"></div>
 
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
       <div class="stit" style="margin-bottom:0;flex:1"><i class="fas fa-tools"></i> ALL TOOLS</div>
@@ -336,6 +363,8 @@ body{background:var(--bg);color:var(--tx);font-family:"Rajdhani",sans-serif;min-
 (function(){
   var h=window.location.hostname;
   var ok=h==="lh-toolkit.vercel.app";
+  // Store result for DOMContentLoaded
+  window._domainOk=ok;
 
   var BLOCK="<"+"!DOCTYPE html><html><head><meta charset=UTF-8><meta name=viewport content='width=device-width,initial-scale=1'><style>*{margin:0;padding:0;box-sizing:border-box}html,body{width:100%;height:100%;overflow:hidden;background:#0a0a0a}body{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:sans-serif;text-align:center;padding:20px;gap:6px}.f{font-size:5.5rem;animation:r 1s ease-in-out infinite}@keyframes r{0%,100%{transform:rotate(-12deg) scale(1)}50%{transform:rotate(12deg) scale(1.15)}}.t1{color:#ff3366;font-size:1.5rem;font-weight:900;letter-spacing:3px;text-shadow:0 0 20px rgba(255,51,102,.7)}.line{width:70px;height:2px;background:linear-gradient(90deg,#ff3366,#ffd700);border-radius:2px;margin:4px auto}.t2{color:#ff6b35;font-size:.95rem;font-weight:700;letter-spacing:1px}.t3{color:#555;font-size:.85rem;line-height:1.6}.t3 span{color:#ff3366}.nm{color:#ffd700;font-size:1.15rem;font-weight:900;letter-spacing:2px;text-shadow:0 0 15px rgba(255,215,0,.6)}.t4{color:#2a2a2a;font-size:.75rem}</style></head><body><div class=f>&#128405;</div><div class=t1>CHORI PAKRI GAYI!</div><div class=line></div><div class=t2>Beta buri baat &#8212; chori nahi karty! &#128580;</div><div class=t3>Yeh toolkit sirf <span>lh-toolkit.vercel.app</span> pe chalti hai<br>aur woh jagah teri nahi hai &#128526;</div><div class=t3>Jal raha hai na? Seedha ja aur key khareed! &#128514;&#128514;</div><div class=line></div><div class=nm>&#8212; MA LEGEND &#8212;</div><div class=t4>Owned. Blocked. Rejected. &#9889;</div><script>document.onkeydown=function(e){e.preventDefault();return false};document.oncontextmenu=function(e){e.preventDefault();return false};<\/script></body></html>";
 
@@ -497,9 +526,9 @@ async function doLogin(){
 }
 
 function showWelcome(){
-  // Skip welcome screen — go straight to toolkit instantly
   showS("ts");
   loadUI();
+  setTimeout(trackOnline, 500);
 }
 
 // Prefetch tools in background — stores in cache so loadTools() shows instantly
@@ -551,6 +580,9 @@ async function loadUI(){
   }catch(e2){}
   curKey=dispKey; // make sure curKey is clean
   document.getElementById("kSh").textContent=dispKey;
+  // Show welcome in topbar
+  var wu=document.getElementById("welcomeUser");
+  if(wu){wu.textContent="Welcome, "+dispKey.substring(0,8)+"...";wu.style.display="block";}
   // Show masked key e.g. LH-X***-***X
   var masked=dispKey.length>6?dispKey.substring(0,4)+"****"+dispKey.slice(-4):dispKey;
   document.getElementById("wU").textContent=masked;
@@ -581,8 +613,7 @@ async function loadUI(){
 function _renderTools(tools){
   var g=document.getElementById("tG");
   g.innerHTML="";
-  var cnt=document.getElementById("toolCount");
-  if(cnt)cnt.textContent=tools&&tools.length?(tools.length+" Tools"):"";
+  updateStatsBadge(tools?tools.length:0);
   if(!tools||!tools.length){
     g.innerHTML="<div class='emp' style='grid-column:1/-1;text-align:center;padding:40px 20px'><div style='font-size:3rem;margin-bottom:12px'>🔧</div><p style='color:var(--mt);font-size:.88rem'>No tools yet<br>Check back soon!</p></div>";
     return;
@@ -598,7 +629,9 @@ function _renderTools(tools){
     c.target="_blank";
     c.rel="noopener noreferrer";
     c.style.animationDelay=(i*.04)+"s";
-    c.innerHTML="<div class='tiw'>"+ic+"</div>"
+    var isFav=(_favs.indexOf(t.name)>-1);
+    c.innerHTML="<div style='position:absolute;top:6px;right:6px;z-index:2'><button onclick='event.preventDefault();togFav(""+t.name+"",this)' style='border:none;background:none;cursor:pointer;font-size:.85rem;padding:2px;line-height:1;'>"+(isFav?"⭐":"☆")+"</button></div>"
+      +"<div class='tiw'>"+ic+"</div>"
       +"<div class='tnm'>"+t.name+"</div>"
       +(t.desc?"<div class='tds'>"+t.desc+"</div>":"");
     g.appendChild(c);
@@ -820,6 +853,102 @@ function showAnn(text){
   if(!text)return;
   document.getElementById('annTxt').textContent = text;
   document.getElementById('annBar').style.display = 'flex';
+}
+
+// ── FAVOURITES ──
+var _favs = JSON.parse(localStorage.getItem("lh_favs")||"[]");
+function togFav(name, btn){
+  var idx = _favs.indexOf(name);
+  if(idx>-1){ _favs.splice(idx,1); btn.textContent="☆"; }
+  else { _favs.push(name); btn.textContent="⭐"; }
+  localStorage.setItem("lh_favs", JSON.stringify(_favs));
+  tst(idx>-1?"Removed from favourites":"Added to favourites ⭐");
+}
+
+// ── TABS ──
+var _activeTab = "all";
+function setTab(tab){
+  _activeTab = tab;
+  // Update tab styles
+  ["all","trending","latest","fav"].forEach(function(t){
+    var btn = document.getElementById("tab_"+t);
+    if(!btn)return;
+    if(t===tab){
+      btn.style.background="var(--ac)";
+      btn.style.color="#fff";
+      btn.style.boxShadow="0 4px 12px rgba(255,51,102,.3)";
+    } else {
+      btn.style.background="var(--nm)";
+      btn.style.color="var(--tx2)";
+      btn.style.boxShadow="var(--shadow-sm)";
+    }
+  });
+  filterTools();
+}
+
+// ── Override filterTools to support tabs ──
+var _origFilterTools = filterTools;
+function filterTools(){
+  var q=(document.getElementById("toolSearch").value||"").toLowerCase();
+  var now=Date.now();
+  var filtered=_allTools.filter(function(t){
+    var matchQ=!q||t.name.toLowerCase().indexOf(q)>-1||(t.desc&&t.desc.toLowerCase().indexOf(q)>-1);
+    var matchCat=_activeCat==="All"||t.category===_activeCat;
+    var matchTab=true;
+    if(_activeTab==="trending") matchTab=(t.views||0)>0||(t.trending===true);
+    else if(_activeTab==="latest") matchTab=((now-(t.created||0))<30*86400000);
+    else if(_activeTab==="fav") matchTab=_favs.indexOf(t.name)>-1;
+    return matchQ&&matchCat&&matchTab;
+  });
+  _renderTools(filtered);
+  // Update cat buttons
+  document.querySelectorAll("#catFilter button").forEach(function(btn){
+    var isActive=btn.textContent===_activeCat;
+    btn.style.background=isActive?"var(--ac)":"var(--nm)";
+    btn.style.color=isActive?"#fff":"var(--tx2)";
+    btn.style.boxShadow=isActive?"none":"var(--shadow-sm)";
+  });
+}
+
+// ── ONLINE USERS & VIEWS (Firebase) ──
+var _sessionId = Math.random().toString(36).slice(2);
+function trackOnline(){
+  if(!curKey)return;
+  var path="online/"+_sessionId;
+  _fbSet(path,{key:curKey,t:Date.now()});
+  // Count online (last 3 min)
+  fetch(_FB_DB+"/online.json").then(function(r){return r.json();}).then(function(d){
+    if(!d)return;
+    var now=Date.now();
+    var count=0;
+    for(var k in d){ if(d[k].t&&(now-d[k].t)<180000)count++; }
+    var el=document.getElementById("onlineCount");
+    if(el)el.textContent=count;
+  }).catch(function(){});
+  // Increment views
+  fetch(_FB_DB+"/stats/views.json").then(function(r){return r.json();}).then(function(v){
+    var views=(v||0)+1;
+    _fbSet("stats/views",views);
+    var el=document.getElementById("viewsCount");
+    if(el)el.textContent=views.toLocaleString();
+  }).catch(function(){});
+}
+// Clean up on leave
+window.addEventListener("beforeunload",function(){
+  navigator.sendBeacon(_FB_DB+"/online/"+_sessionId+".json","null");
+});
+
+// Update online count every 30s
+setInterval(function(){
+  if(curKey)trackOnline();
+},30000);
+
+// ── UPDATE toolsCountStat ──
+function updateStatsBadge(count){
+  var el=document.getElementById("toolsCountStat");
+  if(el)el.textContent=count;
+  var el2=document.getElementById("toolCount");
+  if(el2)el2.textContent=count+" Tools";
 }
 
 // ── SPLASH SCREEN ──
