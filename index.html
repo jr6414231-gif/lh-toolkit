@@ -680,7 +680,7 @@ async function loadTools(){
     _toolsCacheTime=Date.now();
     _allTools=arr;
     buildCategories(arr);
-    _renderTools(arr);
+    filterTools();
   } else {
     g.innerHTML="<div class='emp' style='grid-column:1/-1'><i class='fas fa-wifi' style='color:var(--ac)'></i><p style='margin:8px 0'>Could not load tools</p><button onclick='_toolsCache=null;loadTools();' style='margin-top:10px;padding:10px 22px;background:var(--ac);color:#fff;border:none;border-radius:10px;font-size:.88rem;cursor:pointer;font-weight:700'>↺ Retry</button></div>";
   }
@@ -785,12 +785,15 @@ var _allTools = [];
 var _activeCat = 'All';
 
 function buildCategories(tools){
-  var cats = ['All'];
+  var cats = [];
   tools.forEach(function(t){
     if(t.category && cats.indexOf(t.category)===-1) cats.push(t.category);
   });
   var cf = document.getElementById('catFilter');
   cf.innerHTML = '';
+  // Only show category pills if there are categories
+  if(cats.length===0){cf.style.display='none';return;}
+  cf.style.display='flex';
   cats.forEach(function(c){
     var btn = document.createElement('button');
     btn.textContent = c;
@@ -913,26 +916,24 @@ function filterTools(){
 
 // ── ONLINE USERS & VIEWS (Firebase) ──
 var _sessionId = Math.random().toString(36).slice(2);
-function trackOnline(){
+async function trackOnline(){
   if(!curKey)return;
-  var path="online/"+_sessionId;
-  _fbSet(path,{key:curKey,t:Date.now()});
-  // Count online (last 3 min)
-  fetch(_FB_DB+"/online.json").then(function(r){return r.json();}).then(function(d){
-    if(!d)return;
-    var now=Date.now();
-    var count=0;
-    for(var k in d){ if(d[k].t&&(now-d[k].t)<180000)count++; }
+  // Register this session as online
+  await _fbSet("online/"+_sessionId,{key:curKey,t:Date.now()});
+  // Count online users (active last 3 min)
+  var onlineData=await _fbGet("online");
+  if(onlineData){
+    var now=Date.now(),count=0;
+    for(var k in onlineData){if(onlineData[k]&&onlineData[k].t&&(now-onlineData[k].t)<180000)count++;}
     var el=document.getElementById("onlineCount");
     if(el)el.textContent=count;
-  }).catch(function(){});
-  // Increment views
-  fetch(_FB_DB+"/stats/views.json").then(function(r){return r.json();}).then(function(v){
-    var views=(v||0)+1;
-    _fbSet("stats/views",views);
-    var el=document.getElementById("viewsCount");
-    if(el)el.textContent=views.toLocaleString();
-  }).catch(function(){});
+  }
+  // Views
+  var views=await _fbGet("stats/views");
+  views=(parseInt(views)||0)+1;
+  await _fbSet("stats/views",views);
+  var el2=document.getElementById("viewsCount");
+  if(el2)el2.textContent=views.toLocaleString();
 }
 // Clean up on leave
 window.addEventListener("beforeunload",function(){
