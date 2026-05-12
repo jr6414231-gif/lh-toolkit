@@ -636,6 +636,7 @@ function _renderTools(tools){
       +"<div class='tnm'>"+t.name+"</div>"
       +(t.desc?"<div class='tds'>"+t.desc+"</div>":"");
     (function(n,card){card.querySelector('.fv').style.cssText='position:absolute;top:4px;right:4px;cursor:pointer;font-size:.85rem;';card.querySelector('.fv').onclick=function(e){e.preventDefault();e.stopPropagation();togFav(n,this);};})(t.name,c);
+    g.appendChild(c);
   });
 }
 
@@ -805,22 +806,7 @@ function buildCategories(tools){
   });
 }
 
-function filterTools(){
-  var q = (document.getElementById('toolSearch').value||'').toLowerCase();
-  var filtered = _allTools.filter(function(t){
-    var matchCat = _activeCat==='All' || t.category===_activeCat;
-    var matchQ = !q || t.name.toLowerCase().indexOf(q)>-1 || (t.desc&&t.desc.toLowerCase().indexOf(q)>-1);
-    return matchCat && matchQ;
-  });
-  _renderTools(filtered);
-  // Update active cat button style
-  document.querySelectorAll('#catFilter button').forEach(function(btn){
-    var isActive = btn.textContent===_activeCat;
-    btn.style.background = isActive?'var(--ac)':'var(--nm)';
-    btn.style.color = isActive?'#fff':'var(--tx2)';
-    btn.style.boxShadow = isActive?'none':'var(--shadow-sm)';
-  });
-}
+
 
 // ── PULL TO REFRESH ──
 var _ptrStartY=0,_ptrPulling=false;
@@ -891,16 +877,15 @@ function setTab(tab){
 }
 
 // ── Override filterTools to support tabs ──
-var _origFilterTools = filterTools;
 function filterTools(){
   var q=(document.getElementById("toolSearch").value||"").toLowerCase();
   var now=Date.now();
   var filtered=_allTools.filter(function(t){
     var matchQ=!q||t.name.toLowerCase().indexOf(q)>-1||(t.desc&&t.desc.toLowerCase().indexOf(q)>-1);
-    var matchCat=_activeCat==="All"||t.category===_activeCat;
+    var matchCat=_activeCat==="All"||(!t.category&&_activeCat==="All")||t.category===_activeCat;
     var matchTab=true;
     if(_activeTab==="trending") matchTab=(t.views||0)>0||(t.trending===true);
-    else if(_activeTab==="latest") matchTab=((now-(t.created||0))<30*86400000);
+    else if(_activeTab==="latest") matchTab=(!t.created||(now-t.created)<30*86400000);
     else if(_activeTab==="fav") matchTab=_favs.indexOf(t.name)>-1;
     return matchQ&&matchCat&&matchTab;
   });
