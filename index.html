@@ -212,7 +212,7 @@ body{background:#f0f2f5;font-family:Inter,sans-serif;min-height:100vh;}
       </div>
       <div class="hero-search">
         <i class="fas fa-search"></i>
-        <input type="text" id="toolSearch" placeholder="Search tools..." oninput="filterTools()">
+        <input type="text" id="toolSearch" placeholder="🔍 Search karo MA LEGEND..." oninput="filterTools()" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
       </div>
     </div>
     <!-- TABS -->
@@ -578,6 +578,24 @@ window.addEventListener("beforeunload",function(){navigator.sendBeacon(_FB+"/onl
 // ═══ OFFLINE ═══
 window.addEventListener("online",function(){document.getElementById("offlineBar").style.display="none";});
 window.addEventListener("offline",function(){document.getElementById("offlineBar").style.display="block";});
+
+// ═══ ANIMATED SEARCH PLACEHOLDER ═══
+var _phIdx=0;
+var _placeholders=[
+  "🔍 Search karo MA LEGEND...",
+  "⚡ Kya dhundh raha hai?",
+  "🛠️ Tool ka naam likho...",
+  "🔥 LH Toolkit mein khosh amdeed!",
+  "💎 MA LEGEND ka collection...",
+  "🚀 Apna tool choose karo..."
+];
+setInterval(function(){
+  var inp=document.getElementById("toolSearch");
+  if(inp&&inp.value===""){
+    _phIdx=(_phIdx+1)%_placeholders.length;
+    inp.placeholder=_placeholders[_phIdx];
+  }
+},2500);
 
 // ═══ INIT ═══
 _theme=localStorage.getItem("lh_th")||"light";
