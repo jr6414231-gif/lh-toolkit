@@ -1112,10 +1112,12 @@ var _keyCreatedTime=null;
 
 // INIT
 setTh(localStorage.getItem("lh_th")||"light");
-// Safety: hide splash after 3s no matter what
-setTimeout(function(){hideSplash();},3000);
+// Run autoLogin, safety timeout as backup
 autoLogin();
-});
+setTimeout(function(){
+  hideSplash();
+  if(!curKey){showS("ls");}
+},2500);
 </script>
 </body>
 </html>
