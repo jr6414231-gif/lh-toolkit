@@ -624,6 +624,7 @@ function _renderTools(tools){
       ?"<img src='"+t.iconUrl+"' alt='' style='width:44px;height:44px;border-radius:11px;object-fit:cover'>"
       :(t.iconBase64?"<img src='"+t.iconBase64+"' alt='' style='width:44px;height:44px;border-radius:11px;object-fit:cover'>"
       :"<i class='"+(t.iconClass||"fas fa-star")+"' style='color:var(--ac);font-size:1.6rem'></i>");
+    var isFav=_favs.indexOf(t.name)>-1;
     var c=document.createElement("a");
     c.className="tc";
     c.href=t.link||"#";
@@ -632,8 +633,14 @@ function _renderTools(tools){
     c.style.animationDelay=(i*.04)+"s";
     c.innerHTML="<div class='tiw'>"+ic+"</div>"
       +"<div class='tnm'>"+t.name+"</div>"
-      +(t.desc?"<div class='tds'>"+t.desc+"</div>":"");
+      +(t.desc?"<div class='tds'>"+t.desc+"</div>":"")
+      +"<div class='fav-btn' style='position:absolute;top:4px;right:4px;font-size:.85rem;cursor:pointer;z-index:3;line-height:1;'>"+(isFav?"⭐":"☆")+"</div>";
     g.appendChild(c);
+    // Star click
+    c.querySelector(".fav-btn").onclick=function(e){
+      e.preventDefault();e.stopPropagation();
+      togFav(t.name,this);
+    };
   });
 }
 
