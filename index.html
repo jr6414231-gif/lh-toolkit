@@ -615,7 +615,7 @@ async function loadUI(){
   }catch(e2){}
   curKey=dispKey; // make sure curKey is clean
   var km=document.getElementById("keyMini");
-  if(km)km.style.display="flex";
+  if(km){km.style.display='flex';km.style.alignItems='center';}
   if(document.getElementById("kSh"))document.getElementById("kSh").textContent=dispKey;
   // Show welcome in topbar
   var wu=document.getElementById("welcomeUser");
@@ -1004,8 +1004,8 @@ var _typeTexts=["Search tools...","Search WhatsApp tools...","Search TikTok tool
 var _typeIdx=0,_typeChar=0,_typeDir=1,_typeTimer=null;
 function startTyping(){
   var inp=document.getElementById("toolSearch");
-  var cur=document.getElementById("typeCursor");
-  if(!inp||!cur)return;
+  if(!inp)return;
+  inp.placeholder=_typeTexts[0]; // show immediately
   clearInterval(_typeTimer);
   _typeTimer=setInterval(function(){
     var full=_typeTexts[_typeIdx];
