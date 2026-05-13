@@ -249,6 +249,16 @@ body{background:var(--bg);color:var(--tx);font-family:"Rajdhani",sans-serif;min-
 </head>
 <body>
 
+<!-- FLOATING KEY MINI CARD -->
+<div id="floatKey" style="position:fixed;top:70px;right:10px;z-index:200;background:var(--nm);box-shadow:var(--shadow-sm);border-radius:14px;padding:8px 12px;min-width:120px;display:none;flex-direction:column;gap:2px;border:1px solid rgba(255,51,102,.15);">
+  <div style="font-size:.65rem;color:var(--mt);font-weight:600;">⏰ KEY EXPIRES</div>
+  <div style="font-size:.82rem;font-weight:700;color:var(--ac);" id="kEx2">--</div>
+  <div style="height:3px;background:var(--nd);border-radius:3px;margin-top:4px;overflow:hidden;">
+    <div id="keyBar2" style="height:100%;background:linear-gradient(90deg,var(--ac),var(--gd));width:100%;border-radius:3px;transition:width 1s;"></div>
+  </div>
+  <button onclick="renewKey()" style="margin-top:5px;border:none;background:rgba(16,185,129,.1);color:var(--gr);border-radius:8px;padding:5px;font-size:.7rem;font-weight:700;cursor:pointer;"><i class="fas fa-sync-alt"></i> Renew</button>
+</div>
+
 <!-- SPLASH SCREEN -->
 <div id="splashScr" style="position:fixed;inset:0;background:linear-gradient(135deg,#1a1a2e,#16213e);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;transition:opacity .5s;">
   <div id="splashLogo" style="width:90px;height:90px;border-radius:22px;overflow:hidden;box-shadow:0 0 40px rgba(255,51,102,.5);animation:splashPulse 1.5s ease-in-out infinite;">
@@ -602,6 +612,8 @@ async function loadUI(){
   curKey=dispKey; // make sure curKey is clean
   var km=document.getElementById("keyMini");
   if(km){km.style.display='flex';km.style.alignItems='center';}
+  var fk=document.getElementById("floatKey");
+  if(fk)fk.style.display='flex';
   if(document.getElementById("kSh"))document.getElementById("kSh").textContent=dispKey;
   // Show welcome in topbar
   var wu=document.getElementById("welcomeUser");
@@ -625,6 +637,18 @@ async function loadUI(){
     // Estimate key created time from days stored
     if(!_keyCreatedTime) _keyCreatedTime=curExp-(30*86400000); // fallback 30d
     updateKeyBar();
+    // Update float key bar
+    if(curExp&&_keyCreatedTime){
+      var _rem2=curExp-Date.now();
+      var _tot2=curExp-_keyCreatedTime;
+      var _pct2=Math.max(0,Math.min(100,(_rem2/_tot2)*100));
+      var kb2=document.getElementById("keyBar2");
+      if(kb2){
+        kb2.style.width=_pct2+"%";
+        if(_pct2<20)kb2.style.background="linear-gradient(90deg,#ef4444,#ff6b35)";
+        else if(_pct2<50)kb2.style.background="linear-gradient(90deg,#f59e0b,#ffd700)";
+      }
+    }
     startCountdown();
   } else if(curExp&&curExp<=Date.now()){
     document.getElementById("kEx").textContent="EXPIRED";
@@ -764,7 +788,8 @@ function startCountdown(){
     var fullTxt=hh+mm+ss;
     // Short badge
     var badgeTxt=h>0?(h+"h"):((m<10?"0"+m:m)+"m");
-    document.getElementById("kEx").textContent=fullTxt;
+    if(document.getElementById("kEx"))document.getElementById("kEx").textContent=fullTxt;
+    if(document.getElementById("kEx2"))document.getElementById("kEx2").textContent=fullTxt;
     var bdgHTML=badgeTxt;
     if(document.getElementById("kbdg"))document.getElementById("kbdg").innerHTML="<i class='fas fa-clock'></i> "+badgeTxt;
     if(document.getElementById("kbdg2"))document.getElementById("kbdg2").textContent=badgeTxt;
