@@ -636,7 +636,6 @@ function _renderTools(tools){
       +"<div class='tnm'>"+t.name+"</div>"
       +(t.desc?"<div class='tds'>"+t.desc+"</div>":"");
     (function(n,card){card.querySelector('.fv').style.cssText='position:absolute;top:4px;right:4px;cursor:pointer;font-size:.85rem;';card.querySelector('.fv').onclick=function(e){e.preventDefault();e.stopPropagation();togFav(n,this);};})(t.name,c);
-    g.appendChild(c);
   });
 }
 
