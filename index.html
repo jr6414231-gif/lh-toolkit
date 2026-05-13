@@ -619,23 +619,21 @@ function _renderTools(tools){
     g.innerHTML="<div class='emp' style='grid-column:1/-1;text-align:center;padding:40px 20px'><div style='font-size:3rem;margin-bottom:12px'>🔧</div><p style='color:var(--mt);font-size:.88rem'>No tools yet<br>Check back soon!</p></div>";
     return;
   }
-  tools.forEach(function(t,i){
+    tools.forEach(function(t,i){
     var ic=t.iconUrl
-      ?"<img src='"+t.iconUrl+"' alt='' style='width:52px;height:52px;border-radius:14px;object-fit:cover'>"
-      :(t.iconBase64?"<img src='"+t.iconBase64+"' alt=''>"
-      :"<i class='"+(t.iconClass||"fas fa-star")+"' style='color:var(--ac)'></i>");
+      ?"<img src='"+t.iconUrl+"' alt='' style='width:44px;height:44px;border-radius:11px;object-fit:cover'>"
+      :(t.iconBase64?"<img src='"+t.iconBase64+"' alt='' style='width:44px;height:44px;border-radius:11px;object-fit:cover'>"
+      :"<i class='"+(t.iconClass||"fas fa-star")+"' style='color:var(--ac);font-size:1.6rem'></i>");
     var c=document.createElement("a");
     c.className="tc";
     c.href=t.link||"#";
     c.target="_blank";
     c.rel="noopener noreferrer";
     c.style.animationDelay=(i*.04)+"s";
-    var isFav=(_favs.indexOf(t.name)>-1);
-    c.innerHTML=(isFav?"<span class='fv'>&#11088;</span>":"<span class='fv'>&#9734;</span>")
-      +"<div class='tiw'>"+ic+"</div>"
+    c.innerHTML="<div class='tiw'>"+ic+"</div>"
       +"<div class='tnm'>"+t.name+"</div>"
       +(t.desc?"<div class='tds'>"+t.desc+"</div>":"");
-    (function(n,card){card.querySelector('.fv').style.cssText='position:absolute;top:4px;right:4px;cursor:pointer;font-size:.85rem;';card.querySelector('.fv').onclick=function(e){e.preventDefault();e.stopPropagation();togFav(n,this);};})(t.name,c);
+    g.appendChild(c);
   });
 }
 
