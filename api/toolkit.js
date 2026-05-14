@@ -216,23 +216,30 @@ module.exports = async function handler(req, res) {
       return res.json({ ok: true });
     }
 
-    // Track online users
+    // Track online users + views
     if (action === "track-online" && req.method === "POST") {
-      const { sessionId } = body;
+      const { sessionId, key } = body;
       if (sessionId) {
-        await fb("PUT", `online/${sessionId}.json`, { t: Date.now() });
-        // Clean old sessions (>5 min)
+        await fb("PUT", `online/${sessionId}.json`, { t: Date.now(), key: key||"" });
+        // Count online (last 3 min)
         const online = await fb("GET", "online.json");
+        let count = 1;
         if (online) {
           const now = Date.now();
-          for (const sid in online) {
-            if (now - online[sid].t > 300000) await fb("DELETE", `online/${sid}.json`);
+          const active = Object.entries(online).filter(([,v]) => v && v.t && (now - v.t) < 180000);
+          count = active.length;
+          // Clean old
+          for (const [sid, v] of Object.entries(online)) {
+            if (now - v.t > 300000) await fb("DELETE", `online/${sid}.json`);
           }
-          const count = Object.keys(online).length;
-          return res.json({ ok: true, count });
         }
+        // Track views
+        let views = await fb("GET", "stats/views.json");
+        views = (parseInt(views) || 0) + 1;
+        await fb("PUT", "stats/views.json", views);
+        return res.json({ ok: true, count, views });
       }
-      return res.json({ ok: true, count: 1 });
+      return res.json({ ok: true, count: 1, views: 0 });
     }
 
     return res.status(404).json({ ok: false, msg: "Unknown action" });
