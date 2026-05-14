@@ -387,7 +387,7 @@ body{background:#f0f2f5;font-family:Inter,sans-serif;min-height:100vh;}
       </div>
       <div class="hero-search">
         <i class="fas fa-search"></i>
-        <input type="text" id="toolSearch" placeholder="🔍 Search karo MA LEGEND..." oninput="filterTools()" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+        <input type="text" id="toolSearch" placeholder="🔍 Search tools..." oninput="filterTools()" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
       </div>
     </div>
     <!-- TABS -->
@@ -475,11 +475,11 @@ async function doLogin(){
   if(_lockUntil>now){
     var s=Math.ceil((_lockUntil-now)/1000);
     var e=document.getElementById("err");
-    e.textContent="Wait "+s+"s";e.style.display="block";return;
+    e.textContent="Please wait "+s+"s";e.style.display="block";return;
   }
   var k=document.getElementById("lk").value.trim().toUpperCase();
   var e=document.getElementById("err");
-  if(!k){e.textContent="Enter your key!";e.style.display="block";return;}
+  if(!k){e.textContent="Please enter your key!";e.style.display="block";return;}
   e.textContent="Verifying...";e.style.color="#60a5fa";e.style.display="block";
   try{
     var did=getDevId();
@@ -495,7 +495,7 @@ async function doLogin(){
     localStorage.setItem("lh_e",String(result.expiry));
     localStorage.setItem("lh_ct",String(_keyCreatedTime));
     onLogin();
-  }catch(err){e.textContent="Connection error. Try again.";e.style.color="#ff6b6b";}
+  }catch(err){e.textContent="Connection error. Please try again.";e.style.color="#ff6b6b";}
 }
 
 function getDevId(){
@@ -713,7 +713,7 @@ function copyKey(){
 
 // ═══ RENEW KEY ═══
 async function renewKey(){
-  var ph=await fbGet("admin/phone");ph=(ph||"923277796795").replace(/[^0-9]/g,"");
+  var r2=await apiCall("admin-phone","GET");var ph=((r2&&r2.phone)||"923277796795").replace(/[^0-9]/g,"");
   window.open("https://wa.me/"+ph+"?text="+encodeURIComponent("Hello! I want to renew my key: "+curKey),"_blank");
 }
 
@@ -738,16 +738,15 @@ function showAnn(txt){
 // ═══ ONLINE + VIEWS ═══
 async function trackOnline(){
   if(!curKey)return;
-  await fbSet("online/"+_sessionId,{key:curKey,t:Date.now()});
-  var od=await fbGet("online");
-  if(od){var now=Date.now(),cnt=0;for(var k in od){if(od[k]&&od[k].t&&(now-od[k].t)<180000)cnt++;}
-    var el=document.getElementById("onlineCount");if(el)el.textContent=cnt;}
-  var v=await fbGet("stats/views");v=(parseInt(v)||0)+1;
-  await fbSet("stats/views",v);
-  var el2=document.getElementById("viewsCount");if(el2)el2.textContent=v.toLocaleString();
+  try{
+    var r=await apiCall("track-online","POST",{sessionId:_sessionId,key:curKey});
+    if(r){
+      var el=document.getElementById("onlineCount");if(el)el.textContent=r.count||1;
+      var el2=document.getElementById("viewsCount");if(el2)el2.textContent=(r.views||0).toLocaleString();
+    }
+  }catch(e){}
 }
 setInterval(function(){if(curKey)trackOnline();},30000);
-window.addEventListener("beforeunload",function(){navigator.sendBeacon(_FB+"/online/"+_sessionId+".json","null");});
 
 // ═══ OFFLINE ═══
 window.addEventListener("online",function(){document.getElementById("offlineBar").style.display="none";});
@@ -756,12 +755,12 @@ window.addEventListener("offline",function(){document.getElementById("offlineBar
 // ═══ ANIMATED SEARCH PLACEHOLDER ═══
 var _phIdx=0;
 var _placeholders=[
-  "🔍 Search karo MA LEGEND...",
-  "⚡ Kya dhundh raha hai?",
-  "🛠️ Tool ka naam likho...",
-  "🔥 LH Toolkit mein khosh amdeed!",
-  "💎 MA LEGEND ka collection...",
-  "🚀 Apna tool choose karo..."
+  "🔍 Search tools...",
+  "⚡ What are you looking for?",
+  "🛠️ Type a tool name...",
+  "🔥 Find your tool here!",
+  "💎 Browse our collection...",
+  "🚀 Choose your tool..."
 ];
 setInterval(function(){
   var inp=document.getElementById("toolSearch");
