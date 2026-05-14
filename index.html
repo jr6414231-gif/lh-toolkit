@@ -513,7 +513,7 @@ async function buyK(e){
 }
 
 // ═══ ON LOGIN ═══
-function onLogin(){
+function onLogin(){ setTimeout(trackOnline, 1000);
   showS("ts");
   loadUI();
   loadTools();
@@ -747,6 +747,7 @@ async function trackOnline(){
   }catch(e){}
 }
 setInterval(function(){if(curKey)trackOnline();},30000);
+function startTracking(){ trackOnline(); }
 
 // ═══ OFFLINE ═══
 window.addEventListener("online",function(){document.getElementById("offlineBar").style.display="none";});
