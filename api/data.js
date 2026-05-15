@@ -102,12 +102,15 @@ module.exports = async function handler(req, res) {
 
     // Get tools (public)
     if (action === "tools" && req.method === "GET") {
-      const data = await fb("GET", "tools.json");
-      if (!data || typeof data !== "object") return res.json({ tools: [] });
+      const [data, views] = await Promise.all([
+        fb("GET", "tools.json"),
+        fb("GET", "stats/views.json")
+      ]);
+      if (!data || typeof data !== "object") return res.json({ tools: [], views: parseInt(views)||0 });
       const tools = Object.entries(data)
         .filter(([, v]) => v && v.active !== false)
         .map(([k, v]) => ({ id: k, ...v }));
-      return res.json({ tools });
+      return res.json({ tools, views: parseInt(views)||0 });
     }
 
     // Get settings (public)
@@ -237,14 +240,14 @@ module.exports = async function handler(req, res) {
           }
         }
 
-        // Increment views only on new session
+        // Get current views
         let views = await fb("GET", "stats/views.json");
         views = parseInt(views) || 0;
-        if (newSession) {
+        // Increment only on new session flag
+        if (newSession === true) {
           views += 1;
           await fb("PUT", "stats/views.json", views);
         }
-
         return res.json({ ok: true, count, views });
       }
       return res.json({ ok: true, count: 1, views: 0 });
