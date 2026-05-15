@@ -221,25 +221,30 @@ module.exports = async function handler(req, res) {
 
     // Track online users + views
     if (action === "track-online" && req.method === "POST") {
-      const { sessionId, key } = body;
+      const { sessionId, key, newSession } = body;
       if (sessionId) {
-        await fb("PUT", `online/${sessionId}.json`, { t: Date.now(), key: key||"" });
+        const now = Date.now();
+        await fb("PUT", `online/${sessionId}.json`, { t: now, key: key||"" });
+        
         // Count online (last 3 min)
         const online = await fb("GET", "online.json");
         let count = 1;
-        if (online) {
-          const now = Date.now();
+        if (online && typeof online === "object") {
           const active = Object.entries(online).filter(([,v]) => v && v.t && (now - v.t) < 180000);
-          count = active.length;
-          // Clean old
+          count = Math.max(active.length, 1);
           for (const [sid, v] of Object.entries(online)) {
-            if (now - v.t > 300000) await fb("DELETE", `online/${sid}.json`);
+            if (v && v.t && now - v.t > 300000) await fb("DELETE", `online/${sid}.json`);
           }
         }
-        // Track views
+
+        // Increment views only on new session
         let views = await fb("GET", "stats/views.json");
-        views = (parseInt(views) || 0) + 1;
-        await fb("PUT", "stats/views.json", views);
+        views = parseInt(views) || 0;
+        if (newSession) {
+          views += 1;
+          await fb("PUT", "stats/views.json", views);
+        }
+
         return res.json({ ok: true, count, views });
       }
       return res.json({ ok: true, count: 1, views: 0 });
