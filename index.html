@@ -630,6 +630,11 @@ async function loadTools(){
   if(result&&result.tools){
     _toolsCache=result.tools;_toolsCacheTime=Date.now();
     _allTools=result.tools;
+    // Show initial views from tools response
+    if(result.views !== undefined){
+      var ev=document.getElementById("viewsCount");
+      if(ev) ev.textContent=result.views.toLocaleString();
+    }
   }
   buildCats();filterTools();
 }
