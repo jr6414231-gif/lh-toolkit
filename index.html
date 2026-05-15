@@ -521,20 +521,41 @@ function onLogin(){ setTimeout(trackOnline, 1000);
   startCountdown();
 }
 
-// ═══ AUTO LOGIN ═══
+// ═══ AUTO LOGIN — Server verify zaroori hai ═══
 async function autoLogin(){
   var k=localStorage.getItem("lh_k");
-  var e=localStorage.getItem("lh_e");
-  var ct=localStorage.getItem("lh_ct");
-  if(!k||!e){showS("ls");return;}
-  var exp=parseInt(e);
-  if(!exp||isNaN(exp)||exp<Date.now()){
-    localStorage.removeItem("lh_k");localStorage.removeItem("lh_e");
-    showS("ls");return;
+  if(!k){showS("ls");return;}
+  // ALWAYS verify with server — no bypass possible
+  try {
+    var did=getDevId();
+    var result=await apiCall("verify-key","POST",{key:k,deviceId:did});
+    if(!result||!result.ok){
+      // Invalid/expired/device mismatch — logout
+      localStorage.removeItem("lh_k");
+      localStorage.removeItem("lh_e");
+      localStorage.removeItem("lh_ct");
+      var el=document.getElementById("err");
+      if(el){el.textContent=result&&result.msg?result.msg:"Session expired! Login again.";el.style.color="#ff6b6b";el.style.display="block";}
+      showS("ls");return;
+    }
+    curKey=k;
+    curExp=result.expiry;
+    _keyCreatedTime=result.created||Date.now()-(result.days||30)*86400000;
+    localStorage.setItem("lh_e",String(result.expiry));
+    localStorage.setItem("lh_ct",String(_keyCreatedTime));
+    onLogin();
+  } catch(err) {
+    // Connection error — use cached data temporarily
+    var e=localStorage.getItem("lh_e");
+    var ct=localStorage.getItem("lh_ct");
+    var exp=parseInt(e);
+    if(!exp||isNaN(exp)||exp<Date.now()){
+      localStorage.removeItem("lh_k");showS("ls");return;
+    }
+    curKey=k;curExp=exp>9999999999?exp:exp*1000;
+    _keyCreatedTime=ct?parseInt(ct):null;
+    onLogin();
   }
-  curKey=k;curExp=exp>9999999999?exp:exp*1000;
-  _keyCreatedTime=ct?parseInt(ct):null;
-  onLogin();
 }
 
 // ═══ LOAD UI ═══
@@ -631,10 +652,15 @@ async function loadTools(){
     _toolsCache=result.tools;_toolsCacheTime=Date.now();
     _allTools=result.tools;
     // Show initial views from tools response
-    if(result.views !== undefined && result.views >= 0){
+    if(result.views !== undefined && result.views > _cachedViews){
       _cachedViews = result.views;
+      localStorage.setItem("lh_views", String(_cachedViews));
       var ev=document.getElementById("viewsCount");
       if(ev) ev.textContent=_cachedViews.toLocaleString();
+    } else {
+      // Show cached value if server returned less
+      var ev2=document.getElementById("viewsCount");
+      if(ev2) ev2.textContent=_cachedViews.toLocaleString();
     }
   }
   buildCats();filterTools();
@@ -743,19 +769,20 @@ function showAnn(txt){
 
 // ═══ ONLINE + VIEWS ═══
 var _firstTrack = true;
-var _cachedViews = 0;
+var _cachedViews = parseInt(localStorage.getItem("lh_views")||"0")||0;
 async function trackOnline(){
   if(!curKey)return;
   try{
     var r=await apiCall("track-online","POST",{sessionId:_sessionId,key:curKey,newSession:_firstTrack});
     _firstTrack = false;
     if(r){
-      // Online counter
+      // Online counter - real count
       var el=document.getElementById("onlineCount");
-      if(el) el.textContent=r.count||1;
-      // Views - keep highest value seen
+      if(el) el.textContent=r.count>=0?r.count:1;
+      // Views - keep highest, never go down
       if(r.views && r.views > _cachedViews){
         _cachedViews = r.views;
+        localStorage.setItem("lh_views", String(_cachedViews));
       }
       var el2=document.getElementById("viewsCount");
       if(el2) el2.textContent=_cachedViews.toLocaleString();
