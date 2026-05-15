@@ -3,23 +3,22 @@
 //  Firebase URL sirf yahan hai — client ko kabhi nahi milta
 // ============================================================
 // Vercel Environment Variables:
-//   TOOLKIT_DB_URL   = https://toolkit-73b2a-default-rtdb.firebaseio.com
+//   TOOLKIT_DB_URL   = (set in Vercel environment variables)
 //   TOOLKIT_SECRET   = Firebase database secret
 //   TOOLKIT_ADMIN_KEY = Admin panel ka password (strong string)
 // ============================================================
 
 const https = require("https");
 
-const DB      = process.env.TOOLKIT_DB_URL;
+const DB      = process.env.TOOLKIT_DB_URL || "";
+if (!DB) { console.error("TOOLKIT_DB_URL not set!"); }
 const SECRET  = process.env.TOOLKIT_SECRET;
 const ADM_KEY = process.env.TOOLKIT_ADMIN_KEY;
 
 // CORS
 function cors(req, res) {
-  var origin = req.headers.origin || "";
-  var allowed = ["https://lh-toolkit.vercel.app","http://localhost","http://127.0.0.1","null",""];
-  var ok = allowed.some(function(a){ return origin === a || origin.startsWith(a); }) || origin === "";
-  res.setHeader("Access-Control-Allow-Origin", ok ? (origin||"*") : "https://lh-toolkit.vercel.app");
+  // Allow all - toolkit is private key-protected anyway
+  res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type,x-admin-key");
 }
@@ -225,34 +224,40 @@ module.exports = async function handler(req, res) {
     // Track online users + views
     if (action === "track-online" && req.method === "POST") {
       const { sessionId, key, newSession } = body;
+      const now = Date.now();
+
+      // Get current views first
+      let views = parseInt(await fb("GET", "stats/views.json")) || 0;
+
       if (sessionId) {
-        const now = Date.now();
+        // Mark session alive
         await fb("PUT", `online/${sessionId}.json`, { t: now, key: key||"" });
-        
-        // Count online (last 3 min)
+
+        // Count active sessions (last 3 min)
         const online = await fb("GET", "online.json");
         let count = 1;
         if (online && typeof online === "object") {
-          const active = Object.entries(online).filter(([,v]) => v && v.t && (now - v.t) < 180000);
+          const entries = Object.entries(online);
+          const active = entries.filter(([,v]) => v && v.t && (now - v.t) < 180000);
           count = Math.max(active.length, 1);
-          for (const [sid, v] of Object.entries(online)) {
-            if (v && v.t && now - v.t > 300000) await fb("DELETE", `online/${sid}.json`);
+          // Cleanup old
+          for (const [sid, v] of entries) {
+            if (!v || !v.t || now - v.t > 300000) {
+              await fb("DELETE", `online/${sid}.json`);
+            }
           }
         }
 
-        // Get current views
-        let views = await fb("GET", "stats/views.json");
-        views = parseInt(views) || 0;
-        // Increment only on new session flag
+        // Increment views on new session only
         if (newSession === true) {
           views += 1;
           await fb("PUT", "stats/views.json", views);
         }
+
         return res.json({ ok: true, count, views });
       }
-      // No sessionId - just return current counts
-      const cv = await fb("GET", "stats/views.json");
-      return res.json({ ok: true, count: 1, views: parseInt(cv)||0 });
+
+      return res.json({ ok: true, count: 0, views });
     }
 
     return res.status(404).json({ ok: false, msg: "Unknown action" });
