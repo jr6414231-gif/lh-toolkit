@@ -565,7 +565,7 @@ function loadUI(){
   var tw=document.getElementById("timerWrap");
   if(tw)tw.style.display="flex";
   var ks=document.getElementById("tbKeyShow");
-  if(ks&&curKey)ks.textContent="🔑 "+curKey;
+  if(ks&&curKey)ks.textContent="🔑 LEGEND";
   // Hero welcome
   var hw=document.getElementById("heroWelcome");
   var hu=document.getElementById("heroUser");
@@ -573,12 +573,11 @@ function loadUI(){
   if(hw&&hu){
     hu.textContent=curKey.substring(0,8)+"...";
     if(he){
-      if(curExp&&curExp>1000000000){
-        var expMs=curExp>9999999999?curExp:curExp*1000; // handle seconds vs ms
-        var d=new Date(expMs);
+      // curExp is always in ms (set properly in doLogin/autoLogin)
+      if(curExp && curExp > Date.now()){
+        var d=new Date(curExp);
         var months=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
         he.textContent=d.getDate()+" "+months[d.getMonth()]+" "+d.getFullYear();
-        curExp=expMs; // normalize to ms
       } else {
         he.textContent="Active";
       }
