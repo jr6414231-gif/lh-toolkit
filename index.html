@@ -539,7 +539,9 @@ async function autoLogin(){
       showS("ls");return;
     }
     curKey=k;
-    curExp=result.expiry;
+    // Normalize expiry to milliseconds
+    var rawExp = result.expiry || 0;
+    curExp = rawExp > 9999999999 ? rawExp : rawExp * 1000;
     _keyCreatedTime=result.created||Date.now()-(result.days||30)*86400000;
     localStorage.setItem("lh_e",String(result.expiry));
     localStorage.setItem("lh_ct",String(_keyCreatedTime));
@@ -776,20 +778,22 @@ async function trackOnline(){
     var r=await apiCall("track-online","POST",{sessionId:_sessionId,key:curKey,newSession:_firstTrack});
     _firstTrack = false;
     if(r){
-      // Online counter - real count
+      // Online counter
       var el=document.getElementById("onlineCount");
-      if(el) el.textContent=r.count>=0?r.count:1;
-      // Views - keep highest, never go down
-      if(r.views && r.views > _cachedViews){
-        _cachedViews = r.views;
-        localStorage.setItem("lh_views", String(_cachedViews));
+      if(el) el.textContent=r.count||1;
+      // Views - always take server value if higher
+      var sv = parseInt(r.views)||0;
+      if(sv > _cachedViews){
+        _cachedViews = sv;
+        localStorage.setItem("lh_views",String(_cachedViews));
       }
+      // Always show cached (never goes down)
       var el2=document.getElementById("viewsCount");
       if(el2) el2.textContent=_cachedViews.toLocaleString();
     }
   }catch(e){}
 }
-setInterval(function(){if(curKey)trackOnline();},30000);
+setInterval(function(){if(curKey)trackOnline();},10000);
 function startTracking(){ trackOnline(); }
 
 // ═══ OFFLINE ═══
