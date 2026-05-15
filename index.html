@@ -736,10 +736,12 @@ function showAnn(txt){
 }
 
 // ═══ ONLINE + VIEWS ═══
+var _firstTrack = true;
 async function trackOnline(){
   if(!curKey)return;
   try{
-    var r=await apiCall("track-online","POST",{sessionId:_sessionId,key:curKey});
+    var r=await apiCall("track-online","POST",{sessionId:_sessionId,key:curKey,newSession:_firstTrack});
+    _firstTrack = false;
     if(r){
       var el=document.getElementById("onlineCount");if(el)el.textContent=r.count||1;
       var el2=document.getElementById("viewsCount");if(el2)el2.textContent=(r.views||0).toLocaleString();
