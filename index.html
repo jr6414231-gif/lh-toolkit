@@ -423,7 +423,7 @@ body{background:#f0f2f5;font-family:Inter,sans-serif;min-height:100vh;}
 <script>
 
 // API - Firebase hidden server side
-var _API = "https://lh-toolkit.vercel.app/api/data";
+var _API = (window.location.hostname==="localhost"||window.location.hostname==="127.0.0.1")?"http://localhost:3000/api/data":"/api/data";
 var curKey=null, curExp=null, _cdTimer=null, _theme="light";
 var _allTools=[], _favs=JSON.parse(localStorage.getItem("lh_favs")||"[]");
 var _activeTab="all", _activeCat="All";
@@ -631,9 +631,10 @@ async function loadTools(){
     _toolsCache=result.tools;_toolsCacheTime=Date.now();
     _allTools=result.tools;
     // Show initial views from tools response
-    if(result.views !== undefined){
+    if(result.views !== undefined && result.views >= 0){
+      _cachedViews = result.views;
       var ev=document.getElementById("viewsCount");
-      if(ev) ev.textContent=result.views.toLocaleString();
+      if(ev) ev.textContent=_cachedViews.toLocaleString();
     }
   }
   buildCats();filterTools();
@@ -742,18 +743,22 @@ function showAnn(txt){
 
 // ═══ ONLINE + VIEWS ═══
 var _firstTrack = true;
+var _cachedViews = 0;
 async function trackOnline(){
   if(!curKey)return;
   try{
     var r=await apiCall("track-online","POST",{sessionId:_sessionId,key:curKey,newSession:_firstTrack});
     _firstTrack = false;
     if(r){
-      var el=document.getElementById("onlineCount");if(el)el.textContent=r.count||0;
-      // Only update views if server returned a valid number > 0
-      if(r.views && r.views > 0){
-        var el2=document.getElementById("viewsCount");
-        if(el2) el2.textContent=r.views.toLocaleString();
+      // Online counter
+      var el=document.getElementById("onlineCount");
+      if(el) el.textContent=r.count||1;
+      // Views - keep highest value seen
+      if(r.views && r.views > _cachedViews){
+        _cachedViews = r.views;
       }
+      var el2=document.getElementById("viewsCount");
+      if(el2) el2.textContent=_cachedViews.toLocaleString();
     }
   }catch(e){}
 }
