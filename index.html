@@ -748,8 +748,12 @@ async function trackOnline(){
     var r=await apiCall("track-online","POST",{sessionId:_sessionId,key:curKey,newSession:_firstTrack});
     _firstTrack = false;
     if(r){
-      var el=document.getElementById("onlineCount");if(el)el.textContent=r.count||1;
-      var el2=document.getElementById("viewsCount");if(el2)el2.textContent=(r.views||0).toLocaleString();
+      var el=document.getElementById("onlineCount");if(el)el.textContent=r.count||0;
+      // Only update views if server returned a valid number > 0
+      if(r.views && r.views > 0){
+        var el2=document.getElementById("viewsCount");
+        if(el2) el2.textContent=r.views.toLocaleString();
+      }
     }
   }catch(e){}
 }
