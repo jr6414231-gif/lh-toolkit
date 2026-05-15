@@ -250,7 +250,9 @@ module.exports = async function handler(req, res) {
         }
         return res.json({ ok: true, count, views });
       }
-      return res.json({ ok: true, count: 1, views: 0 });
+      // No sessionId - just return current counts
+      const cv = await fb("GET", "stats/views.json");
+      return res.json({ ok: true, count: 1, views: parseInt(cv)||0 });
     }
 
     return res.status(404).json({ ok: false, msg: "Unknown action" });
