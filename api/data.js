@@ -248,7 +248,7 @@ module.exports = async function handler(req, res) {
           }
         }
 
-        // Increment views on new session only
+        // Increment views on new session
         if (newSession === true) {
           views += 1;
           await fb("PUT", "stats/views.json", views);
