@@ -896,6 +896,8 @@ function togFav(name, btn){
 var _activeTab = "all";
 function setTab(tab){
   _activeTab = tab;
+  // All tab click karo to category bhi reset karo
+  if(tab==="all") _activeCat="All";
   // Update tab styles
   ["all","trending","latest","fav"].forEach(function(t){
     var btn = document.getElementById("tab_"+t);
@@ -919,13 +921,31 @@ function filterTools(){
   var now=Date.now();
   var filtered=_allTools.filter(function(t){
     var matchQ=!q||t.name.toLowerCase().indexOf(q)>-1||(t.desc&&t.desc.toLowerCase().indexOf(q)>-1);
-    var matchCat=_activeCat==="All"||(!t.category&&_activeCat==="All")||t.category===_activeCat;
+    var matchCat=_activeCat==="All"||(t.category&&t.category===_activeCat);
     var matchTab=true;
-    if(_activeTab==="trending") matchTab=(t.views||0)>0||(t.trending===true);
-    else if(_activeTab==="latest") matchTab=(!t.created||(now-t.created)<30*86400000);
-    else if(_activeTab==="fav") matchTab=_favs.indexOf(t.name)>-1;
+    if(_activeTab==="trending"){
+      // Trending: explicitly marked trending, ya views 10 se zyada
+      matchTab=(t.trending===true)||(t.views&&t.views>=10);
+    } else if(_activeTab==="latest"){
+      // Latest: sirf woh tools jo created field hai aur 30 din ke andar
+      matchTab=t.created&&(now-t.created)<30*86400000;
+    } else if(_activeTab==="fav"){
+      matchTab=_favs.indexOf(t.name)>-1;
+    }
+    // "all" tab: matchTab=true (sab dikhao)
     return matchQ&&matchCat&&matchTab;
   });
+  // Agar tab mein koi tool nahi to friendly message
+  if(filtered.length===0&&_activeTab!=="all"){
+    var msgs={
+      trending:"Koi trending tool nahi abhi 🔥",
+      latest:"Koi naya tool nahi 30 din mein ✨",
+      fav:"Koi favourite nahi — star dabao ⭐"
+    };
+    var g=document.getElementById("tG");
+    if(g)g.innerHTML="<div class='emp' style='grid-column:1/-1'><i class='fas fa-inbox'></i><p style='margin:8px 0;font-size:.85rem;color:var(--mt)'>"+(msgs[_activeTab]||"Koi tool nahi")+"</p></div>";
+    return;
+  }
   _renderTools(filtered);
   // Update cat buttons
   document.querySelectorAll("#catFilter button").forEach(function(btn){
