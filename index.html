@@ -213,23 +213,23 @@ body{background:var(--bg);color:var(--tx);font-family:"Rajdhani",sans-serif;min-
 @keyframes spin{to{transform:rotate(360deg);}}
 
 .foot{text-align:center;padding:16px;color:var(--mt);font-size:.75rem;}
-.hero{position:relative;overflow:hidden;border-radius:22px;padding:22px 18px 18px;margin-bottom:16px;background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%);box-shadow:0 8px 32px rgba(255,51,102,.25);}
-.hero::before{content:"";position:absolute;top:-40px;right:-40px;width:140px;height:140px;border-radius:50%;background:rgba(255,51,102,.12);filter:blur(30px);}
-.hero::after{content:"";position:absolute;bottom:-30px;left:-30px;width:100px;height:100px;border-radius:50%;background:rgba(255,215,0,.08);filter:blur(20px);}
-.hero-badge{display:inline-flex;align-items:center;gap:5px;background:rgba(255,51,102,.15);border:1px solid rgba(255,51,102,.3);border-radius:20px;padding:3px 10px;font-size:.65rem;font-weight:700;color:#ff3366;letter-spacing:1px;margin-bottom:10px;}
-.hero-title{font-family:"Orbitron",sans-serif;font-size:1.45rem;font-weight:800;color:#fff;line-height:1.2;margin-bottom:6px;}
-.hero-title .ht{color:#ff3366;}.hero-title .hh{color:#ffd700;}
-.hero-welcome{font-size:.78rem;color:rgba(255,255,255,.6);margin-bottom:14px;display:none;}
-.hero-welcome b{color:#ffd700;}
+.hero{position:relative;overflow:hidden;border-radius:22px;padding:22px 18px 18px;margin-bottom:16px;background:var(--nm);box-shadow:var(--shadow);}
+.hero::before{content:"";position:absolute;top:-40px;right:-40px;width:140px;height:140px;border-radius:50%;background:rgba(255,51,102,.07);filter:blur(30px);}
+.hero::after{content:"";position:absolute;bottom:-30px;left:-30px;width:100px;height:100px;border-radius:50%;background:rgba(245,158,11,.06);filter:blur(20px);}
+.hero-badge{display:inline-flex;align-items:center;gap:5px;background:rgba(255,51,102,.08);border:1px solid rgba(255,51,102,.2);border-radius:20px;padding:3px 10px;font-size:.65rem;font-weight:700;color:var(--ac);letter-spacing:1px;margin-bottom:10px;}
+.hero-title{font-family:"Orbitron",sans-serif;font-size:1.45rem;font-weight:800;color:var(--tx);line-height:1.2;margin-bottom:6px;}
+.hero-title .ht{color:#ff3366;}.hero-title .hh{color:#f59e0b;}
+.hero-welcome{font-size:.78rem;color:var(--tx2);margin-bottom:14px;display:none;}
+.hero-welcome b{color:var(--ac);}
 .hero-stats{display:flex;gap:6px;margin-bottom:16px;}
-.hero-stat{flex:1;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:8px 4px;text-align:center;}
-.hero-stat-val{font-family:"Orbitron",sans-serif;font-size:.82rem;font-weight:700;line-height:1;}
-.hero-stat-lbl{font-size:.6rem;color:rgba(255,255,255,.4);margin-top:3px;}
+.hero-stat{flex:1;background:var(--bg);box-shadow:var(--shadow-in);border-radius:10px;padding:8px 4px;text-align:center;}
+.hero-stat-val{font-family:"Orbitron",sans-serif;font-size:.82rem;font-weight:700;line-height:1;color:var(--tx);}
+.hero-stat-lbl{font-size:.6rem;color:var(--mt);margin-top:3px;}
 .hero-search-wrap{position:relative;}
-.hero-search{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:11px 14px 11px 38px;width:100%;color:#fff;font-size:.85rem;font-family:inherit;outline:none;transition:border .2s;}
-.hero-search::placeholder{color:rgba(255,255,255,.35);}
-.hero-search:focus{border-color:rgba(255,51,102,.5);}
-.hero-search-ic{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:rgba(255,255,255,.4);font-size:.8rem;}
+.hero-search{background:var(--bg);box-shadow:var(--shadow-in);border:1px solid transparent;border-radius:12px;padding:11px 14px 11px 38px;width:100%;color:var(--tx);font-size:.85rem;font-family:inherit;outline:none;transition:border .2s;}
+.hero-search::placeholder{color:var(--mt);}
+.hero-search:focus{border-color:var(--ac);}
+.hero-search-ic{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--mt);font-size:.8rem;}
 .tst{position:fixed;bottom:18px;right:18px;background:var(--nm);box-shadow:var(--shadow-sm);
   color:var(--gr);padding:11px 18px;border-radius:11px;font-size:.85rem;
   transform:translateY(100px);opacity:0;transition:all .4s;z-index:9999;
@@ -296,7 +296,8 @@ body{background:var(--bg);color:var(--tx);font-family:"Rajdhani",sans-serif;min-
       <span id="tpN">L&#9829;H TOOLKIT</span>
     </div>
     <div class="tbri">
-      <div class="kbdg" id="kbdg2"><i class="fas fa-clock"></i> --</div>
+      <div class="kbdg" id="kbdg2" style="display:none;"><i class="fas fa-clock"></i> --</div>
+      <div id="topTimerBadge" style="display:none;background:linear-gradient(135deg,rgba(255,51,102,.1),rgba(245,158,11,.08));border:1px solid rgba(255,51,102,.25);border-radius:20px;padding:5px 12px;font-size:.72rem;font-family:'Orbitron',sans-serif;font-weight:700;color:var(--ac);display:flex;align-items:center;gap:5px;"><i class="fas fa-clock"></i> <span id="topTimerTxt">--</span></div>
       <button class="icb" id="thTkBtn" onclick="togTh()"><i class="fas fa-moon" id="thTk"></i></button>
       <button class="icb" onclick="doLogout()"><i class="fas fa-sign-out-alt"></i></button>
     </div>
@@ -316,11 +317,11 @@ body{background:var(--bg);color:var(--tx);font-family:"Rajdhani",sans-serif;min-
           <div class="hero-stat-lbl">Online</div>
         </div>
         <div class="hero-stat">
-          <div class="hero-stat-val" style="color:#60a5fa;" id="viewsCount">--</div>
+          <div class="hero-stat-val" style="color:var(--bl);" id="viewsCount">--</div>
           <div class="hero-stat-lbl">Views</div>
         </div>
         <div class="hero-stat">
-          <div class="hero-stat-val" style="color:#ff3366;" id="toolsCountStat">--</div>
+          <div class="hero-stat-val" style="color:var(--ac);" id="toolsCountStat">--</div>
           <div class="hero-stat-lbl">Tools</div>
         </div>
       </div>
@@ -438,25 +439,29 @@ async function api(action,payload){
   try{
     if(action==="verifyKey"){
       var k=(payload.key||"").trim().toUpperCase();
+      if(!k||k.length<4)return{ok:false,msg:"Invalid key!"};
       var now=Date.now();
-      // Query Firebase by key value directly — no need to read all keys
       try{
-        var url=_FB_DB+"/keys.json?orderBy=%22key%22&equalTo=%22"+encodeURIComponent(k)+"%22";
-        var r2=await fetch(url);
-        var txt=await r2.text();
-        var result=(txt&&txt!=="null")?JSON.parse(txt):null;
-        if(!result||!Object.keys(result).length)
-          return{ok:false,msg:"Invalid key! Buy from admin."};
-        var id=Object.keys(result)[0];
-        var kd=result[id];
-        if(kd.expiry<now)return{ok:false,msg:"Key expired!"};
-        if(kd.deviceId&&kd.deviceId!==(payload.deviceId||""))
-          return{ok:false,msg:"Key locked to another device!"};
-        if(!kd.deviceId&&payload.deviceId){
-          await _fbSet("keys/"+id+"/deviceId",payload.deviceId);
-          await _fbSet("keys/"+id+"/used",true);
+        // Saari keys fetch karke manually match karo
+        // (Firebase orderBy ke liye index chahiye hota hai)
+        var allKeys=await _fbGet("keys");
+        if(!allKeys)return{ok:false,msg:"Invalid key! Buy from admin."};
+        var foundId=null,foundKd=null;
+        for(var kid in allKeys){
+          var kobj=allKeys[kid];
+          if(kobj&&kobj.key&&kobj.key.toUpperCase()===k){
+            foundId=kid;foundKd=kobj;break;
+          }
         }
-        return{ok:true,expiry:kd.expiry,keyId:id,created:kd.created||null,days:kd.days||null};
+        if(!foundId||!foundKd)return{ok:false,msg:"Invalid key! Buy from admin."};
+        if(foundKd.expiry<now)return{ok:false,msg:"Key expired!"};
+        if(foundKd.deviceId&&foundKd.deviceId!==(payload.deviceId||""))
+          return{ok:false,msg:"Key locked to another device!"};
+        if(!foundKd.deviceId&&payload.deviceId){
+          await _fbSet("keys/"+foundId+"/deviceId",payload.deviceId);
+          await _fbSet("keys/"+foundId+"/used",true);
+        }
+        return{ok:true,expiry:foundKd.expiry,keyId:foundId,created:foundKd.created||null,days:foundKd.days||null};
       }catch(e2){
         return{ok:false,msg:"Connection error. Try again."};
       }
@@ -746,12 +751,19 @@ async function buyK(e){
 var _cdTimer=null;
 function startCountdown(){
   clearInterval(_cdTimer);
+  // Topbar timer badge dikhao
+  var topBadge=document.getElementById("topTimerBadge");
+  if(topBadge)topBadge.style.display="flex";
   function tick(){
     var rem=curExp-Date.now();
     updateKeyBar();
     if(rem<=0){
       document.getElementById("kEx").textContent="EXPIRED";
-      document.getElementById("kbdg").innerHTML="<i class='fas fa-clock'></i> EXP";if(document.getElementById("kbdg2"))document.getElementById("kbdg2").innerHTML="<i class='fas fa-clock'></i> EXP";
+      document.getElementById("kbdg").innerHTML="<i class='fas fa-clock'></i> EXP";
+      var tt=document.getElementById("topTimerTxt");
+      if(tt)tt.textContent="EXP";
+      var tb=document.getElementById("topTimerBadge");
+      if(tb){tb.style.background="rgba(239,68,68,.15)";tb.style.borderColor="rgba(239,68,68,.3)";tb.style.color="var(--ac)";}
       clearInterval(_cdTimer);
       setTimeout(function(){doLogout();tst("Key expired!",false);},1500);
       return;
@@ -763,18 +775,18 @@ function startCountdown(){
     var mm=(m<10?"0"+m:m)+"m ";
     var ss=(s<10?"0"+s:s)+"s";
     var fullTxt=hh+mm+ss;
-    // Short badge
+    // Short badge for topbar
     var badgeTxt=h>0?(h+"h"):((m<10?"0"+m:m)+"m");
     document.getElementById("kEx").textContent=fullTxt;
-    var bdgHTML="<i class='fas fa-clock'></i> "+badgeTxt;
-    document.getElementById("kbdg").innerHTML=bdgHTML;
-    if(document.getElementById("kbdg2"))document.getElementById("kbdg2").innerHTML=bdgHTML;
+    document.getElementById("kbdg").innerHTML="<i class='fas fa-clock'></i> "+badgeTxt;
+    var tt=document.getElementById("topTimerTxt");
+    if(tt)tt.textContent=badgeTxt;
     // Warn red when < 1 hour
     if(rem<3600000){
-      ["kbdg","kbdg2"].forEach(function(id){
-        var el=document.getElementById(id);
-        if(el){el.style.background="rgba(239,68,68,.15)";el.style.color="var(--ac)";el.style.borderColor="rgba(239,68,68,.3)";}
-      });
+      var tb2=document.getElementById("topTimerBadge");
+      if(tb2){tb2.style.background="rgba(239,68,68,.15)";tb2.style.borderColor="rgba(239,68,68,.3)";}
+      var kb=document.getElementById("kbdg");
+      if(kb){kb.style.background="rgba(239,68,68,.15)";kb.style.color="var(--ac)";kb.style.borderColor="rgba(239,68,68,.3)";}
     }
   }
   tick();
@@ -788,6 +800,9 @@ function doLogout(){
   localStorage.removeItem("lh_k");
   localStorage.removeItem("lh_e");
   localStorage.removeItem("lh_ct");
+  // Topbar timer hide karo
+  var tb=document.getElementById("topTimerBadge");
+  if(tb)tb.style.display="none";
   document.getElementById("lk").value="";
   document.getElementById("err").style.display="none";
   showS("ls");tst("Logged out!");
