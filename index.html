@@ -523,40 +523,13 @@ function onLogin(){ setTimeout(trackOnline, 1000);
   startCountdown();
 }
 
-// ═══ AUTO LOGIN — Server verify zaroori hai ═══
+// ═══ AUTO LOGIN — Har baar server se verify ═══
 async function autoLogin(){
-  var k=localStorage.getItem("lh_k");
-  if(!k){showS("ls");return;}
-  // ALWAYS verify with server — no bypass possible
-  try {
-    var did=getDevId();
-    var result=await apiCall("verify-key","POST",{key:k,deviceId:did});
-    if(!result||!result.ok){
-      // Invalid/expired/device mismatch — logout
-      localStorage.removeItem("lh_k");
-      localStorage.removeItem("lh_e");
-      localStorage.removeItem("lh_ct");
-      var el=document.getElementById("err");
-      if(el){el.textContent=result&&result.msg?result.msg:"Session expired! Login again.";el.style.color="#ff6b6b";el.style.display="block";}
-      showS("ls");return;
-    }
-    curKey=k;
-    // API always returns expiry in ms - use directly
-    curExp = parseInt(result.expiry) || 0;
-    if(curExp < 9999999999) curExp = curExp * 1000; // old seconds format
-    _keyCreatedTime = parseInt(result.created) || (Date.now() - (result.days||30)*86400000);
-    localStorage.setItem("lh_e", String(curExp));
-    localStorage.setItem("lh_ct", String(_keyCreatedTime));
-    onLogin();
-  } catch(err) {
-    // Connection error — always go to login screen, no bypass
-    localStorage.removeItem("lh_k");
-    localStorage.removeItem("lh_e");
-    localStorage.removeItem("lh_ct");
-    var errEl=document.getElementById("err");
-    if(errEl){errEl.textContent="Connection error! Please try again.";errEl.style.color="#ff6b6b";errEl.style.display="block";}
-    showS("ls");
-  }
+  // Clear old cached key — fresh login required every time
+  localStorage.removeItem("lh_k");
+  localStorage.removeItem("lh_e");
+  localStorage.removeItem("lh_ct");
+  showS("ls");
 }
 
 // ═══ LOAD UI ═══
@@ -608,16 +581,12 @@ function startCountdown(){
     var hrs=Math.floor((rem%86400000)/3600000);
     var mins=Math.floor((rem%3600000)/60000);
     var secs=Math.floor((rem%60000)/1000);
-    var dd=days<10?"0"+days:days;
-    var hh=hrs<10?"0"+hrs:hrs;
-    var mm=mins<10?"0"+mins:mins;
-    var ss=secs<10?"0"+secs:secs;
-    var badge=dd+":"+hh+":"+mm+":"+ss;
-    var txt=days+"d "+hrs+"h "+mins+"m "+secs+"s";
+    function p(n){return n<10?"0"+n:String(n);}
+    var badge=p(days)+":"+p(hrs)+":"+p(mins)+":"+p(secs);
     var tt=document.getElementById("tbTimer");
     if(tt)tt.textContent="⌛ "+badge;
     var kex=document.getElementById("kEx");
-    if(kex)kex.textContent=txt;
+    if(kex)kex.textContent=days+"d "+hrs+"h "+mins+"m "+secs+"s";
     // Key bar
     if(_keyCreatedTime){
       var total=curExp-_keyCreatedTime;
