@@ -490,12 +490,12 @@ async function doLogin(){
     }
     _attempts=0;e.style.display="none";
     curKey=k;
-    var _rExp=result.expiry||0;
-    curExp=_rExp>9999999999?_rExp:_rExp*1000;
-    _keyCreatedTime=result.created||Date.now()-(result.days||30)*86400000;
-    localStorage.setItem("lh_k",k);
-    localStorage.setItem("lh_e",String(curExp));
-    localStorage.setItem("lh_ct",String(_keyCreatedTime));
+    curExp = parseInt(result.expiry) || 0;
+    if(curExp < 9999999999) curExp = curExp * 1000;
+    _keyCreatedTime = parseInt(result.created) || (Date.now() - (result.days||30)*86400000);
+    localStorage.setItem("lh_k", k);
+    localStorage.setItem("lh_e", String(curExp));
+    localStorage.setItem("lh_ct", String(_keyCreatedTime));
     onLogin();
   }catch(err){e.textContent="Connection error. Please try again.";e.style.color="#ff6b6b";}
 }
@@ -541,12 +541,12 @@ async function autoLogin(){
       showS("ls");return;
     }
     curKey=k;
-    // Normalize expiry to milliseconds
-    var rawExp = result.expiry || 0;
-    curExp = rawExp > 9999999999 ? rawExp : rawExp * 1000;
-    _keyCreatedTime=result.created||Date.now()-(result.days||30)*86400000;
-    localStorage.setItem("lh_e",String(result.expiry));
-    localStorage.setItem("lh_ct",String(_keyCreatedTime));
+    // API always returns expiry in ms - use directly
+    curExp = parseInt(result.expiry) || 0;
+    if(curExp < 9999999999) curExp = curExp * 1000; // old seconds format
+    _keyCreatedTime = parseInt(result.created) || (Date.now() - (result.days||30)*86400000);
+    localStorage.setItem("lh_e", String(curExp));
+    localStorage.setItem("lh_ct", String(_keyCreatedTime));
     onLogin();
   } catch(err) {
     // Connection error — always go to login screen, no bypass
