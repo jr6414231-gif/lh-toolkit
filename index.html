@@ -35,18 +35,19 @@ body{background:#f0f2f5;font-family:Inter,sans-serif;min-height:100vh;}
 #ls.on{display:flex;min-height:100vh;align-items:center;justify-content:center;padding:20px;background:linear-gradient(145deg,#e8e8e8,#f5f5f5);}
 .lw{width:100%;max-width:360px;text-align:center;}
 .lcard{background:linear-gradient(145deg,#f0f0f0,#ffffff);border-radius:28px;padding:36px 28px 32px;box-shadow:20px 20px 60px #d0d0d0,-20px -20px 60px #ffffff;}
-.ll{width:90px;height:90px;border-radius:50%;object-fit:cover;margin:0 auto 16px;display:block;border:3px solid rgba(255,51,102,.3);box-shadow:0 0 0 6px rgba(255,51,102,.1),0 8px 24px rgba(255,51,102,.2);}
+.ll{width:90px;height:90px;border-radius:50%;object-fit:cover;margin:0 auto 16px;display:block;border:3px solid rgba(255,51,102,.4);box-shadow:0 0 0 8px rgba(255,51,102,.1),0 8px 24px rgba(255,51,102,.2);animation:logoPulse 2.5s ease-in-out infinite;}
+@keyframes logoPulse{0%,100%{box-shadow:0 0 0 6px rgba(255,51,102,.1),0 0 0 12px rgba(255,51,102,.05),0 8px 24px rgba(255,51,102,.2);}50%{box-shadow:0 0 0 10px rgba(255,51,102,.15),0 0 0 20px rgba(255,51,102,.05),0 12px 32px rgba(255,51,102,.3);}}
 .lt{font-size:1.6rem;font-weight:900;letter-spacing:1px;margin-bottom:4px;}
 .lt span:first-child{color:#ff3366;}.lt span:last-child{color:#ff6b35;}
 .ls2{color:#94a3b8;font-size:.75rem;font-weight:600;letter-spacing:2px;margin-bottom:28px;}
 .lerr{color:#ff3366;font-size:.78rem;background:rgba(255,51,102,.08);padding:8px 12px;border-radius:10px;margin-bottom:12px;display:none;border:1px solid rgba(255,51,102,.2);}
 .li{width:100%;background:linear-gradient(145deg,#e8e8e8,#f5f5f5);border:none;border-radius:50px;padding:14px 20px;color:#1e293b;font-size:.88rem;outline:none;margin-bottom:16px;font-family:inherit;box-shadow:inset 6px 6px 12px #d0d0d0,inset -6px -6px 12px #ffffff;text-align:center;letter-spacing:1px;}
 .li::placeholder{color:#b0b8c1;font-size:.82rem;letter-spacing:1px;}
-.lbtn{width:100%;background:linear-gradient(135deg,#ff4d6d,#ff3366);border:none;border-radius:50px;padding:16px;color:#fff;font-size:.88rem;font-weight:800;cursor:pointer;letter-spacing:2px;margin-bottom:16px;box-shadow:0 8px 24px rgba(255,51,102,.4),0 2px 0 rgba(255,255,255,.3) inset;transition:transform .15s;}
-.lbtn:active{transform:scale(.97);}
+.lbtn{width:100%;background:linear-gradient(180deg,#ff6b8a 0%,#ff3366 40%,#e8174f 100%);border:none;border-radius:50px;padding:17px;color:#fff;font-size:.9rem;font-weight:900;cursor:pointer;letter-spacing:2px;margin-bottom:16px;box-shadow:0 6px 0 #b5103a,0 10px 20px rgba(255,51,102,.5),inset 0 1px 0 rgba(255,255,255,.4);transition:transform .1s,box-shadow .1s;text-shadow:0 1px 2px rgba(0,0,0,.2);}
+.lbtn:active{transform:translateY(4px);box-shadow:0 2px 0 #b5103a,0 4px 12px rgba(255,51,102,.4);}
 .ldiv{color:#b0b8c1;font-size:.72rem;font-weight:600;letter-spacing:2px;margin-bottom:14px;}
-.lbuy{width:100%;background:linear-gradient(135deg,#22c55e,#16a34a);border:none;border-radius:50px;padding:15px;color:#fff;font-size:.88rem;font-weight:800;cursor:pointer;letter-spacing:1px;box-shadow:0 8px 24px rgba(34,197,94,.35),0 2px 0 rgba(255,255,255,.3) inset;transition:transform .15s;}
-.lbuy:active{transform:scale(.97);}
+.lbuy{width:100%;background:linear-gradient(180deg,#4ade80 0%,#22c55e 40%,#15803d 100%);border:none;border-radius:50px;padding:16px;color:#fff;font-size:.9rem;font-weight:900;cursor:pointer;letter-spacing:1px;box-shadow:0 6px 0 #166534,0 10px 20px rgba(34,197,94,.4),inset 0 1px 0 rgba(255,255,255,.4);transition:transform .1s,box-shadow .1s;text-shadow:0 1px 2px rgba(0,0,0,.2);}
+.lbuy:active{transform:translateY(4px);box-shadow:0 2px 0 #166534,0 4px 12px rgba(34,197,94,.4);}
 
 /* TOPBAR */
 .tb{background:#fff;box-shadow:0 2px 12px rgba(0,0,0,.08);padding:0 16px;height:60px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:100;}
@@ -313,33 +314,59 @@ async function doLogin(){
   if(_lockUntil>now){
     var s=Math.ceil((_lockUntil-now)/1000);
     var e=document.getElementById("err");
-    e.textContent="Wait "+s+"s";e.style.display="block";return;
+    e.textContent="Too many attempts! Wait "+s+"s";e.style.display="block";return;
   }
   var k=document.getElementById("lk").value.trim().toUpperCase();
   var e=document.getElementById("err");
-  if(!k){e.textContent="Enter your key!";e.style.display="block";return;}
-  e.textContent="Verifying...";e.style.color="#60a5fa";e.style.display="block";
+  // Must be non-empty and at least 4 chars
+  if(!k||k.length<4){e.textContent="Enter a valid license key!";e.style.display="block";return;}
+  e.textContent="Verifying key...";e.style.color="#60a5fa";e.style.display="block";
+  // Disable button
+  var btn=document.querySelector(".lbtn");if(btn)btn.disabled=true;
   try{
+    // Query Firebase for exact key match
     var url=_FB+"/keys.json?orderBy=%22key%22&equalTo=%22"+encodeURIComponent(k)+"%22";
-    var r=await fetch(url);var txt=await r.text();
+    var r=await fetch(url);
+    if(!r.ok){throw new Error("Server error");}
+    var txt=await r.text();
     var result=(txt&&txt!=="null")?JSON.parse(txt):null;
     if(!result||!Object.keys(result).length){
-      _attempts++;if(_attempts>=5){_lockUntil=Date.now()+60000;_attempts=0;}
-      e.textContent="Invalid key! Buy from admin.";e.style.color="#ff6b6b";return;
+      _attempts++;
+      if(_attempts>=5){_lockUntil=Date.now()+60000;_attempts=0;}
+      e.textContent="❌ Invalid key! Buy from admin.";e.style.color="#ff3366";
+      if(btn)btn.disabled=false;return;
     }
-    var id=Object.keys(result)[0];var kd=result[id];
-    if(kd.expiry<Date.now()){e.textContent="Key expired!";e.style.color="#ff6b6b";return;}
+    var id=Object.keys(result)[0];
+    var kd=result[id];
+    // Check expiry
+    if(kd.expiry<Date.now()){
+      e.textContent="❌ Key expired! Buy new key.";e.style.color="#ff3366";
+      if(btn)btn.disabled=false;return;
+    }
+    // Device lock - one key one device
     var did=getDevId();
-    if(kd.deviceId&&kd.deviceId!==did){e.textContent="Key locked to another device!";e.style.color="#ff6b6b";return;}
-    if(!kd.deviceId){await fbSet("keys/"+id+"/deviceId",did);await fbSet("keys/"+id+"/used",true);}
+    if(kd.deviceId&&kd.deviceId!==did){
+      e.textContent="❌ Key already used on another device!";e.style.color="#ff3366";
+      if(btn)btn.disabled=false;return;
+    }
+    // First use - lock to this device
+    if(!kd.deviceId){
+      await fbSet("keys/"+id+"/deviceId",did);
+      await fbSet("keys/"+id+"/used",true);
+      await fbSet("keys/"+id+"/usedAt",Date.now());
+    }
     _attempts=0;e.style.display="none";
     curKey=k;curExp=kd.expiry;
-    _keyCreatedTime=kd.created||Date.now()-kd.days*86400000;
+    _keyCreatedTime=kd.created||(Date.now()-((kd.days||30)*86400000));
     localStorage.setItem("lh_k",k);
     localStorage.setItem("lh_e",String(kd.expiry));
     localStorage.setItem("lh_ct",String(_keyCreatedTime));
+    if(btn)btn.disabled=false;
     onLogin();
-  }catch(err){e.textContent="Connection error. Try again.";e.style.color="#ff6b6b";}
+  }catch(err){
+    e.textContent="Connection error. Try again.";e.style.color="#ff3366";
+    if(btn)btn.disabled=false;
+  }
 }
 
 function getDevId(){
