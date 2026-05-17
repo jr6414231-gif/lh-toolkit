@@ -66,7 +66,7 @@ body{background:var(--bg);color:var(--tx);font-family:sans-serif;min-height:100v
 
 /* ═══ LOGIN PREMIUM ═══ */
 /* Floating particles background */
-#ls{background:var(--bg);overflow:hidden;display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px;}
+#ls{background:var(--bg);overflow:hidden;min-height:100vh;padding:20px;}
 .ls-bg{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;}
 .ls-orb{position:absolute;border-radius:50%;filter:blur(60px);animation:orbFloat 8s ease-in-out infinite;}
 .ls-orb1{width:280px;height:280px;background:rgba(255,51,102,.12);top:-80px;right:-60px;animation-delay:0s;}
@@ -437,7 +437,7 @@ body{background:var(--bg);color:var(--tx);font-family:sans-serif;min-height:100v
 
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
       <div class="stit" style="margin-bottom:0;flex:1"><i class="fas fa-tools"></i> ALL TOOLS</div>
-      <span id="toolCount" style="font-size:.72rem;background:rgba(255,51,102,.1);color:var(--ac);padding:4px 12px;border-radius:20px;font-family:'Inter',sans-serif;font-weight:700;border:1px solid rgba(255,51,102,.15);white-space:nowrap;"></span>
+      <span id="toolCount" style="font-size:.72rem;background:rgba(255,51,102,.1);color:var(--ac);padding:4px 12px;border-radius:20px;font-weight:700;border:1px solid rgba(255,51,102,.15);white-space:nowrap;"></span>
     </div>
     <div class="tg" id="tG"></div>
   </div>
@@ -658,6 +658,7 @@ function _prefetchTools(){
     if(res&&res.ok&&res.tools){
       _toolsCache=res.tools;
       _toolsCacheTime=Date.now();
+      _allTools=res.tools.slice(); // cache aur allTools dono sync
     }
     _prefetchPromise=null;
   }).catch(function(){_prefetchPromise=null;});
@@ -759,6 +760,22 @@ function _renderTools(tools){
     c.target="_blank";
     c.rel="noopener noreferrer";
     c.style.animationDelay=(i*.04)+"s";
+    // Tool click hone pe views increment karo Firebase mein
+    c.addEventListener("click",function(){
+      if(t.name){
+        var tpath="tools";
+        _fbGet("tools").then(function(allT){
+          if(!allT)return;
+          for(var tid in allT){
+            if(allT[tid]&&allT[tid].name===t.name){
+              var v=(parseInt(allT[tid].views)||0)+1;
+              _fbSet("tools/"+tid+"/views",v);
+              break;
+            }
+          }
+        });
+      }
+    });
     c.innerHTML="<div class='tiw'>"+ic+"</div>"
       +"<div class='tnm'>"+t.name+"</div>"
       +(t.desc?"<div class='tds'>"+t.desc+"</div>":"")
@@ -870,6 +887,7 @@ function startCountdown(){
 function doLogout(){
   clearInterval(_cdTimer);
   _toolsCache=null;_toolsCacheTime=0;_prefetchPromise=null;
+  _allTools=[];_viewCounted=false;
   curKey=null;curExp=null;
   localStorage.removeItem("lh_k");
   localStorage.removeItem("lh_e");
@@ -1071,6 +1089,7 @@ function filterTools(){
 
 // ── ONLINE USERS & VIEWS (Firebase) ──
 var _sessionId = Math.random().toString(36).slice(2);
+var _viewCounted = false;
 async function trackOnline(){
   if(!curKey)return;
   // Register this session as online
@@ -1083,12 +1102,20 @@ async function trackOnline(){
     var el=document.getElementById("onlineCount");
     if(el)el.textContent=count;
   }
-  // Views
-  var views=await _fbGet("stats/views");
-  views=(parseInt(views)||0)+1;
-  await _fbSet("stats/views",views);
-  var el2=document.getElementById("viewsCount");
-  if(el2)el2.textContent=views.toLocaleString();
+  // Views — sirf ek baar session mein count karo
+  if(!_viewCounted){
+    _viewCounted=true;
+    var views=await _fbGet("stats/views");
+    views=(parseInt(views)||0)+1;
+    await _fbSet("stats/views",views);
+    var el2=document.getElementById("viewsCount");
+    if(el2)el2.textContent=views.toLocaleString();
+  } else {
+    // Sirf display update karo
+    var views2=await _fbGet("stats/views");
+    var el3=document.getElementById("viewsCount");
+    if(el3&&views2)el3.textContent=parseInt(views2).toLocaleString();
+  }
 }
 // Clean up on leave
 window.addEventListener("beforeunload",function(){
