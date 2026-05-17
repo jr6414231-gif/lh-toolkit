@@ -504,84 +504,26 @@ body{background:var(--bg);color:var(--tx);font-family:sans-serif;min-height:100v
   });
 })();
 
-// ═══ FIREBASE DIRECT — No auth needed, instant ═══
-var _FB_DB = "https://toolkit-73b2a-default-rtdb.firebaseio.com";
+// ═══ API — Firebase URL kabhi browser mein nahi aata ═══
+// Sab kuch /api/toolkit serverless function handle karta hai
+var _API = "/api/toolkit";
 
-async function _fbGet(path){
-  try{
-    var r=await fetch(_FB_DB+"/"+path+".json");
-    var t=await r.text();
-    return(t&&t!=="null")?JSON.parse(t):null;
-  }catch(e){return null;}
-}
-
-async function _fbSet(path,data){
-  try{
-    await fetch(_FB_DB+"/"+path+".json",{
-      method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify(data)
+async function api(action, payload) {
+  try {
+    var r = await fetch(_API, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: action, payload: payload || {} })
     });
-  }catch(e){}
-}
-
-// ── api() shim — maps old Vercel actions to Firebase directly ──
-async function api(action,payload){
-  try{
-    if(action==="verifyKey"){
-      var k=(payload.key||"").trim().toUpperCase();
-      if(!k||k.length<4)return{ok:false,msg:"Invalid key!"};
-      var now=Date.now();
-      try{
-        // Saari keys fetch karke manually match karo
-        // (Firebase orderBy ke liye index chahiye hota hai)
-        var allKeys=await _fbGet("keys");
-        if(!allKeys)return{ok:false,msg:"Invalid key! Buy from admin."};
-        var foundId=null,foundKd=null;
-        for(var kid in allKeys){
-          var kobj=allKeys[kid];
-          if(kobj&&kobj.key&&kobj.key.toUpperCase()===k){
-            foundId=kid;foundKd=kobj;break;
-          }
-        }
-        if(!foundId||!foundKd)return{ok:false,msg:"Invalid key! Buy from admin."};
-        if(foundKd.expiry<now)return{ok:false,msg:"Key expired!"};
-        if(foundKd.deviceId&&foundKd.deviceId!==(payload.deviceId||""))
-          return{ok:false,msg:"Key locked to another device!"};
-        if(!foundKd.deviceId&&payload.deviceId){
-          await _fbSet("keys/"+foundId+"/deviceId",payload.deviceId);
-          await _fbSet("keys/"+foundId+"/used",true);
-        }
-        return{ok:true,expiry:foundKd.expiry,keyId:foundId,created:foundKd.created||null,days:foundKd.days||null};
-      }catch(e2){
-        return{ok:false,msg:"Connection error. Try again."};
-      }
-    }
-
-    if(action==="getTools"){
-      var tools=await _fbGet("tools");
-      if(!tools)return{ok:true,tools:[]};
-      var arr=[];
-      for(var tid in tools){
-        var t=tools[tid];
-        if(t.active!==false)arr.push(t);
-      }
-      return{ok:true,tools:arr};
-    }
-
-    if(action==="getSettings"){
-      var s=await _fbGet("settings");
-      return{ok:true,settings:s||{}};
-    }
-
-    if(action==="getPhone"){
-      var ph=await _fbGet("admin/phone");
-      return{ok:true,phone:ph||"923277796795"};
-    }
-
-    return{ok:false,msg:"Unknown action"};
-  }catch(e){
-    return{ok:false,msg:"Connection error"};
+    return await r.json();
+  } catch(e) {
+    return { ok: false, msg: "Connection error" };
   }
 }
+
+// Legacy shims — sirf API se call karein
+async function _fbGet(path) { return null; }
+async function _fbSet(path, data) { return null; }
 
 var curKey=null,curExp=null,curTh="light";
 
@@ -589,14 +531,10 @@ var curKey=null,curExp=null,curTh="light";
 var _ssIdx=0,_ssTotal=0,_ssTimer=null,_ssTouching=false,_ssTouchX=0,_ssLoaded=false;
 
 async function loadScreenshots(){
-  if(_ssLoaded)return; // Pehle se load ho to skip karo
-  var shots=await _fbGet("screenshots");
-  if(!shots)return;
-  var arr=[];
-  for(var k in shots){if(shots[k]&&shots[k].url)arr.push(shots[k]);}
-  if(!arr.length)return;
-  // Sort by order field
-  arr.sort(function(a,b){return(a.order||0)-(b.order||0);});
+  if(_ssLoaded)return;
+  var res = await api("getScreenshots", {});
+  if(!res || !res.ok || !res.screenshots || !res.screenshots.length) return;
+  var arr = res.screenshots;
   _ssTotal=arr.length;
   var track=document.getElementById("ssTrack");
   var dots=document.getElementById("ssDots");
@@ -851,21 +789,8 @@ function _renderTools(tools){
     c.target="_blank";
     c.rel="noopener noreferrer";
     c.style.animationDelay=(i*.04)+"s";
-    // Tool click hone pe views increment karo Firebase mein
-    c.addEventListener("click",function(){
-      if(t.name){
-        var tpath="tools";
-        _fbGet("tools").then(function(allT){
-          if(!allT)return;
-          for(var tid in allT){
-            if(allT[tid]&&allT[tid].name===t.name){
-              var v=(parseInt(allT[tid].views)||0)+1;
-              _fbSet("tools/"+tid+"/views",v);
-              break;
-            }
-          }
-        });
-      }
+    c.addEventListener("click", function(){
+      if(t.name) api("toolClick", { toolName: t.name });
     });
     c.innerHTML="<div class='tiw'>"+ic+"</div>"
       +"<div class='tnm'>"+t.name+"</div>"
@@ -1178,39 +1103,30 @@ function filterTools(){
   });
 }
 
-// ── ONLINE USERS & VIEWS (Firebase) ──
+// ── ONLINE USERS & VIEWS (via API) ──
 var _sessionId = Math.random().toString(36).slice(2);
 var _viewCounted = false;
 async function trackOnline(){
   if(!curKey)return;
-  // Register this session as online
-  await _fbSet("online/"+_sessionId,{key:curKey,t:Date.now()});
-  // Count online users (active last 3 min)
-  var onlineData=await _fbGet("online");
-  if(onlineData){
-    var now=Date.now(),count=0;
-    for(var k in onlineData){if(onlineData[k]&&onlineData[k].t&&(now-onlineData[k].t)<180000)count++;}
-    var el=document.getElementById("onlineCount");
-    if(el)el.textContent=count;
+  var res = await api("trackOnline", { sessionId: _sessionId });
+  if(res && res.online !== undefined){
+    var el = document.getElementById("onlineCount");
+    if(el) el.textContent = res.online;
   }
-  // Views — sirf ek baar session mein count karo
   if(!_viewCounted){
-    _viewCounted=true;
-    var views=await _fbGet("stats/views");
-    views=(parseInt(views)||0)+1;
-    await _fbSet("stats/views",views);
-    var el2=document.getElementById("viewsCount");
-    if(el2)el2.textContent=views.toLocaleString();
+    _viewCounted = true;
+    var vRes = await api("countView", {});
+    var el2 = document.getElementById("viewsCount");
+    if(el2 && vRes && vRes.views) el2.textContent = vRes.views.toLocaleString();
   } else {
-    // Sirf display update karo
-    var views2=await _fbGet("stats/views");
-    var el3=document.getElementById("viewsCount");
-    if(el3&&views2)el3.textContent=parseInt(views2).toLocaleString();
+    var vRes2 = await api("getViews", {});
+    var el3 = document.getElementById("viewsCount");
+    if(el3 && vRes2 && vRes2.views !== undefined) el3.textContent = vRes2.views.toLocaleString();
   }
 }
 // Clean up on leave
 window.addEventListener("beforeunload",function(){
-  navigator.sendBeacon(_FB_DB+"/online/"+_sessionId+".json","null");
+  navigator.sendBeacon(_API, JSON.stringify({ action: "goOffline", payload: { sessionId: _sessionId } }));
 });
 
 // Update online count every 30s
