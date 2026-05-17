@@ -1,6 +1,8 @@
 {
   "functions": {
-    "api/toolkit.js": { "runtime": "edge" },
-    "api/admin.js":   { "runtime": "edge" }
+    "api/toolkit.js": {
+      "memory": 128,
+      "maxDuration": 10
+    }
   }
 }
