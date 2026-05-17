@@ -358,6 +358,26 @@ body{background:var(--bg);color:var(--tx);font-family:sans-serif;min-height:100v
       <a href="#" class="wab" onclick="buyK(event)"><i class="fab fa-whatsapp"></i> Buy Key from Admin</a>
     </div>
   </div>
+
+  <!-- SCREENSHOT SLIDER -->
+  <div id="ssSection" style="display:none;width:100%;max-width:420px;margin-top:22px;">
+    <div style="font-size:.75rem;font-weight:700;color:var(--mt);text-align:center;margin-bottom:10px;letter-spacing:.5px;">📸 TOOLKIT PREVIEW</div>
+    <div style="position:relative;overflow:hidden;border-radius:16px;">
+      <!-- Slider Track -->
+      <div id="ssTrack" style="display:flex;transition:transform .4s cubic-bezier(.25,.46,.45,.94);will-change:transform;"></div>
+      <!-- Dots -->
+      <div id="ssDots" style="position:absolute;bottom:10px;left:50%;transform:translateX(-50%);display:flex;gap:6px;z-index:10;"></div>
+      <!-- Arrows -->
+      <button onclick="ssPrev()" style="position:absolute;left:8px;top:50%;transform:translateY(-50%);background:rgba(0,0,0,.4);border:none;color:#fff;border-radius:50%;width:30px;height:30px;cursor:pointer;font-size:.8rem;z-index:10;display:flex;align-items:center;justify-content:center;"><i class="fas fa-chevron-left"></i></button>
+      <button onclick="ssNext()" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);background:rgba(0,0,0,.4);border:none;color:#fff;border-radius:50%;width:30px;height:30px;cursor:pointer;font-size:.8rem;z-index:10;display:flex;align-items:center;justify-content:center;"><i class="fas fa-chevron-right"></i></button>
+    </div>
+  </div>
+
+  <!-- FULLSCREEN LIGHTBOX -->
+  <div id="ssLightbox" onclick="closeLightbox()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:9999;align-items:center;justify-content:center;padding:16px;">
+    <img id="ssLbImg" style="max-width:100%;max-height:90vh;border-radius:12px;object-fit:contain;">
+    <button onclick="closeLightbox()" style="position:absolute;top:16px;right:16px;background:rgba(255,255,255,.15);border:none;color:#fff;border-radius:50%;width:38px;height:38px;font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;"><i class="fas fa-times"></i></button>
+  </div>
 </div>
 
 <!-- WELCOME -->
@@ -565,13 +585,82 @@ async function api(action,payload){
 
 var curKey=null,curExp=null,curTh="light";
 
+// ═══ SCREENSHOT SLIDER ═══
+var _ssIdx=0,_ssTotal=0,_ssTimer=null,_ssTouching=false,_ssTouchX=0,_ssLoaded=false;
+
+async function loadScreenshots(){
+  if(_ssLoaded)return; // Pehle se load ho to skip karo
+  var shots=await _fbGet("screenshots");
+  if(!shots)return;
+  var arr=[];
+  for(var k in shots){if(shots[k]&&shots[k].url)arr.push(shots[k]);}
+  if(!arr.length)return;
+  // Sort by order field
+  arr.sort(function(a,b){return(a.order||0)-(b.order||0);});
+  _ssTotal=arr.length;
+  var track=document.getElementById("ssTrack");
+  var dots=document.getElementById("ssDots");
+  track.innerHTML="";dots.innerHTML="";
+  arr.forEach(function(s,i){
+    var slide=document.createElement("div");
+    slide.style.cssText="min-width:100%;position:relative;cursor:pointer;";
+    slide.innerHTML="<img src='"+s.url+"' alt='"+(s.caption||"")+"' style='width:100%;height:220px;object-fit:cover;display:block;border-radius:16px;' onclick='openLightbox(\""+s.url+"\")'>"
+      +(s.caption?"<div style='position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,.6));border-radius:0 0 16px 16px;padding:20px 14px 10px;color:#fff;font-size:.78rem;font-weight:600;'>"+s.caption+"</div>":"");
+    track.appendChild(slide);
+    var dot=document.createElement("div");
+    dot.style.cssText="width:"+(i===0?"20px":"8px")+";height:8px;border-radius:4px;background:"+(i===0?"#fff":"rgba(255,255,255,.4)")+";transition:all .3s;cursor:pointer;";
+    dot.onclick=function(idx){return function(){ssGoTo(idx);};}(i);
+    dots.appendChild(dot);
+  });
+  document.getElementById("ssSection").style.display="block";
+  _ssLoaded=true;
+  // Touch swipe
+  track.addEventListener("touchstart",function(e){_ssTouching=true;_ssTouchX=e.touches[0].clientX;},{passive:true});
+  track.addEventListener("touchend",function(e){
+    if(!_ssTouching)return;_ssTouching=false;
+    var dx=e.changedTouches[0].clientX-_ssTouchX;
+    if(dx<-40)ssNext();else if(dx>40)ssPrev();
+  },{passive:true});
+  // Auto scroll every 3s
+  _ssTimer=setInterval(ssNext,3000);
+}
+
+function ssGoTo(idx){
+  _ssIdx=idx;
+  var track=document.getElementById("ssTrack");
+  if(track)track.style.transform="translateX(-"+(_ssIdx*100)+"%)";
+  var dots=document.getElementById("ssDots");
+  if(dots){
+    Array.from(dots.children).forEach(function(d,i){
+      d.style.width=i===_ssIdx?"20px":"8px";
+      d.style.background=i===_ssIdx?"#fff":"rgba(255,255,255,.4)";
+    });
+  }
+}
+function ssNext(){if(!_ssTotal)return;ssGoTo((_ssIdx+1)%_ssTotal);}
+function ssPrev(){if(!_ssTotal)return;ssGoTo((_ssIdx-1+_ssTotal)%_ssTotal);}
+
+function openLightbox(url){
+  clearInterval(_ssTimer);
+  var lb=document.getElementById("ssLightbox");
+  document.getElementById("ssLbImg").src=url;
+  lb.style.display="flex";
+}
+function closeLightbox(){
+  document.getElementById("ssLightbox").style.display="none";
+  _ssTimer=setInterval(ssNext,3000);
+}
+
+// Load screenshots when login screen shows
+// (called from showS)
+
 // ═══ LOGIN PARTICLES ═══
 function spawnParticles(){
   var bg=document.querySelector(".ls-bg");
   if(!bg)return;
   var colors=["rgba(255,51,102,.5)","rgba(245,158,11,.4)","rgba(255,107,53,.4)","rgba(16,185,129,.3)"];
   for(var i=0;i<18;i++){
-    var d=document.createElement("div");
+    var d=document.createElement("d"+"iv");
     d.className="ls-dot";
     var sz=Math.random()*5+3;
     d.style.cssText="width:"+sz+"px;height:"+sz+"px;left:"+Math.random()*100+"%;background:"+colors[Math.floor(Math.random()*colors.length)]+";animation-duration:"+(Math.random()*12+8)+"s;animation-delay:"+(Math.random()*8)+"s;";
@@ -604,6 +693,8 @@ function showS(id){
   var el=document.getElementById(id);
   if(el)el.classList.add("on");
   hideSplash();
+  // Login screen dikhne pe screenshots load karo
+  if(id==="ls") loadScreenshots();
 }
 
 function getDevId(){
