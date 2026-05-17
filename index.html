@@ -682,7 +682,8 @@ async function loadTools(){
 
   // Cache valid — instant show
   if(_toolsCache&&(now-_toolsCacheTime)<_CACHE_TTL){
-    _renderTools(_toolsCache);
+    if(_allTools.length===0)_allTools=_toolsCache.slice();
+    filterTools();
     return;
   }
 
@@ -711,11 +712,16 @@ async function loadTools(){
     }
     _toolsCache=arr;
     _toolsCacheTime=Date.now();
-    _allTools=arr;
-    buildCategories(arr);
+    _allTools=arr.slice(); // copy - kabhi overwrite na ho
+    buildCategories(_allTools);
     filterTools();
   } else {
-    g.innerHTML="<div class='emp' style='grid-column:1/-1'><i class='fas fa-wifi' style='color:var(--ac)'></i><p style='margin:8px 0'>Could not load tools</p><button onclick='_toolsCache=null;loadTools();' style='margin-top:10px;padding:10px 22px;background:var(--ac);color:#fff;border:none;border-radius:10px;font-size:.88rem;cursor:pointer;font-weight:700'>↺ Retry</button></div>";
+    // Agar cache mein pehle se data hai to use karo
+    if(_allTools&&_allTools.length>0){
+      filterTools();
+    } else {
+      g.innerHTML="<div class='emp' style='grid-column:1/-1'><i class='fas fa-wifi' style='color:var(--ac)'></i><p style='margin:8px 0'>Could not load tools</p><button onclick='_toolsCache=null;loadTools();' style='margin-top:10px;padding:10px 22px;background:var(--ac);color:#fff;border:none;border-radius:10px;font-size:.88rem;cursor:pointer;font-weight:700'>↺ Retry</button></div>";
+    }
   }
 }
 
@@ -856,6 +862,7 @@ document.addEventListener("touchend",function(e){
     var ind=document.getElementById("ptrIndicator");
     if(ind)ind.style.display="block";
     _toolsCache=null;
+    // _allTools reset mat karo — loadTools fresh data se update karega
     loadTools().then(function(){
       setTimeout(function(){if(ind)ind.style.display="none";},800);
     });
@@ -917,6 +924,15 @@ function setTab(tab){
 
 // ── Override filterTools to support tabs ──
 function filterTools(){
+  // Agar _allTools khali hai to Firebase se dobara load karo
+  if(!_allTools||_allTools.length===0){
+    if(_toolsCache&&_toolsCache.length>0){
+      _allTools=_toolsCache.slice();
+    } else {
+      loadTools();
+      return;
+    }
+  }
   var q=(document.getElementById("toolSearch").value||"").toLowerCase();
   var now=Date.now();
   var filtered=_allTools.filter(function(t){
@@ -924,15 +940,12 @@ function filterTools(){
     var matchCat=_activeCat==="All"||(t.category&&t.category===_activeCat);
     var matchTab=true;
     if(_activeTab==="trending"){
-      // Trending: explicitly marked trending, ya views 10 se zyada
       matchTab=(t.trending===true)||(t.views&&t.views>=10);
     } else if(_activeTab==="latest"){
-      // Latest: sirf woh tools jo created field hai aur 30 din ke andar
       matchTab=t.created&&(now-t.created)<30*86400000;
     } else if(_activeTab==="fav"){
       matchTab=_favs.indexOf(t.name)>-1;
     }
-    // "all" tab: matchTab=true (sab dikhao)
     return matchQ&&matchCat&&matchTab;
   });
   // Agar tab mein koi tool nahi to friendly message
