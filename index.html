@@ -504,133 +504,23 @@ body{background:var(--bg);color:var(--tx);font-family:sans-serif;min-height:100v
   });
 })();
 
-// ═══ FIREBASE DIRECT — Toolkit works without API deployment ═══
-var _FB_DB = "https://toolkit-73b2a-default-rtdb.firebaseio.com";
+// ═══ API ROUTE — Firebase URL browser mein nahi aata ═══
+var _API = "/api/toolkit";
 
-async function _fbGet(path){
-  try{
-    var r=await fetch(_FB_DB+"/"+path+".json");
-    var t=await r.text();
-    return(t&&t!=="null")?JSON.parse(t):null;
-  }catch(e){return null;}
-}
-async function _fbSet(path,data){
-  try{
-    await fetch(_FB_DB+"/"+path+".json",{
-      method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify(data)
-    });
-  }catch(e){}
-}
+async function _fbGet(path){ return null; } // disabled
+async function _fbSet(path, data){ return null; } // disabled
 
-// api() — directly handles all actions via Firebase
 async function api(action, payload){
   try{
-    // ── VERIFY KEY ──
-    if(action==="verifyKey"){
-      var k=(payload.key||"").trim().toUpperCase();
-      if(!k||k.length<4)return{ok:false,msg:"Invalid key!"};
-      var allKeys=await _fbGet("keys");
-      if(!allKeys)return{ok:false,msg:"Invalid key! Buy from admin."};
-      var foundId=null,foundKd=null;
-      for(var kid in allKeys){
-        var kobj=allKeys[kid];
-        if(kobj&&kobj.key&&kobj.key.toUpperCase()===k){foundId=kid;foundKd=kobj;break;}
-      }
-      if(!foundId||!foundKd)return{ok:false,msg:"Invalid key! Buy from admin."};
-      if(foundKd.expiry<Date.now())return{ok:false,msg:"Key expired!"};
-      if(foundKd.deviceId&&foundKd.deviceId!==(payload.deviceId||""))
-        return{ok:false,msg:"Key locked to another device!"};
-      if(!foundKd.deviceId&&payload.deviceId){
-        await _fbSet("keys/"+foundId+"/deviceId",payload.deviceId);
-        await _fbSet("keys/"+foundId+"/used",true);
-      }
-      return{ok:true,expiry:foundKd.expiry,keyId:foundId,created:foundKd.created||null,days:foundKd.days||null};
-    }
-
-    // ── GET TOOLS ──
-    if(action==="getTools"){
-      var tools=await _fbGet("tools");
-      if(!tools)return{ok:true,tools:[]};
-      var arr=[];
-      for(var tid in tools){if(tools[tid]&&tools[tid].active!==false)arr.push(tools[tid]);}
-      return{ok:true,tools:arr};
-    }
-
-    // ── GET SETTINGS ──
-    if(action==="getSettings"){
-      var s=await _fbGet("settings");
-      return{ok:true,settings:s||{}};
-    }
-
-    // ── GET PHONE ──
-    if(action==="getPhone"){
-      var ph=await _fbGet("admin/phone");
-      return{ok:true,phone:ph||""};
-    }
-
-    // ── GET SCREENSHOTS ──
-    if(action==="getScreenshots"){
-      var shots=await _fbGet("screenshots");
-      if(!shots)return{ok:true,screenshots:[]};
-      var arr2=[];
-      for(var sid in shots){if(shots[sid]&&shots[sid].url)arr2.push(shots[sid]);}
-      arr2.sort(function(a,b){return(a.order||0)-(b.order||0);});
-      return{ok:true,screenshots:arr2};
-    }
-
-    // ── TRACK ONLINE ──
-    if(action==="trackOnline"){
-      if(!payload.sessionId)return{ok:false};
-      await _fbSet("online/"+payload.sessionId,{t:Date.now()});
-      var online=await _fbGet("online");
-      var count=0,now=Date.now();
-      if(online){
-        for(var ok2 in online){
-          if(online[ok2]&&online[ok2].t&&(now-online[ok2].t)<180000)count++;
-          else _fbSet("online/"+ok2,"null");
-        }
-      }
-      return{ok:true,online:count};
-    }
-
-    // ── COUNT VIEW ──
-    if(action==="countView"){
-      var v=await _fbGet("stats/views");
-      var nv=(parseInt(v)||0)+1;
-      await _fbSet("stats/views",nv);
-      return{ok:true,views:nv};
-    }
-
-    // ── GET VIEWS ──
-    if(action==="getViews"){
-      var v2=await _fbGet("stats/views");
-      return{ok:true,views:parseInt(v2)||0};
-    }
-
-    // ── TOOL CLICK ──
-    if(action==="toolClick"){
-      var tls=await _fbGet("tools");
-      if(tls){
-        for(var tid2 in tls){
-          if(tls[tid2]&&tls[tid2].name===payload.toolName){
-            var tv=(parseInt(tls[tid2].views)||0)+1;
-            await _fbSet("tools/"+tid2+"/views",tv);
-            break;
-          }
-        }
-      }
-      return{ok:true};
-    }
-
-    // ── GO OFFLINE ──
-    if(action==="goOffline"){
-      if(payload.sessionId)await _fbSet("online/"+payload.sessionId,"null");
-      return{ok:true};
-    }
-
-    return{ok:false,msg:"Unknown action"};
+    var r = await fetch(_API, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: action, payload: payload||{} })
+    });
+    if(!r.ok) return { ok: false, msg: "Server error "+r.status };
+    return await r.json();
   }catch(e){
-    return{ok:false,msg:"Connection error"};
+    return { ok: false, msg: "Connection error" };
   }
 }
 
@@ -1227,12 +1117,12 @@ async function trackOnline(){
   } else {
     var vRes2 = await api("getViews", {});
     var el3 = document.getElementById("viewsCount");
-    if(el3 && vRes2 && vRes2.views !== undefined) el3.textContent = vRes2.views.toLocaleString();
+    if(el3 && vRes2 && vRes2.views !== undefined) el3.textContent = (parseInt(vRes2.views)||0).toLocaleString();
   }
 }
 // Clean up on leave
 window.addEventListener("beforeunload",function(){
-  navigator.sendBeacon(_API, JSON.stringify({ action: "goOffline", payload: { sessionId: _sessionId } }));
+  api("goOffline", { sessionId: _sessionId });
 });
 
 // Update online count every 30s
