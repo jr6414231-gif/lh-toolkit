@@ -504,11 +504,9 @@ body{background:var(--bg);color:var(--tx);font-family:sans-serif;min-height:100v
   });
 })();
 
-// ═══ API ROUTE — Firebase URL browser mein nahi aata ═══
+// ═══ SECURE API — Firebase URL completely hidden ═══
+// Sab kuch /api/toolkit se jaata hai — browser mein kuch nahi
 var _API = "/api/toolkit";
-
-async function _fbGet(path){ return null; } // disabled
-async function _fbSet(path, data){ return null; } // disabled
 
 async function api(action, payload){
   try{
@@ -517,12 +515,16 @@ async function api(action, payload){
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ action: action, payload: payload||{} })
     });
-    if(!r.ok) return { ok: false, msg: "Server error "+r.status };
+    if(!r.ok) return { ok: false, msg: "Server error" };
     return await r.json();
-  }catch(e){
+  } catch(e) {
     return { ok: false, msg: "Connection error" };
   }
 }
+
+// These do nothing — Firebase never called from browser
+function _fbGet(){ return Promise.resolve(null); }
+function _fbSet(){ return Promise.resolve(null); }
 
 var curKey=null,curExp=null,curTh="light";
 
