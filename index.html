@@ -535,15 +535,21 @@ async function loadScreenshots(){
   if(_ssLoaded)return;
   var res = await api("getScreenshots", {});
   if(!res || !res.ok || !res.screenshots || !res.screenshots.length) return;
+  // Koi screenshot mila tabhi loaded mark karo
   var arr = res.screenshots;
+  if(!arr.length) return;
+  _ssLoaded = true;
   _ssTotal=arr.length;
   var track=document.getElementById("ssTrack");
   var dots=document.getElementById("ssDots");
-  track.innerHTML="";dots.innerHTML="";
+  if(!track||!dots) return;
+  track.innerHTML=""; dots.innerHTML="";
   arr.forEach(function(s,i){
     var slide=document.createElement("div");
-    slide.style.cssText="min-width:100%;position:relative;cursor:pointer;";
-    slide.innerHTML="<img src='"+s.url+"' alt='"+(s.caption||"")+"' style='width:100%;height:220px;object-fit:cover;display:block;border-radius:16px;' onclick='openLightbox(\""+s.url+"\")'>"
+    slide.style.cssText="min-width:100%;position:relative;cursor:pointer;flex-shrink:0;";
+    var imgUrl = s.url || "";
+    var cap = (s.caption||"").replace(/"/g,"&quot;");
+    slide.innerHTML="<img src='"+imgUrl+"' alt='"+cap+"' style='width:100%;height:220px;object-fit:cover;display:block;border-radius:16px;' onclick='openLightbox(this.src)'>"
       +(s.caption?"<div style='position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,.6));border-radius:0 0 16px 16px;padding:20px 14px 10px;color:#fff;font-size:.78rem;font-weight:600;'>"+s.caption+"</div>":"");
     track.appendChild(slide);
     var dot=document.createElement("div");
@@ -552,7 +558,6 @@ async function loadScreenshots(){
     dots.appendChild(dot);
   });
   document.getElementById("ssSection").style.display="block";
-  _ssLoaded=true;
   // Touch swipe
   track.addEventListener("touchstart",function(e){_ssTouching=true;_ssTouchX=e.touches[0].clientX;},{passive:true});
   track.addEventListener("touchend",function(e){
@@ -560,7 +565,7 @@ async function loadScreenshots(){
     var dx=e.changedTouches[0].clientX-_ssTouchX;
     if(dx<-40)ssNext();else if(dx>40)ssPrev();
   },{passive:true});
-  // Auto scroll every 3s
+  if(_ssTimer) clearInterval(_ssTimer);
   _ssTimer=setInterval(ssNext,3000);
 }
 
