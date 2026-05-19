@@ -1,8 +1,3 @@
-// ================================================================
-// /api/toolkit.js — Secure Serverless API (Vercel)
-// Firebase URL sirf yahan hai — browser tak kabhi nahi jaata
-// ================================================================
-
 const DB = process.env.FIREBASE_DB_URL;
 
 async function fbGet(path) {
@@ -14,26 +9,17 @@ async function fbGet(path) {
 }
 async function fbSet(path, data) {
   try {
-    await fetch(`${DB}/${path}.json`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data)
-    });
+    await fetch(`${DB}/${path}.json`, { method:"PUT", headers:{"Content-Type":"application/json"}, body:JSON.stringify(data) });
   } catch(e) {}
 }
 async function fbDel(path) {
-  try {
-    await fetch(`${DB}/${path}.json`, { method: "DELETE" });
-  } catch(e) {}
+  try { await fetch(`${DB}/${path}.json`, { method:"DELETE" }); } catch(e) {}
 }
 
 export default async function handler(req, res) {
-  res.setHeader("X-Content-Type-Options", "nosniff");
-  res.setHeader("X-Frame-Options", "DENY");
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-
   if (req.method === "OPTIONS") return res.status(200).end();
   if (req.method !== "POST") return res.status(405).json({ ok: false });
   if (!DB) return res.status(500).json({ ok: false, msg: "Server config error" });
@@ -48,23 +34,25 @@ export default async function handler(req, res) {
   try {
     if (action === "verifyKey") {
       const k = (payload.key || "").trim().toUpperCase();
-      if (!k || k.length < 4) return res.json({ ok: false, msg: "Invalid key!" });
+      if (!k || k.length < 2) return res.json({ ok: false, msg: "Invalid key!" });
       const allKeys = await fbGet("keys");
       if (!allKeys) return res.json({ ok: false, msg: "Invalid key! Buy from admin." });
       let foundId = null, foundKd = null;
       for (const kid in allKeys) {
         const obj = allKeys[kid];
-        if (obj && obj.key && obj.key.toUpperCase() === k) { foundId = kid; foundKd = obj; break; }
+        if (obj && obj.key && String(obj.key).toUpperCase() === k) {
+          foundId = kid; foundKd = obj; break;
+        }
       }
       if (!foundId || !foundKd) return res.json({ ok: false, msg: "Invalid key! Buy from admin." });
-      if (foundKd.expiry < Date.now()) return res.json({ ok: false, msg: "Key expired!" });
+      if (!foundKd.expiry || foundKd.expiry < Date.now()) return res.json({ ok: false, msg: "Key expired!" });
       if (foundKd.deviceId && foundKd.deviceId !== (payload.deviceId || ""))
         return res.json({ ok: false, msg: "Key locked to another device!" });
       if (!foundKd.deviceId && payload.deviceId) {
         await fbSet(`keys/${foundId}/deviceId`, payload.deviceId);
         await fbSet(`keys/${foundId}/used`, true);
       }
-      return res.json({ ok: true, expiry: foundKd.expiry, keyId: foundId, created: foundKd.created || null, days: foundKd.days || null });
+      return res.json({ ok: true, expiry: foundKd.expiry, keyId: foundId, created: foundKd.created || null, days: foundKd.days || 1 });
     }
 
     if (action === "getTools") {
@@ -84,7 +72,8 @@ export default async function handler(req, res) {
 
     if (action === "getPhone") {
       const ph = await fbGet("admin/phone");
-      return res.json({ ok: true, phone: ph || "" });
+      const phoneStr = ph ? (typeof ph === "object" ? String(Object.values(ph)[0] || "") : String(ph)) : "";
+      return res.json({ ok: true, phone: phoneStr });
     }
 
     if (action === "getScreenshots") {
@@ -97,7 +86,7 @@ export default async function handler(req, res) {
     }
 
     if (action === "trackOnline") {
-      if (!payload.sessionId) return res.json({ ok: false });
+      if (!payload.sessionId) return res.json({ ok: true, online: 0 });
       const sid = String(payload.sessionId).replace(/[^a-z0-9]/gi, "").slice(0, 30);
       await fbSet(`online/${sid}`, { t: Date.now() });
       const online = await fbGet("online");
@@ -125,7 +114,7 @@ export default async function handler(req, res) {
     }
 
     if (action === "toolClick") {
-      if (!payload.toolName) return res.json({ ok: false });
+      if (!payload.toolName) return res.json({ ok: true });
       const tools = await fbGet("tools");
       if (tools) {
         for (const id in tools) {
@@ -146,8 +135,8 @@ export default async function handler(req, res) {
       return res.json({ ok: true });
     }
 
-    return res.json({ ok: false });
-  } catch (e) {
+    return res.json({ ok: false, msg: "Unknown action" });
+  } catch(e) {
     return res.status(500).json({ ok: false });
   }
 }
