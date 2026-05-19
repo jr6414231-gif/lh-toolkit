@@ -1,0 +1,998 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>L&#9829;H TOOLKIT &mdash; Admin</title>
+<!-- Simple system fonts only -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+:root{
+  --bg:#e8ecf0;--nm:#e0e6ed;--nl:#ffffff;--nd:#c8d0dc;
+  --ac:#ff3366;--ac2:#ff6b35;--gd:#f59e0b;
+  --tx:#1a1a2e;--tx2:#4a5568;--mt:#94a3b8;
+  --gr:#10b981;--bl:#3b82f6;--red:#ef4444;
+  --shadow:8px 8px 20px #c8d0dc,-8px -8px 20px #ffffff;
+  --shadow-sm:5px 5px 12px #c8d0dc,-5px -5px 12px #ffffff;
+  --shadow-in:inset 4px 4px 10px #c8d0dc,inset -4px -4px 10px #ffffff;
+  --border:#dde3ea;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--tx);font-family:sans-serif;min-height:100vh;}
+
+/* AUTH */
+#authScreen{position:fixed;inset:0;background:linear-gradient(135deg,#1a1a2e,#16213e,#0f3460);display:flex;align-items:center;justify-content:center;z-index:1000;}
+.aw{width:360px;text-align:center;}
+.al{width:82px;height:82px;border-radius:20px;object-fit:cover;margin:0 auto 16px;display:block;box-shadow:0 0 0 3px rgba(255,51,102,.4),0 0 40px rgba(255,51,102,.3);animation:alp 2.5s ease-in-out infinite;}
+@keyframes alp{0%,100%{box-shadow:0 0 0 3px rgba(255,51,102,.3),0 0 30px rgba(255,51,102,.2);}50%{box-shadow:0 0 0 6px rgba(255,51,102,.5),0 0 50px rgba(255,51,102,.4);}}
+.at{font-size:1.2rem;color:#fff;margin-bottom:4px;}
+.as{color:rgba(255,255,255,.45);font-size:.8rem;margin-bottom:22px;}
+.ac2{background:rgba(255,255,255,.06);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.1);border-radius:18px;padding:26px 22px;}
+.ai{width:100%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:11px 14px;color:#fff;font-size:.9rem;font-family:sans-serif;outline:none;margin-bottom:11px;transition:border .2s;}
+.ai::placeholder{color:rgba(255,255,255,.3);}
+.ai:focus{border-color:var(--ac);}
+.abn{width:100%;background:linear-gradient(135deg,var(--ac),var(--ac2));border:none;border-radius:10px;padding:12px;color:#fff;font-size:.78rem;font-weight:700;cursor:pointer;transition:all .2s;}
+.abn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(255,51,102,.4);}
+.aerr{color:#ff6b6b;font-size:.8rem;margin-top:10px;display:none;background:rgba(255,51,102,.1);padding:7px;border-radius:7px;}
+.alnk{color:rgba(255,255,255,.35);font-size:.7rem;margin-top:10px;cursor:pointer;display:none;}
+
+/* HAMBURGER */
+.hbtn{position:fixed;top:14px;left:14px;z-index:300;width:44px;height:44px;border-radius:12px;border:none;background:var(--ac);color:#fff;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;box-shadow:var(--shadow-sm),0 4px 14px rgba(255,51,102,.3);transition:all .2s;}
+.hbtn span{display:block;width:18px;height:2px;background:#fff;border-radius:2px;transition:all .3s;}
+.hbtn.open span:nth-child(1){transform:rotate(45deg) translate(5px,5px);}
+.hbtn.open span:nth-child(2){opacity:0;}
+.hbtn.open span:nth-child(3){transform:rotate(-45deg) translate(5px,-5px);}
+
+/* OVERLAY */
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:150;display:none;opacity:0;transition:opacity .3s;}
+.ov.on{display:block;opacity:1;}
+
+/* SIDEBAR */
+.sb{width:256px;background:var(--nm);display:flex;flex-direction:column;position:fixed;top:0;left:-270px;height:100vh;z-index:200;transition:left .3s cubic-bezier(.23,1,.32,1);overflow:hidden;box-shadow:var(--shadow);}
+.sb.open{left:0;}
+.sbhd{padding:20px 16px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;min-height:68px;}
+.sblo{width:38px;height:38px;border-radius:11px;object-fit:cover;box-shadow:var(--shadow-sm);}
+.sbnm{font-size:.8rem;font-weight:700;background:linear-gradient(135deg,var(--ac),var(--gd));-webkit-background-clip:text;-webkit-text-fill-color:transparent;white-space:nowrap;}
+.sbnav{flex:1;padding:12px 10px;overflow-y:auto;}
+.sbsec{font-size:.62rem;font-weight:700;color:var(--mt);letter-spacing:2px;text-transform:uppercase;padding:12px 10px 5px;}
+.ni{display:flex;align-items:center;gap:12px;padding:11px 12px;color:var(--tx2);cursor:pointer;border-radius:11px;margin-bottom:3px;transition:all .2s;}
+.ni:hover{background:rgba(255,51,102,.06);color:var(--tx);}
+.ni.on{background:linear-gradient(135deg,rgba(255,51,102,.1),rgba(255,107,53,.06));color:var(--ac);}
+.ni-ic{width:20px;display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0;}
+.ni-tx{font-size:.87rem;font-weight:500;}
+
+/* MAIN */
+.mn{margin-left:0;min-height:100vh;display:flex;flex-direction:column;}
+.tb{background:var(--nm);border-bottom:1px solid var(--border);padding:0 22px 0 70px;height:62px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;box-shadow:0 2px 10px rgba(0,0,0,.06);}
+.tb h1{font-size:1rem;font-weight:600;color:var(--tx);}
+.tb p{font-size:.74rem;color:var(--mt);}
+.tbr2{display:flex;align-items:center;gap:8px;}
+.badm{background:rgba(255,51,102,.08);color:var(--ac);border:1px solid rgba(255,51,102,.2);padding:4px 12px;border-radius:20px;font-size:.7rem;font-weight:600;}
+.tbn{background:var(--bg);border:1px solid var(--border);color:var(--tx2);padding:7px 14px;border-radius:8px;cursor:pointer;font-size:.8rem;font-family:sans-serif;transition:all .2s;}
+.tbn:hover{border-color:var(--ac);color:var(--ac);}
+
+/* CONTENT */
+.con{flex:1;padding:22px;}
+.pg{display:none;}.pg.on{display:block;}
+
+/* STATS */
+.sr{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:20px;}
+.sc{background:var(--nm);box-shadow:var(--shadow-sm);border-radius:14px;padding:18px;}
+.si{width:40px;height:40px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:.95rem;margin-bottom:10px;box-shadow:var(--shadow-in);}
+.si.r{color:var(--ac);}.si.g{color:var(--gd);}.si.gr{color:var(--gr);}.si.b{color:var(--bl);}
+.sv{font-size:1.8rem;font-weight:800;color:var(--tx);}
+.sl{font-size:.75rem;color:var(--mt);margin-top:2px;}
+
+/* CARD */
+.cd{background:var(--nm);box-shadow:var(--shadow-sm);border-radius:14px;padding:18px;margin-bottom:16px;}
+.ch{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.ch h3{font-size:.88rem;font-weight:600;color:var(--tx);display:flex;align-items:center;gap:7px;}
+.ch h3 i{color:var(--ac);}
+
+/* FORM */
+.fg{display:flex;flex-direction:column;gap:4px;margin-bottom:12px;}
+.fg label{font-size:.7rem;font-weight:600;color:var(--tx2);text-transform:uppercase;letter-spacing:.5px;}
+.fg input,.fg select,.fg textarea{background:var(--bg);box-shadow:var(--shadow-in);border:1px solid transparent;border-radius:9px;padding:10px 13px;color:var(--tx);font-size:.88rem;font-family:sans-serif;outline:none;transition:border .2s;resize:vertical;}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--ac);}
+.fg select option{background:var(--nm);}
+.fr{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.fr1{grid-template-columns:1fr;}
+
+/* BUTTONS */
+.bn{border:none;border-radius:9px;padding:10px 18px;cursor:pointer;font-size:.8rem;font-family:sans-serif;font-weight:600;transition:all .2s;display:inline-flex;align-items:center;gap:6px;}
+.bp{background:linear-gradient(135deg,var(--ac),var(--ac2));color:#fff;box-shadow:var(--shadow-sm),0 4px 14px rgba(255,51,102,.2);}
+.bp:hover{transform:translateY(-1px);box-shadow:var(--shadow-sm),0 6px 20px rgba(255,51,102,.3);}
+.bg2{background:linear-gradient(135deg,#10b981,#059669);color:#fff;box-shadow:var(--shadow-sm);}
+.bg2:hover{transform:translateY(-1px);}
+.bo{background:var(--nm);box-shadow:var(--shadow-sm);border:none;color:var(--tx2);}
+.bo:hover{color:var(--ac);}
+.bd{background:rgba(239,68,68,.08);box-shadow:var(--shadow-sm);border:1px solid rgba(239,68,68,.15);color:var(--red);}
+.bd:hover{background:rgba(239,68,68,.15);}
+.bs{padding:6px 11px;font-size:.76rem;}
+
+/* TABLE */
+.tw{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;}
+th{text-align:left;padding:9px 12px;font-size:.7rem;font-weight:600;color:var(--mt);text-transform:uppercase;border-bottom:2px solid var(--border);}
+td{padding:11px 12px;border-bottom:1px solid var(--border);font-size:.84rem;vertical-align:middle;}
+tr:hover td{background:rgba(255,51,102,.02);}
+.bdg{padding:3px 9px;border-radius:20px;font-size:.68rem;font-weight:600;}
+.ba{background:rgba(16,185,129,.1);color:var(--gr);}
+.bof{background:rgba(239,68,68,.1);color:var(--red);}
+.bus{background:rgba(245,158,11,.1);color:var(--gd);}
+.bbl{background:rgba(59,130,246,.1);color:var(--bl);}
+.tic{width:34px;height:34px;border-radius:9px;object-fit:cover;}
+.tif{width:34px;height:34px;border-radius:9px;background:rgba(255,51,102,.08);display:inline-flex;align-items:center;justify-content:center;color:var(--ac);}
+
+/* KEY */
+.kb{background:var(--bg);box-shadow:var(--shadow-in);border-radius:9px;padding:11px 14px;font-size:.78rem;color:var(--ac);word-break:break-all;margin-top:10px;}
+.kr{background:var(--bg);box-shadow:var(--shadow-in);border-radius:10px;padding:12px 14px;margin-bottom:9px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.kv{font-size:.75rem;color:var(--ac);flex:1;word-break:break-all;}
+
+/* LOADING SKELETON */
+.sk-row td{padding:14px 12px;}
+.sk-cell{height:14px;border-radius:6px;background:linear-gradient(90deg,var(--nd) 25%,var(--nl) 50%,var(--nd) 75%);background-size:200% 100%;animation:skAnim 1.2s ease-in-out infinite;}
+@keyframes skAnim{0%{background-position:200% 0;}100%{background-position:-200% 0;}}
+.sk-key{height:44px;border-radius:10px;background:linear-gradient(90deg,var(--nd) 25%,var(--nl) 50%,var(--nd) 75%);background-size:200% 100%;animation:skAnim 1.2s ease-in-out infinite;margin-bottom:9px;}
+
+/* COLORS */
+.cg{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;}
+.ci{display:flex;flex-direction:column;gap:4px;}
+.ci label{font-size:.7rem;font-weight:600;color:var(--tx2);text-transform:uppercase;}
+.ci input[type=color]{width:100%;height:38px;border:none;border-radius:8px;box-shadow:var(--shadow-in);background:var(--bg);cursor:pointer;padding:3px;}
+.ci input[type=text]{background:var(--bg);box-shadow:var(--shadow-in);border:1px solid transparent;border-radius:8px;padding:7px 10px;color:var(--tx);font-size:.8rem;outline:none;}
+
+/* UPLOAD */
+.ua{border:2px dashed var(--border);border-radius:10px;padding:18px;text-align:center;cursor:pointer;transition:border .2s;background:var(--bg);box-shadow:var(--shadow-in);}
+.ua:hover{border-color:var(--ac);}
+.ua i{font-size:1.6rem;color:var(--mt);margin-bottom:7px;display:block;}
+.ua p{font-size:.8rem;color:var(--mt);}
+
+/* PHONE */
+.pc{background:rgba(16,185,129,.06);border:1px solid rgba(16,185,129,.2);border-radius:11px;padding:14px 18px;display:flex;align-items:center;gap:12px;box-shadow:var(--shadow-sm);}
+.pc i{color:var(--gr);font-size:1.3rem;}
+.pn{font-size:.95rem;color:var(--gr);font-weight:700;}
+
+/* MODAL */
+.modalbg{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:500;display:none;align-items:center;justify-content:center;padding:16px;}
+.modalbg.open{display:flex;}
+.modal{background:var(--nm);box-shadow:var(--shadow);border-radius:16px;padding:22px;width:90%;max-width:460px;max-height:90vh;overflow-y:auto;}
+.modal h3{font-size:.95rem;font-weight:600;margin-bottom:14px;display:flex;align-items:center;gap:7px;color:var(--tx);}
+.modal h3 i{color:var(--ac);}
+.mf{display:flex;gap:10px;justify-content:flex-end;margin-top:14px;}
+
+/* TOAST */
+.toast{position:fixed;bottom:18px;right:18px;background:var(--nm);box-shadow:var(--shadow-sm);color:var(--gr);padding:11px 18px;border-radius:10px;font-size:.84rem;transform:translateY(80px);opacity:0;transition:all .3s;z-index:9999;border-left:3px solid var(--gr);}
+.toast.on{transform:translateY(0);opacity:1;}
+.toast.er{color:var(--red);border-left-color:var(--red);}
+
+@media(max-width:600px){.fr{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+<!-- AUTH -->
+<div id="authScreen">
+  <div class="aw">
+    <img class="al" src="data:image/jpeg;base64,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" alt="">
+    <div class="at">L&#9829;H TOOLKIT</div>
+    <div class="as">Admin Panel &mdash; Private Access</div>
+    <div class="ac2">
+      <input class="ai" type="text" id="au" placeholder="Username" autocomplete="off">
+      <input class="ai" type="password" id="ap" placeholder="Password" autocomplete="off"
+        onkeydown="if(event.key==='Enter')adminLogin()">
+      <button class="abn" onclick="adminLogin()">&#128274; ENTER PANEL</button>
+      <div class="aerr" id="aerr"></div>
+    </div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="adminApp" style="display:none">
+  <button class="hbtn" id="hBtn" onclick="togSb()"><span></span><span></span><span></span></button>
+  <div class="ov" id="ov" onclick="closeSb()"></div>
+  <div class="sb" id="sb">
+    <div class="sbhd">
+      <img class="sblo" id="sbLogo" src="data:image/jpeg;base64,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" alt="">
+      <span class="sbnm">L&#9829;H ADMIN</span>
+    </div>
+    <nav class="sbnav">
+      <div class="sbsec">MAIN</div>
+      <div class="ni on" id="nav-dash" onclick="showPg('dash',this)"><div class="ni-ic"><i class="fas fa-chart-pie"></i></div><span class="ni-tx">Dashboard</span></div>
+      <div class="ni" id="nav-tools" onclick="showPg('tools',this)"><div class="ni-ic"><i class="fas fa-tools"></i></div><span class="ni-tx">Manage Tools</span></div>
+      <div class="ni" id="nav-keys" onclick="showPg('keys',this)"><div class="ni-ic"><i class="fas fa-key"></i></div><span class="ni-tx">License Keys</span></div>
+      <div class="ni" id="nav-shots" onclick="showPg('shots',this)"><div class="ni-ic"><i class="fas fa-images"></i></div><span class="ni-tx">Screenshots</span></div>
+      <div class="sbsec">SETTINGS</div>
+      <div class="ni" onclick="showPg('appear',this)"><div class="ni-ic"><i class="fas fa-palette"></i></div><span class="ni-tx">Appearance</span></div>
+      <div class="ni" onclick="showPg('tksett',this)"><div class="ni-ic"><i class="fas fa-sliders-h"></i></div><span class="ni-tx">Toolkit Settings</span></div>
+      <div class="ni" onclick="showPg('admsett',this)"><div class="ni-ic"><i class="fas fa-user-shield"></i></div><span class="ni-tx">Admin Settings</span></div>
+      <div class="sbsec">ACCOUNT</div>
+      <div class="ni" onclick="doLogout()"><div class="ni-ic"><i class="fas fa-sign-out-alt"></i></div><span class="ni-tx">Logout</span></div>
+    </nav>
+  </div>
+  <div class="mn">
+    <div class="tb">
+      <div><h1 id="pgT">Dashboard</h1><p id="pgS">L&#9829;H Toolkit Overview</p></div>
+      <div class="tbr2">
+        <span class="badm"><i class="fas fa-shield-alt"></i> ADMIN</span>
+        <button class="tbn" onclick="doLogout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+      </div>
+    </div>
+    <div class="con">
+
+      <!-- DASHBOARD -->
+      <div class="pg on" id="pg-dash">
+        <div class="sr">
+          <div class="sc"><div class="si r"><i class="fas fa-tools"></i></div><div class="sv" id="st0">--</div><div class="sl">Total Tools</div></div>
+          <div class="sc"><div class="si g"><i class="fas fa-key"></i></div><div class="sv" id="st1">--</div><div class="sl">Total Keys</div></div>
+          <div class="sc"><div class="si gr"><i class="fas fa-check-circle"></i></div><div class="sv" id="st2">--</div><div class="sl">Active Keys</div></div>
+          <div class="sc"><div class="si b"><i class="fas fa-times-circle"></i></div><div class="sv" id="st3">--</div><div class="sl">Expired Keys</div></div>
+          <div class="sc"><div class="si r"><i class="fas fa-eye"></i></div><div class="sv" id="st4">--</div><div class="sl">Total Views</div></div>
+        </div>
+        <div class="cd">
+          <div class="ch"><h3><i class="fab fa-whatsapp"></i> Admin WhatsApp</h3></div>
+          <div class="pc"><i class="fab fa-whatsapp"></i><span class="pn" id="dPh">Loading...</span></div>
+        </div>
+        <div class="cd">
+          <div class="ch"><h3><i class="fas fa-bolt"></i> Quick Actions</h3></div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;">
+            <button class="bn bp" onclick="showPg('tools',document.getElementById('nav-tools'))"><i class="fas fa-plus"></i> Add Tool</button>
+            <button class="bn bg2" onclick="showPg('keys',document.getElementById('nav-keys'))"><i class="fas fa-key"></i> Generate Key</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- TOOLS -->
+      <div class="pg" id="pg-tools">
+        <div class="cd">
+          <div class="ch"><h3><i class="fas fa-plus-circle"></i> Add New Tool</h3></div>
+          <div class="fr">
+            <div class="fg"><label>Tool Name</label><input type="text" id="tNm" placeholder="e.g. WhatsApp Tool"></div>
+            <div class="fg"><label>Tool Link</label><input type="text" id="tLk" placeholder="https://..."></div>
+            <div class="fg"><label>Description</label><input type="text" id="tDsc" placeholder="Short description"></div>
+            <div class="fg"><label>Icon Class (optional)</label><input type="text" id="tIc" placeholder="fas fa-star"></div>
+          </div>
+          <div class="fg">
+            <label>Icon Image URL</label>
+            <input type="text" id="tIU" placeholder="https://i.imgur.com/... ya koi bhi image link" oninput="prevIcUrl(this.value)">
+            <div style="margin-top:6px;font-size:.7rem;color:var(--mt)">Ya file se upload karo:</div>
+            <input type="file" id="tIF" accept="image/*" style="margin-top:4px;font-size:.8rem;" onchange="prevImg(event)">
+            <div style="margin-top:8px;display:flex;align-items:center;gap:10px;">
+              <img id="icPv" style="width:48px;height:48px;border-radius:10px;object-fit:cover;display:none;box-shadow:var(--shadow-sm);">
+              <span id="icPvTxt" style="font-size:.75rem;color:var(--mt)">URL daalo — preview yahan dikhega</span>
+            </div>
+          </div>
+          <button class="bn bp" style="margin-top:8px" onclick="addTool()"><i class="fas fa-plus"></i> ADD TOOL</button>
+        </div>
+        <div class="cd">
+          <div class="ch">
+            <h3><i class="fas fa-list"></i> All Tools</h3>
+            <button class="bn bo bs" onclick="_aCache=null;loadTools()"><i class="fas fa-sync-alt"></i> Refresh</button>
+          </div>
+          <div class="tw"><table><thead><tr><th>#</th><th>Icon</th><th>Name</th><th>Desc</th><th>Status</th><th>Actions</th></tr></thead><tbody id="tTbl"><tr class="sk-row"><td><div class="sk-cell" style="width:20px"></div></td><td><div class="sk-cell" style="width:34px;height:34px;border-radius:9px"></div></td><td><div class="sk-cell" style="width:80px"></div></td><td><div class="sk-cell" style="width:100px"></div></td><td><div class="sk-cell" style="width:50px"></div></td><td><div class="sk-cell" style="width:80px"></div></td></tr><tr class="sk-row"><td><div class="sk-cell" style="width:20px"></div></td><td><div class="sk-cell" style="width:34px;height:34px;border-radius:9px"></div></td><td><div class="sk-cell" style="width:100px"></div></td><td><div class="sk-cell" style="width:80px"></div></td><td><div class="sk-cell" style="width:50px"></div></td><td><div class="sk-cell" style="width:80px"></div></td></tr></tbody></table></div>
+        </div>
+      </div>
+
+      <!-- KEYS -->
+      <div class="pg" id="pg-keys">
+        <div class="cd">
+          <div class="ch"><h3><i class="fas fa-key"></i> Generate Key</h3></div>
+          <div class="fr">
+            <div class="fg"><label>Duration</label>
+              <select id="kDr">
+                <option value="1">1 Day</option>
+                <option value="3">3 Days</option>
+                <option value="7">7 Days</option>
+                <option value="14">14 Days</option>
+                <option value="30">30 Days</option>
+              </select>
+            </div>
+            <div class="fg"><label>Custom Key Text (optional)</label><input type="text" id="kCus" placeholder="Auto if blank"></div>
+          </div>
+          <button class="bn bp" onclick="genKey()"><i class="fas fa-key"></i> GENERATE KEY</button>
+          <div id="kBox" style="display:none;margin-top:12px;">
+            <label style="font-size:.7rem;font-weight:600;color:var(--mt);text-transform:uppercase;">Generated Key:</label>
+            <div class="kb" id="kVal"></div>
+            <button class="bn bo bs" style="margin-top:8px" onclick="cpKey()"><i class="fas fa-copy"></i> Copy Key</button>
+          </div>
+        </div>
+        <div class="cd">
+          <div class="ch">
+            <h3><i class="fas fa-list-alt"></i> All Keys</h3>
+            <button class="bn bo bs" onclick="_aCache=null;loadKeys()"><i class="fas fa-sync-alt"></i> Refresh</button>
+          </div>
+          <div id="kList"><div class="sk-key"></div><div class="sk-key"></div><div class="sk-key"></div></div>
+        </div>
+      </div>
+
+      <!-- SCREENSHOTS -->
+      <div class="pg" id="pg-shots">
+        <div class="cd">
+          <div class="ch"><h3><i class="fas fa-plus-circle"></i> Add Screenshot</h3></div>
+          <div class="fg"><label>Screenshot URL (Direct Image Link)</label>
+            <input type="text" id="shotUrl" placeholder="https://i.imgur.com/... ya koi image URL" oninput="prevShot(this.value)">
+          </div>
+          <div id="shotPvWrap" style="display:none;margin-bottom:12px;">
+            <img id="shotPv" style="width:100%;max-height:200px;object-fit:cover;border-radius:10px;box-shadow:var(--shadow-sm);">
+          </div>
+          <div class="fg"><label>Caption (optional)</label>
+            <input type="text" id="shotCap" placeholder="e.g. Tools page">
+          </div>
+          <button class="bn bp" onclick="addShot()"><i class="fas fa-plus"></i> ADD SCREENSHOT</button>
+        </div>
+        <div class="cd">
+          <div class="ch">
+            <h3><i class="fas fa-images"></i> All Screenshots</h3>
+            <button class="bn bo bs" onclick="loadShots()"><i class="fas fa-sync-alt"></i> Refresh</button>
+          </div>
+          <div id="shotList"><div class="sk-key"></div><div class="sk-key"></div></div>
+        </div>
+      </div>
+
+      <!-- APPEARANCE -->
+      <div class="pg" id="pg-appear">
+        <div class="cd">
+          <div class="ch"><h3><i class="fas fa-palette"></i> Toolkit Colors</h3></div>
+          <div class="cg">
+            <div class="ci"><label>Background</label><input type="color" id="c-bg" value="#e8ecf0" oninput="sC('bg',this.value)"><input type="text" id="ct-bg" value="#e8ecf0"></div>
+            <div class="ci"><label>Accent Color</label><input type="color" id="c-ac" value="#ff3366" oninput="sC('ac',this.value)"><input type="text" id="ct-ac" value="#ff3366"></div>
+            <div class="ci"><label>Text Color</label><input type="color" id="c-tx" value="#1a1a2e" oninput="sC('tx',this.value)"><input type="text" id="ct-tx" value="#1a1a2e"></div>
+          </div>
+          <button class="bn bp" style="margin-top:14px" onclick="saveColors()"><i class="fas fa-save"></i> Save Colors</button>
+        </div>
+        <div class="cd">
+          <div class="ch"><h3><i class="fas fa-moon"></i> Default Theme</h3></div>
+          <div style="display:flex;gap:18px;">
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:.88rem;"><input type="radio" name="thm" value="light" checked> Light Mode</label>
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:.88rem;"><input type="radio" name="thm" value="dark"> Dark Mode</label>
+          </div>
+          <button class="bn bp" style="margin-top:12px" onclick="saveTheme()"><i class="fas fa-save"></i> Save Theme</button>
+        </div>
+      </div>
+
+      <!-- TOOLKIT SETTINGS -->
+      <div class="pg" id="pg-tksett">
+        <div class="cd">
+          <div class="ch"><h3><i class="fas fa-cog"></i> Toolkit Settings</h3></div>
+          <div class="fr fr1">
+            <div class="fg"><label>Toolkit Name</label><input type="text" id="tkN" value="L&#9829;H TOOLKIT"></div>
+            <div class="fg"><label>Tagline</label><input type="text" id="tkT" value="The Ultimate Toolkit"></div>
+            <div class="fg"><label>Welcome Message</label><input type="text" id="tkW" value="Welcome to L&#9829;H TOOLKIT!"></div>
+            <div class="fg"><label>Announcement Bar (khali chhodo band karne ke liye)</label><input type="text" id="tkAnn" placeholder="e.g. New tools added! 🔥"></div>
+            <div class="fg"><label>Upload Logo</label>
+              <div class="ua" onclick="document.getElementById('lgF').click()">
+                <i class="fas fa-image"></i><p>Click to upload logo</p>
+                <img id="lgPv" style="max-height:55px;margin-top:8px;display:none;border-radius:9px;">
+              </div>
+              <input type="file" id="lgF" accept="image/*" style="display:none" onchange="prevLg(event)">
+            </div>
+          </div>
+          <button class="bn bp" onclick="saveTk()"><i class="fas fa-save"></i> Save Settings</button>
+        </div>
+      </div>
+
+      <!-- ADMIN SETTINGS -->
+      <div class="pg" id="pg-admsett">
+        <div class="cd">
+          <div class="ch"><h3><i class="fas fa-lock"></i> Change Login Credentials</h3></div>
+          <div class="fr fr1">
+            <div class="fg"><label>New Username</label><input type="text" id="nU" placeholder="New username" autocomplete="off"></div>
+            <div class="fg"><label>New Password</label><input type="password" id="nP" placeholder="New password"></div>
+            <div class="fg"><label>Confirm Password</label><input type="password" id="nCP" placeholder="Confirm password"></div>
+          </div>
+          <button class="bn bp" onclick="changeCreds()"><i class="fas fa-save"></i> Save Credentials</button>
+        </div>
+        <div class="cd">
+          <div class="ch"><h3><i class="fab fa-whatsapp"></i> Admin WhatsApp Number</h3></div>
+          <p style="font-size:.8rem;color:var(--mt);margin-bottom:12px;">Users click Buy Key button — this WhatsApp opens.</p>
+          <div class="fg"><label>WhatsApp Number</label><input type="text" id="aPh" value="+923277796795"></div>
+          <button class="bn bg2" onclick="savePhone()"><i class="fas fa-save"></i> Save Number</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- EDIT TOOL MODAL -->
+<div class="modalbg" id="editMod">
+  <div class="modal">
+    <h3><i class="fas fa-edit"></i> Edit Tool</h3>
+    <input type="hidden" id="eId">
+    <div class="fg"><label>Name</label><input type="text" id="eNm"></div>
+    <div class="fg"><label>Link</label><input type="text" id="eLk"></div>
+    <div class="fg"><label>Description</label><input type="text" id="eDsc"></div>
+    <div class="fg"><label>Icon Class</label><input type="text" id="eIc" placeholder="fas fa-star"></div>
+    <div class="fg"><label>Icon Image URL (URL se change karein)</label>
+      <input type="text" id="eIU" placeholder="https://..." oninput="prevEIUrl(this.value)">
+      <span id="eIPvTxt" style="font-size:.75rem;color:var(--mt);display:block;margin-top:4px">URL daalo — preview yahan dikhega</span>
+    </div>
+    <div class="fg"><label>Icon Image</label>
+      <div class="ua" onclick="document.getElementById('eIF').click()">
+        <i class="fas fa-cloud-upload-alt"></i><p>Click to change icon</p>
+        <img id="eIPv" style="max-width:55px;border-radius:8px;margin-top:8px;display:none;">
+      </div>
+      <input type="file" id="eIF" accept="image/*" style="display:none" onchange="prevEI(event)">
+    </div>
+    <div class="mf">
+      <button class="bn bo" onclick="closeEdit()">Cancel</button>
+      <button class="bn bp" onclick="saveEdit()"><i class="fas fa-save"></i> Save</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="tst"></div>
+
+<script>
+// ═══ SECURE ADMIN API ═══
+// Firebase URL kabhi browser mein nahi aata
+var _ADMIN_API = "https://lh-toolkit.vercel.app/api/admin-data";
+var _ADMIN_KEY = ""; // Login ke baad set hoga
+
+// API helper
+async function adminApi(action, payload) {
+  try {
+    var r = await fetch(_ADMIN_API, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: action, payload: payload||{}, adminKey: _ADMIN_KEY })
+    });
+    if (!r.ok) return { ok: false, msg: "Server error" };
+    return await r.json();
+  } catch(e) {
+    return { ok: false, msg: "Connection error" };
+  }
+}
+
+// Legacy shims — not used
+async function fbGet(p) { return null; }
+async function fbSet(p, d) { return null; }
+async function fbPush(p, d) { return null; }
+async function fbDel(p) { return null; }
+
+// ═══ STATE ═══
+var _aCache = null;
+var _aCacheTime = 0;
+var _A_TTL = 30000;
+var _kTimer = null;
+var lgB = null;
+
+// ═══ TOAST ═══
+function tst(m, ok) {
+  var t = document.getElementById("tst");
+  t.textContent = m;
+  t.className = "toast on" + (ok === false ? " er" : "");
+  setTimeout(function () { t.className = "toast"; }, 2800);
+}
+
+// ═══ FIREBASE AUTH — Not needed, direct access ═══
+
+// ═══ FIREBASE CRUD — Direct (no auth needed with open rules) ═══
+async function fbGet(p) {
+  try {
+    var r = await fetch(DB + "/" + p + ".json");
+    var t = await r.text();
+    return (t && t !== "null") ? JSON.parse(t) : null;
+  } catch (e) { return null; }
+}
+async function fbSet(p, d) {
+  try {
+    var r = await fetch(DB + "/" + p + ".json", {
+      method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(d)
+    });
+    return await r.json();
+  } catch (e) { return null; }
+}
+async function fbPush(p, d) {
+  try {
+    var r = await fetch(DB + "/" + p + ".json", {
+      method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(d)
+    });
+    var j = await r.json();
+    return j.name || null;
+  } catch (e) { return null; }
+}
+async function fbDel(p) {
+  try {
+    await fetch(DB + "/" + p + ".json", { method: "DELETE" });
+  } catch (e) {}
+}
+
+// ═══ SIDEBAR ═══
+function togSb() {
+  document.getElementById("sb").classList.toggle("open");
+  document.getElementById("hBtn").classList.toggle("open");
+  document.getElementById("ov").classList.toggle("on");
+}
+function closeSb() {
+  document.getElementById("sb").classList.remove("open");
+  document.getElementById("hBtn").classList.remove("open");
+  document.getElementById("ov").classList.remove("on");
+}
+
+// ═══ PAGE SWITCH ═══
+var _pgMap = {
+  dash: ["Dashboard", "L\u2665H Toolkit Overview"],
+  tools: ["Manage Tools", "Add, edit & remove tools"],
+  keys: ["License Keys", "Generate & manage keys"],
+  shots: ["Screenshots", "Login page preview images"],
+  appear: ["Appearance", "Colors and theme"],
+  tksett: ["Toolkit Settings", "Name, logo & welcome"],
+  admsett: ["Admin Settings", "Credentials & contact"]
+};
+function showPg(id, el) {
+  closeSb();
+  document.querySelectorAll(".pg").forEach(function (p) { p.classList.remove("on"); });
+  document.querySelectorAll(".ni").forEach(function (n) { n.classList.remove("on"); });
+  document.getElementById("pg-" + id).classList.add("on");
+  if (el) el.classList.add("on");
+  if (_pgMap[id]) {
+    document.getElementById("pgT").textContent = _pgMap[id][0];
+    document.getElementById("pgS").textContent = _pgMap[id][1];
+  }
+  // Auto load screenshots when page opens
+  if(id==="shots") loadShots();
+}
+
+// ═══ AUTH ═══
+var _loginAttempts = 0;
+var _loginLock = 0;
+
+async function adminLogin() {
+  var now = Date.now();
+  if (_loginLock > now) {
+    var sec = Math.ceil((_loginLock - now) / 1000);
+    document.getElementById("aerr").textContent = "Too many attempts! Wait " + sec + "s";
+    document.getElementById("aerr").style.display = "block"; return;
+  }
+  var u = document.getElementById("au").value.trim();
+  var p = document.getElementById("ap").value;
+  var e = document.getElementById("aerr");
+  if (!u || !p) { e.textContent = "Enter username and password"; e.style.display = "block"; return; }
+  e.textContent = "Checking..."; e.style.color = "rgba(255,255,255,.5)"; e.style.display = "block";
+  var btn = document.querySelector(".abn"); btn.disabled = true;
+
+  // Step 1: Get admin key by verifying credentials
+  var keyRes = await fetch(_ADMIN_API, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ action: "getKey", payload: { username: u, password: p } })
+  }).then(function(r){ return r.json(); }).catch(function(){ return { ok: false }; });
+
+  btn.disabled = false;
+
+  if (keyRes.ok && keyRes.key) {
+    _ADMIN_KEY = keyRes.key;
+    _loginAttempts = 0;
+    sessionStorage.setItem("lha_u", btoa(u));
+    sessionStorage.setItem("lha_p", btoa(p));
+    sessionStorage.setItem("lha_key", keyRes.key);
+    document.getElementById("authScreen").style.display = "none";
+    document.getElementById("adminApp").style.display = "block";
+    loadAll();
+  } else {
+    _loginAttempts++;
+    if (_loginAttempts >= 5) { _loginLock = Date.now() + 60000; _loginAttempts = 0; }
+    e.textContent = "❌ " + (keyRes.msg || "Invalid credentials");
+    e.style.color = "#ff6b6b"; e.style.display = "block";
+  }
+}
+
+function doLogout() {
+  sessionStorage.removeItem("lha_u");
+  sessionStorage.removeItem("lha_p");
+  sessionStorage.removeItem("lha_key");
+  _ADMIN_KEY = "";
+  _aCache = null; clearInterval(_kTimer);
+  document.getElementById("adminApp").style.display = "none";
+  document.getElementById("authScreen").style.display = "flex";
+  document.getElementById("au").value = "";
+  document.getElementById("ap").value = "";
+  document.getElementById("aerr").style.display = "none";
+}
+
+(function() {
+  var su = sessionStorage.getItem("lha_u");
+  var sp = sessionStorage.getItem("lha_p");
+  var sk = sessionStorage.getItem("lha_key");
+  if (su && sp && sk) {
+    try {
+      _ADMIN_KEY = sk;
+      document.getElementById("au").value = atob(su);
+      document.getElementById("ap").value = atob(sp);
+      document.getElementById("authScreen").style.display = "none";
+      document.getElementById("adminApp").style.display = "block";
+      loadAll();
+    } catch(e) {
+      sessionStorage.clear();
+    }
+  }
+})();
+
+// ═══ DATA CACHE ═══
+async function _getAD(force) {
+  var now = Date.now();
+  if (!force && _aCache && (now - _aCacheTime) < _A_TTL) return _aCache;
+  var res = await adminApi("getData", {});
+  if (!res || !res.ok) return { ok: false, tools: null, keys: null, phone: null, settings: null, views: 0 };
+  _aCache = res; _aCacheTime = now;
+  return res;
+}
+
+async function loadAll() {
+  try {
+    var r = await _getAD(true);
+    if (!r || !r.ok) { tst("Connection failed! Check API.", false); return; }
+    _fillDash(r); _fillTools(r); _fillKeys(r); _fillTkS(r);
+  } catch(e) { tst("Load error!", false); }
+}
+
+// ═══ DASHBOARD ═══
+function _fillDash(r) {
+  var t = r.tools, k = r.keys, ph = r.phone;
+  document.getElementById("st0").textContent = t ? Object.keys(t).length : 0;
+  document.getElementById("st1").textContent = k ? Object.keys(k).length : 0;
+  // Phone fix - string ho ya object dono handle karo
+  var phoneStr = (ph && typeof ph === "object") ? (ph.number || ph.phone || JSON.stringify(ph)) : (ph || "");
+  if (phoneStr) {
+    document.getElementById("dPh").textContent = phoneStr;
+    document.getElementById("aPh").value = phoneStr;
+  }
+  var a = 0, ex = 0, now = Date.now();
+  if (k) Object.values(k).forEach(function (x) { x && (x.expiry > now ? a++ : ex++); });
+  document.getElementById("st2").textContent = a;
+  document.getElementById("st3").textContent = ex;
+  var el4 = document.getElementById("st4");
+  if(el4) el4.textContent = r.views || 0;
+}
+
+// ═══ TOOLS ═══
+function prevImg(ev) {
+  var f = ev.target.files[0]; if (!f) return;
+  var rd = new FileReader();
+  rd.onload = function(e2) {
+    window._addIconBase64 = e2.target.result;
+    var img = document.getElementById("icPv");
+    img.src = e2.target.result; img.style.display = "block";
+    document.getElementById("icPvTxt").textContent = "✓ Image ready";
+    document.getElementById("icPvTxt").style.color = "var(--gr)";
+    // URL clear karo - file prefer hogi
+    document.getElementById("tIU").value = "";
+  };
+  rd.readAsDataURL(f);
+}
+function prevIcUrl(url) {
+  var img = document.getElementById("icPv");
+  var txt = document.getElementById("icPvTxt");
+  if(url && url.startsWith("http")) {
+    img.src = url;
+    img.style.display = "block";
+    img.onerror = function(){ img.style.display="none"; txt.textContent="Invalid URL!"; txt.style.color="var(--ac)"; };
+    img.onload = function(){ txt.textContent="✓ Preview"; txt.style.color="var(--gr)"; };
+  } else {
+    img.style.display = "none";
+    txt.textContent = "URL daalo — preview yahan dikhega";
+    txt.style.color = "var(--mt)";
+  }
+}
+
+async function addTool() {
+  var n = document.getElementById("tNm").value.trim();
+  var l = document.getElementById("tLk").value.trim();
+  if (!n || !l) { tst("Name & Link required!", false); return; }
+  var btn = document.querySelector(".bn.bp"); btn.disabled = true;
+  var iconUrl = document.getElementById("tIU").value.trim() || null;
+  var iconBase64 = window._addIconBase64 || null;
+  if (iconUrl) iconBase64 = null;
+  var id = await adminApi("addTool", {
+    name: n, link: l,
+    desc: document.getElementById("tDsc").value.trim(),
+    iconClass: document.getElementById("tIc").value.trim(),
+    iconUrl: iconUrl, iconBase64: iconBase64,
+    active: true, created: Date.now(), views: 0
+  });
+  btn.disabled = false;
+  if (!id) { tst("Error!", false); return; }
+  tst("Tool added!"); window._addIconBase64 = null; _aCache = null;
+  ["tNm","tLk","tDsc","tIc","tIU"].forEach(function(i){ document.getElementById(i).value=""; });
+  document.getElementById("icPv").style.display = "none";
+  document.getElementById("icPvTxt").textContent = "URL daalo — preview yahan dikhega";
+  var r = await _getAD(true); _fillTools(r); _fillDash(r);
+}
+
+function _fillTools(r) {
+  var tools = r.tools;
+  var tb = document.getElementById("tTbl");
+  tb.innerHTML = "";
+  if (!tools || !Object.keys(tools).length) {
+    tb.innerHTML = "<tr><td colspan='6' style='text-align:center;color:var(--mt);padding:24px'>No tools yet. Add your first tool above!</td></tr>";
+    return;
+  }
+  var i = 1;
+  for (var id in tools) {
+    var t = tools[id];
+    var ic = t.iconBase64
+      ? "<img src='" + t.iconBase64 + "' class='tic'>"
+      : t.iconUrl
+        ? "<img src='" + t.iconUrl + "' class='tic' onerror=\"this.style.display='none'\">"
+        : "<div class='tif'><i class='" + (t.iconClass || "fas fa-star") + "'></i></div>";
+    var row = document.createElement("tr");
+    row.innerHTML = "<td>" + i + "</td>"
+      + "<td>" + ic + "</td>"
+      + "<td><strong>" + (t.name||"") + "</strong><div style='font-size:.72rem;color:var(--mt);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:120px'>" + (t.link||"") + "</div></td>"
+      + "<td style='color:var(--mt);font-size:.8rem'>" + (t.desc || "-") + "</td>"
+      + "<td><span class='bdg " + (t.active !== false ? "ba" : "bof") + "'>" + (t.active !== false ? "Active" : "Off") + "</span></td>"
+      + "<td style='display:flex;gap:5px;flex-wrap:wrap;padding:8px 12px'>"
+      + "<button class='bn bp bs' onclick='openEdit(\"" + id + "\")'><i class='fas fa-edit'></i></button>"
+      + "<button class='bn bo bs' onclick='togTool(\"" + id + "\"," + (t.active === false) + ")'>" + (t.active !== false ? "Off" : "On") + "</button>"
+      + "<button class='bn bd bs' onclick='delTool(\"" + id + "\")'><i class='fas fa-trash'></i></button>"
+      + "</td>";
+    tb.appendChild(row);
+    i++;
+  }
+}
+
+async function togTool(id, v) {
+  await adminApi("toggleTool", { id: id, active: v });
+  tst("Updated!"); _aCache = null;
+  var r = await _getAD(true); _fillTools(r);
+}
+async function delTool(id) {
+  if (!confirm("Delete this tool?")) return;
+  await adminApi("deleteTool", { id: id });
+  tst("Deleted!"); _aCache = null;
+  var r = await _getAD(true); _fillTools(r); _fillDash(r);
+}
+
+// ═══ EDIT MODAL ═══
+async function openEdit(id) {
+  window._editIconBase64 = null; // reset
+  var r = await _getAD();
+  var t = r.tools && r.tools[id];
+  if (!t) { tst("Tool not found!", false); return; }
+  document.getElementById("eId").value = id;
+  document.getElementById("eNm").value = t.name || "";
+  document.getElementById("eLk").value = t.link || "";
+  document.getElementById("eDsc").value = t.desc || "";
+  document.getElementById("eIc").value = t.iconClass || "";
+  document.getElementById("eIU").value = t.iconUrl || "";
+  var pv = document.getElementById("eIPv");
+  var pvTxt = document.getElementById("eIPvTxt");
+  if (t.iconUrl) { pv.src = t.iconUrl; pv.style.display = "block"; if(pvTxt) pvTxt.textContent = "✓ Preview"; }
+  else if (t.iconBase64) { pv.src = t.iconBase64; pv.style.display = "block"; window._editIconBase64 = t.iconBase64; if(pvTxt) pvTxt.textContent = "Uploaded image"; }
+  else { pv.style.display = "none"; if(pvTxt) pvTxt.textContent = "URL daalo — preview yahan dikhega"; }
+  document.getElementById("editMod").classList.add("open");
+}
+function closeEdit() { document.getElementById("editMod").classList.remove("open"); }
+function prevEIUrl(url) {
+  var img = document.getElementById("eIPv");
+  var txt = document.getElementById("eIPvTxt");
+  if(url && url.startsWith("http")) {
+    img.src = url;
+    img.style.display = "block";
+    img.onerror = function(){ img.style.display="none"; txt.textContent="Invalid URL!"; txt.style.color="var(--ac)"; };
+    img.onload = function(){ txt.textContent="✓ Preview"; txt.style.color="var(--gr)"; };
+  } else {
+    img.style.display = "none";
+    txt.textContent = "URL daalo — preview yahan dikhega";
+    txt.style.color = "var(--mt)";
+  }
+}
+async function saveEdit() {
+  var id = document.getElementById("eId").value;
+  var iconUrlVal = document.getElementById("eIU").value.trim() || null;
+  var iconBase64Val = window._editIconBase64 || null;
+  if (iconUrlVal) iconBase64Val = null;
+  await adminApi("editTool", {
+    id: id,
+    name: document.getElementById("eNm").value.trim(),
+    link: document.getElementById("eLk").value.trim(),
+    desc: document.getElementById("eDsc").value.trim(),
+    iconClass: document.getElementById("eIc").value.trim(),
+    iconUrl: iconUrlVal, iconBase64: iconBase64Val
+  });
+  window._editIconBase64 = null;
+  tst("Updated!"); closeEdit(); _aCache = null;
+  var r = await _getAD(true); _fillTools(r);
+}
+
+async function loadKeys() {
+  var r = await _getAD(true); _fillKeys(r);
+}
+
+// ═══ KEYS ═══
+async function genKey() {
+  var days = parseInt(document.getElementById("kDr").value) || 1;
+  var custom = document.getElementById("kCus").value.trim();
+  var res = await adminApi("generateKey", { days: days, custom: custom || null });
+  if (!res.ok) { tst("Error!", false); return; }
+  document.getElementById("kVal").textContent = res.key;
+  document.getElementById("kBox").style.display = "block";
+  tst("Key generated!"); _aCache = null;
+  var r = await _getAD(true); _fillKeys(r); _fillDash(r);
+}
+function cpKey() {
+  navigator.clipboard.writeText(document.getElementById("kVal").textContent)
+    .then(function () { tst("Copied!"); });
+}
+
+function _fmtKeyTime(ms) {
+  if (ms <= 0) return "EXPIRED";
+  var h = Math.floor(ms / 3600000);
+  var m = Math.floor((ms % 3600000) / 60000);
+  var s = Math.floor((ms % 60000) / 1000);
+  if (h >= 24) return Math.ceil(ms / 86400000) + "d left";
+  return (h > 0 ? h + "h " : "") + (m < 10 ? "0" + m : m) + "m " + (s < 10 ? "0" + s : s) + "s";
+}
+
+function _fillKeys(r) {
+  var keys = r.keys;
+  var c = document.getElementById("kList");
+  if (!keys || !Object.keys(keys).length) {
+    c.innerHTML = "<p style='color:var(--mt);font-size:.85rem;padding:10px 0'>No keys yet. Generate your first key above!</p>";
+    return;
+  }
+  c.innerHTML = "";
+  var now = Date.now();
+  for (var id in keys) {
+    var k = keys[id];
+    if (!k || !k.key) continue; // skip invalid
+    var expiry = parseInt(k.expiry) || 0;
+    var days = parseInt(k.days) || 1;
+    var exp = expiry < now;
+    var rem = exp ? "EXPIRED" : _fmtKeyTime(expiry - now);
+    var div = document.createElement("div");
+    div.className = "kr";
+    div.setAttribute("data-exp", expiry);
+    div.innerHTML = "<div class='kv'>" + k.key + "</div>"
+      + "<span class='bdg " + (exp ? "bof" : "ba") + " kt-rem'>" + rem + "</span>"
+      + "<span class='bdg bbl'>" + days + "d</span>"
+      + (k.used ? "<span class='bdg bus'>USED</span>" : "<span class='bdg ba'>FREE</span>")
+      + "<button class='bn bo bs' onclick='cpKV(\"" + k.key + "\")'><i class='fas fa-copy'></i></button>"
+      + "<button class='bn bd bs' onclick='delKey(\"" + id + "\")'><i class='fas fa-trash'></i></button>";
+    c.appendChild(div);
+  }
+  clearInterval(_kTimer);
+  _kTimer = setInterval(function () {
+    document.querySelectorAll(".kr[data-exp]").forEach(function (el) {
+      var exp2 = parseInt(el.getAttribute("data-exp"));
+      var rem2 = exp2 - Date.now();
+      var span = el.querySelector(".kt-rem");
+      if (!span) return;
+      if (rem2 <= 0) { span.textContent = "EXPIRED"; span.className = "bdg bof kt-rem"; }
+      else { span.textContent = _fmtKeyTime(rem2); span.className = "bdg ba kt-rem"; }
+    });
+  }, 1000);
+}
+
+function cpKV(v) { navigator.clipboard.writeText(v).then(function() { tst("Copied!"); }); }
+async function delKey(id) {
+  if (!confirm("Delete this key?")) return;
+  await adminApi("deleteKey", { id: id });
+  tst("Deleted!"); _aCache = null;
+  var r = await _getAD(true); _fillKeys(r); _fillDash(r);
+}
+
+// ═══ SCREENSHOTS ═══
+function prevShot(url){
+  var pv=document.getElementById("shotPv");
+  var wrap=document.getElementById("shotPvWrap");
+  if(url&&url.startsWith("http")){
+    pv.src=url;wrap.style.display="block";
+    pv.onerror=function(){wrap.style.display="none";};
+  } else wrap.style.display="none";
+}
+async function addShot(){
+  var url = document.getElementById("shotUrl").value.trim();
+  var cap = document.getElementById("shotCap").value.trim();
+  if(!url){ tst("URL daalo!", false); return; }
+  var res = await adminApi("addScreenshot", { url: url, caption: cap||"" });
+  if(!res.ok){ tst("Error!", false); return; }
+  tst("Screenshot added!");
+  document.getElementById("shotUrl").value = "";
+  document.getElementById("shotCap").value = "";
+  document.getElementById("shotPvWrap").style.display = "none";
+  loadShots();
+}
+async function loadShots(){
+  var c = document.getElementById("shotList");
+  c.innerHTML = "<div class='sk-key'></div><div class='sk-key'></div>";
+  var res = await adminApi("getScreenshots", {});
+  if(!res.ok || !res.screenshots || !res.screenshots.length){
+    c.innerHTML = "<p style='color:var(--mt);font-size:.85rem;padding:10px 0'>Koi screenshot nahi. Upar se add karo!</p>";
+    return;
+  }
+  c.innerHTML = "";
+  res.screenshots.forEach(function(s){
+    var div = document.createElement("div");
+    div.style.cssText = "display:flex;align-items:center;gap:12px;background:var(--bg);border-radius:12px;padding:10px;margin-bottom:9px;box-shadow:var(--shadow-in);";
+    div.innerHTML = "<img src='"+s.url+"' style='width:70px;height:50px;object-fit:cover;border-radius:8px;flex-shrink:0;'>"
+      +"<div style='flex:1;min-width:0'><div style='font-size:.82rem;font-weight:600;color:var(--tx);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;'>"+s.url+"</div>"
+      +(s.caption ? "<div style='font-size:.75rem;color:var(--mt);margin-top:2px;'>"+s.caption+"</div>" : "")+"</div>"
+      +"<button class='bn bd bs' onclick='delShot(\""+s.id+"\")'><i class='fas fa-trash'></i></button>";
+    c.appendChild(div);
+  });
+}
+async function delShot(id){
+  if(!confirm("Delete this screenshot?")) return;
+  await adminApi("deleteScreenshot", { id: id });
+  tst("Deleted!"); loadShots();
+}
+
+async function saveColors() {
+  var c = { bg: document.getElementById("ct-bg").value, accent: document.getElementById("ct-ac").value, text: document.getElementById("ct-tx").value };
+  var r2 = await _getAD(); var s = r2.settings || {}; s.colors = c;
+  await adminApi("saveSettings", { settings: s }); _aCache = null; tst("Colors saved!");
+}
+async function saveTheme() {
+  var th = document.querySelector("input[name=thm]:checked").value;
+  var r2 = await _getAD(); var s = r2.settings || {}; s.theme = th;
+  await adminApi("saveSettings", { settings: s }); _aCache = null; tst("Theme saved!");
+}
+
+// ═══ TOOLKIT SETTINGS ═══
+function _fillTkS(r) {
+  var s = r.settings && r.settings.toolkit;
+  if (s) {
+    if (s.name) document.getElementById("tkN").value = s.name;
+    if (s.tagline) document.getElementById("tkT").value = s.tagline;
+    if (s.welcome) document.getElementById("tkW").value = s.welcome;
+  }
+  if (r.settings && r.settings.announcement) {
+    document.getElementById("tkAnn").value = r.settings.announcement;
+  }
+}
+function prevEI(ev) {
+  var f = ev.target.files[0]; if (!f) return;
+  var rd = new FileReader();
+  rd.onload = function(e2) {
+    var img = document.getElementById("eIPv");
+    img.src = e2.target.result; img.style.display = "block";
+    window._editIconBase64 = e2.target.result;
+  };
+  rd.readAsDataURL(f);
+}
+function prevLg(ev) {
+  var f = ev.target.files[0]; if (!f) return;
+  var rd = new FileReader();
+  rd.onload = function(e2) { lgB = e2.target.result; var i = document.getElementById("lgPv"); i.src = lgB; i.style.display = "block"; };
+  rd.readAsDataURL(f);
+}
+async function saveTk() {
+  var r2 = await _getAD(); var s = r2.settings || {};
+  s.toolkit = { name: document.getElementById("tkN").value, tagline: document.getElementById("tkT").value, welcome: document.getElementById("tkW").value };
+  if (lgB) s.toolkit.logoUrl = lgB;
+  s.announcement = document.getElementById("tkAnn").value.trim() || null;
+  await adminApi("saveSettings", { settings: s }); _aCache = null; tst("Saved!");
+}
+
+// ═══ ADMIN SETTINGS ═══
+async function savePhone() {
+  var p = document.getElementById("aPh").value.trim();
+  if (!p) { tst("Enter phone number!", false); return; }
+  var res = await adminApi("savePhone", { phone: p });
+  if(res.ok) {
+    document.getElementById("dPh").textContent = res.phone || p;
+    tst("Saved!");
+  } else { tst("Error!", false); }
+}
+async function changeCreds() {
+  var u = document.getElementById("nU").value.trim();
+  var p = document.getElementById("nP").value;
+  var cp = document.getElementById("nCP").value;
+  if (!u || !p) { tst("All fields required!", false); return; }
+  if (p !== cp) { tst("Passwords don't match!", false); return; }
+  if (p.length < 6) { tst("Password must be 6+ chars!", false); return; }
+  await adminApi("saveCredentials", { username: u, password: p });
+  tst("Updated! Re-login...");
+  setTimeout(function() { doLogout(); }, 2000);
+}
+
+// ═══ APPEARANCE ═══
+function sC(k, v) {
+  document.getElementById("ct-" + k).value = v;
+  document.getElementById("c-" + k).value = v;
+}
+</script>
+</body>
+</html>
