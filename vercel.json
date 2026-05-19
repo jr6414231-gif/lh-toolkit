@@ -1,12 +1,6 @@
 {
   "functions": {
-    "api/toolkit.js": {
-      "memory": 128,
-      "maxDuration": 10
-    },
-    "api/admin-data.js": {
-      "memory": 128,
-      "maxDuration": 10
-    }
+    "api/toolkit.js": { "memory": 128, "maxDuration": 10 },
+    "api/admin-data.js": { "memory": 128, "maxDuration": 10 }
   }
 }
