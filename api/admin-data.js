@@ -80,11 +80,35 @@ export default async function handler(req, res) {
   try {
     if (action === "getData") {
       const tools = await fbGet("tools");
-      const keys = await fbGet("keys");
+      const keysRaw = await fbGet("keys");
       const phone = await fbGet("admin/phone");
       const settings = await fbGet("settings");
       const views = await fbGet("stats/views");
-      return res.json({ ok: true, tools, keys, phone: String(phone||""), settings, views: parseInt(views)||0 });
+      
+      // Keys ko validate karo — invalid entries ignore karo
+      let keys = null;
+      if (keysRaw) {
+        keys = {};
+        for (const id in keysRaw) {
+          const k = keysRaw[id];
+          if (k && k.key && k.expiry) {
+            keys[id] = {
+              key: String(k.key),
+              days: parseInt(k.days) || 1,
+              expiry: parseInt(k.expiry),
+              created: parseInt(k.created) || Date.now(),
+              used: k.used === true,
+              deviceId: k.deviceId || null
+            };
+          }
+        }
+        if (!Object.keys(keys).length) keys = null;
+      }
+      
+      // Phone ko string banao
+      const phoneStr = phone ? (typeof phone === "object" ? (phone.number || phone.phone || "") : String(phone)) : "";
+      
+      return res.json({ ok: true, tools, keys, phone: phoneStr, settings, views: parseInt(views)||0 });
     }
 
     // TOOLS
