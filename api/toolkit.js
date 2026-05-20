@@ -1,19 +1,33 @@
+// Firebase Database Secret se authenticate karo
+// Vercel env var: FIREBASE_DB_URL, FIREBASE_SECRET
 const DB = process.env.FIREBASE_DB_URL;
+const SECRET = process.env.FIREBASE_SECRET;
 
 async function fbGet(path) {
   try {
-    const r = await fetch(`${DB}/${path}.json`);
+    const url = SECRET 
+      ? `${DB}/${path}.json?auth=${SECRET}`
+      : `${DB}/${path}.json`;
+    const r = await fetch(url);
     const t = await r.text();
     return (t && t !== "null") ? JSON.parse(t) : null;
   } catch(e) { return null; }
 }
 async function fbSet(path, data) {
   try {
-    await fetch(`${DB}/${path}.json`, { method:"PUT", headers:{"Content-Type":"application/json"}, body:JSON.stringify(data) });
+    const url = SECRET
+      ? `${DB}/${path}.json?auth=${SECRET}`
+      : `${DB}/${path}.json`;
+    await fetch(url, { method:"PUT", headers:{"Content-Type":"application/json"}, body:JSON.stringify(data) });
   } catch(e) {}
 }
 async function fbDel(path) {
-  try { await fetch(`${DB}/${path}.json`, { method:"DELETE" }); } catch(e) {}
+  try {
+    const url = SECRET
+      ? `${DB}/${path}.json?auth=${SECRET}`
+      : `${DB}/${path}.json`;
+    await fetch(url, { method:"DELETE" });
+  } catch(e) {}
 }
 
 export default async function handler(req, res) {
